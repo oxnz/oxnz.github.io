@@ -1,5 +1,5 @@
 # Gems
-gems: [jekyll-paginate, jekyll-sitemap, jekyll-gist]
+gems: [jekyll-paginate, jekyll-sitemap, jekyll-gist, jekyll-seo-tag]
 
 # Site settings
 title: Tech Stack
