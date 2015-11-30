@@ -1,8 +1,9 @@
 ---
-title: Articles
 layout: page
+title: Articles
 ---
 
+{{ site.posts.size }} posts
 
 {% if site.posts.size > 0 %}
 Title | Author | Categories | Tags | Date

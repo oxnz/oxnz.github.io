@@ -30,6 +30,13 @@ comments: []
 }
 </style>
 
+# Tech Stack
+
+[![Build Status](https://travis-ci.org/oxnz/oxnz.github.io.svg?branch=master)](https://travis-ci.org/oxnz/oxnz.github.io)
+
+[Google Analytics](https://analytics.google.com)
+[Google Search Console](https://www.google.com/webmasters/tools/dashboard?hl=en&authuser=0&siteUrl=http://oxnz.github.io/&sig=ALjLGbMtvWBqzv2K_PniURTSZMiKB1ZNig)
+
 # Will Z
 
 <h4 class="profession">Web Designer & Software Developer</h4>
