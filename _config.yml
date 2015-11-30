@@ -1,5 +1,5 @@
 # Gems
-gems: [jekyll-paginate]
+gems: [jekyll-paginate, jekyll-sitemap]
 
 # Site settings
 title: Tech Stack
@@ -20,6 +20,10 @@ excerpt_separator: <!--more-->
 
 # Pagination
 paginate: 10
+
+# Sass
+sass:
+  style: compressed
 
 defaults:
   -
