@@ -19,6 +19,14 @@ body {
 	color: #fff;
 }
 
+.post-link {
+	display: initial;
+}
+
+.post-link:hover {
+	color: #DD4D31;
+}
+
 /**
  * pagination
  */
@@ -44,6 +52,23 @@ body {
 	padding-left: 20px;
 }
 
+/**
+ * post meta
+ */
+.cat,
+.tag {
+	display: inline-block;
+	padding: 2px 4px;
+	margin: 0px 2px;
+	border: 1px solid #eee;
+	border-radius: 5px;
+	line-height: 1;
+	vertical-align: middle;
+	color: #337ab7;
+	text-align: center;
+	white-space: nowrap;
+}
+
 pre,
 code {
 	font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
@@ -53,4 +78,18 @@ code {
 blockquote {
 	font-size: 95%;
 	letter-spacing: normal;
+}
+
+dt {
+	font-weight: bold;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+th,
+td {
+	border-bottom: 1px solid #ddd;
+	padding: 4px;
 }
