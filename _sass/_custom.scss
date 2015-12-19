@@ -1,5 +1,6 @@
 body {
-	font-weight: 300;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .site-header {
@@ -19,12 +20,33 @@ body {
 	color: #418EF5;
 }
 
+.post-title {
+	letter-spacing: normal;
+	line-height: 1.2;
+	font-weight: 300;
+	margin-bottom: 10px;
+	color: #2d2d2d;
+}
+
 .post-link {
 	display: initial;
 }
 
 .post-link:hover {
 	color: #DD4D31;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+	color: #2d2d2d;
+}
+
+.post-content p {
+	line-height: 1.75;
 }
 
 /**
