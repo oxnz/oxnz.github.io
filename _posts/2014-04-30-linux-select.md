@@ -6,7 +6,8 @@ type: post
 published: true
 status: publish
 categories:
-- Linux
+- socket
+- dev
 tags:
 - select
 meta:
@@ -19,28 +20,21 @@ author:
   first_name: Will
   last_name: Z
 ---
-<h2 id="intro">介绍</h2>
-<p>最近在看 Linux/Unix 网络编程，谢了三篇关于 select、poll 和 epoll 的文章。本篇介绍select，<a title="Linux poll" href="http://xinyi.sourceforge.net/linux-poll/" target="_blank">第二篇</a>介绍poll，<a title="Linux epoll" href="http://xinyi.sourceforge.net/linux-epool/" target="_blank">第三篇</a>介绍 epoll。</p>
-<ol>
-<li><a href="#intro">介绍</a>
-<ol>
-<li><a href="#select-pic">select 原理图</a></li>
-<li><a href="#man-select">man select</a></li>
-</ol>
-</li>
-<li><a href="#example-program">实例程序</a>
-<ol>
-<li><a href="#input-detect">输入监测</a></li>
-<li><a href="#web-server">web 服务器</a></li>
-</ol>
-</li>
-<li><a href="summary">总结</a></li>
-<li><a href="#refs">参考</a></li>
-</ol>
-<h2 id="select-pic">select 原理图</h2>
-<p>[caption id="attachment_1395" align="aligncenter" width="475"]<a href="https://blog-oxnz.rhcloud.com/wp-content/uploads/2014/04/2429699_1331492431cuPx.gif"><img class="wp-image-1395 size-full" src="{{ site.baseurl }}/assets/2429699_1331492431cuPx.gif" alt="select 原理图" width="475" height="467" /></a> select 原理图，摘自<a href="http://publib.boulder.ibm.com/infocenter/iseries/v5r3/index.jsp?topic=%2Frzab6%2Frzab6xnonblock.htm">IBM iSeries 信息中心</a>[/caption]</p>
-<p><!--more--></p>
-<h2 id="man-select">man 手册</h2>
+### Introduction
+
+最近在看 Linux/Unix 网络编程，谢了三篇关于 select、poll 和 epoll 的文章。本篇介绍select，<a title="Linux poll" href="http://xinyi.sourceforge.net/linux-poll/" target="_blank">第二篇</a>介绍poll，<a title="Linux epoll" href="http://xinyi.sourceforge.net/linux-epool/" target="_blank">第三篇</a>介绍 epoll。
+
+<!--more-->
+
+* TOC
+{:toc}
+
+## select 原理图
+
+[caption id="attachment_1395" align="aligncenter" width="475"]<a href="https://blog-oxnz.rhcloud.com/wp-content/uploads/2014/04/2429699_1331492431cuPx.gif"><img class="wp-image-1395 size-full" src="{{ site.baseurl }}/assets/2429699_1331492431cuPx.gif" alt="select 原理图" width="475" height="467" /></a> select 原理图，摘自<a href="http://publib.boulder.ibm.com/infocenter/iseries/v5r3/index.jsp?topic=%2Frzab6%2Frzab6xnonblock.htm">IBM iSeries 信息中心</a>[/caption]</p>
+
+## man 手册
+
 <blockquote>
 <h2>Name</h2>
 <p>select, pselect, FD_CLR, FD_ISSET, FD_SET, FD_ZERO - synchronous I/O multiplexing</p>
@@ -169,12 +163,16 @@ pthread_sigmask(SIG_SETMASK, &amp;origmask, NULL);</pre>
 <p>On systems that lack <b>pselect</b>(), reliable (and more portable) signal trapping can be achieved using the self-pipe trick. In this technique, a signal handler writes a byte to a pipe whose other end is monitored by <b>select</b>() in the main program. (To avoid possibly blocking when writing to a pipe that may be full or reading from a pipe that may be empty, nonblocking I/O is used when reading from and writing to the pipe.)</p>
 <p>Under Linux, <b>select</b>() may report a socket file descriptor as "ready for reading", while nevertheless a subsequent read blocks. This could for example happen when data has arrived but upon examination has wrong checksum and is discarded. There may be other circumstances in which a file descriptor is spuriously reported as ready. <span style="color: #ff0000;">Thus it may be safer to use <b>O_NONBLOCK</b> on sockets that should not block.</span></p>
 <p>On Linux, <b>select</b>() also modifies <i>timeout</i> if the call is interrupted by a signal handler (i.e., the <b>EINTR</b> error return). This is not permitted by POSIX.1-2001. The Linux <b>pselect</b>() system call has the same behavior, but the glibc wrapper hides this behavior by internally copying the <i>timeout</i> to a local variable and passing that variable to the system call.</p>
-<h2>Example</h2>
-<pre class="code">#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;sys/time.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;unistd.h&gt;
+</blockquote>
+
+## Example
+
+```cpp
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 int
 main(void)
@@ -184,46 +182,46 @@ main(void)
     int retval;
 
    /* Watch stdin (fd 0) to see when it has input. */
-    FD_ZERO(&amp;rfds);
-    FD_SET(0, &amp;rfds);
+    FD_ZERO(&rfds);
+    FD_SET(0, &rfds);
 
    /* Wait up to five seconds. */
     tv.tv_sec = 5;
     tv.tv_usec = 0;
 
-   retval = select(1, &amp;rfds, NULL, NULL, &amp;tv);
+   retval = select(1, &rfds, NULL, NULL, &tv);
     /* Don't rely on the value of tv now! */
 
    if (retval == -1)
         perror("select()");
     else if (retval)
         printf("Data is available now.n");
-        /* FD_ISSET(0, &amp;rfds) will be true. */
+        /* FD_ISSET(0, &rfds) will be true. */
     else
         printf("No data within five seconds.n");
 
    exit(EXIT_SUCCESS);
-}</pre>
-<h2>See Also</h2>
-<p><b><a style="color: #660000;" href="http://linux.die.net/man/2/accept">accept</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/connect">connect</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/poll">poll</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/read" rel="nofollow">read</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/recv">recv</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/send">send</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/sigprocmask" rel="nofollow">sigprocmask</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/write">write</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/7/epoll">epoll</a></b>(7), <b><a style="color: #660000;" href="http://linux.die.net/man/7/time">time</a></b>(7)</p>
-<p>For a tutorial with discussion and examples, see <b><a style="color: #660000;" href="http://linux.die.net/man/2/select_tut">select_tut</a></b>(2).</p>
-<h2>Referenced By</h2>
-<p><b><a style="color: #660000;" href="http://linux.die.net/man/2/accept4" rel="nofollow">accept4</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/alarm" rel="nofollow">alarm</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/3/avc_netlink_open" rel="nofollow">avc_netlink_open</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/8/coroipc_overview" rel="nofollow">coroipc_overview</a></b>(8), <b><a style="color: #660000;" href="http://linux.die.net/man/3/curl_easy_recv" rel="nofollow">curl_easy_recv</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/curl_easy_send" rel="nofollow">curl_easy_send</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/8/distcache" rel="nofollow">distcache</a></b>(8), <b><a style="color: #660000;" href="http://linux.die.net/man/3/dnet" rel="nofollow">dnet</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/2/epoll_wait" rel="nofollow">epoll_wait</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/3/ev" rel="nofollow">ev</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/event" rel="nofollow">event</a></b>(3),<b><a style="color: #660000;" href="http://linux.die.net/man/2/eventfd" rel="nofollow">eventfd</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/1/explain" rel="nofollow">explain</a></b>(1), <b><a style="color: #660000;" href="http://linux.die.net/man/3/explain" rel="nofollow">explain</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/explain_select" rel="nofollow">explain_select</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/explain_select_or_die" rel="nofollow">explain_select_or_die</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/2/fcntl" rel="nofollow">fcntl</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/8/haveged" rel="nofollow">haveged</a></b>(8), <b><a style="color: #660000;" href="http://linux.die.net/man/3/ident" rel="nofollow">ident</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/ieee1284_get_irq_fd" rel="nofollow">ieee1284_get_irq_fd</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/imclient" rel="nofollow">imclient</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/7/inotify" rel="nofollow">inotify</a></b>(7),<b><a style="color: #660000;" href="http://linux.die.net/man/3/iopause" rel="nofollow">iopause</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/ipq_read" rel="nofollow">ipq_read</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/1/jstest" rel="nofollow">jstest</a></b>(1), <b><a style="color: #660000;" href="http://linux.die.net/man/5/ldap.conf" rel="nofollow">ldap.conf</a></b>(5), <b><a style="color: #660000;" href="http://linux.die.net/man/3/ldap_result" rel="nofollow">ldap_result</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/ldap_set_option" rel="nofollow">ldap_set_option</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/libnids" rel="nofollow">libnids</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/libxradius" rel="nofollow">libxradius</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/2/migrate_pages" rel="nofollow">migrate_pages</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/7/mq_overview" rel="nofollow">mq_overview</a></b>(7),<b><a style="color: #660000;" href="http://linux.die.net/man/2/nal_connection_new" rel="nofollow">nal_connection_new</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/nal_selector_new" rel="nofollow">nal_selector_new</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/7/nfsd" rel="nofollow">nfsd</a></b>(7), <b><a style="color: #660000;" href="http://linux.die.net/man/5/nss_ldap" rel="nofollow">nss_ldap</a></b>(5), <b><a style="color: #660000;" href="http://linux.die.net/man/1/nttcp" rel="nofollow">nttcp</a></b>(1), <b><a style="color: #660000;" href="http://linux.die.net/man/5/pam_ldap" rel="nofollow">pam_ldap</a></b>(5), <b><a style="color: #660000;" href="http://linux.die.net/man/2/pause" rel="nofollow">pause</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/3/pcap_get_selectable_fd" rel="nofollow">pcap_get_selectable_fd</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/2/perf_event_open" rel="nofollow">perf_event_open</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/2/perfmonctl" rel="nofollow">perfmonctl</a></b>(2),<b><a style="color: #660000;" href="http://linux.die.net/man/1/perlfunc" rel="nofollow">perlfunc</a></b>(1), <b><a style="color: #660000;" href="http://linux.die.net/man/7/pipe" rel="nofollow">pipe</a></b>(7), <b><a style="color: #660000;" href="http://linux.die.net/man/3/pmrecordsetup" rel="nofollow">pmrecordsetup</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/pmtimerecv" rel="nofollow">pmtimerecv</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/2/prctl" rel="nofollow">prctl</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/5/proc" rel="nofollow">proc</a></b>(5), <b><a style="color: #660000;" href="http://linux.die.net/man/3/pth" rel="nofollow">pth</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/7/pty" rel="nofollow">pty</a></b>(7), <b><a style="color: #660000;" href="http://linux.die.net/man/4/random" rel="nofollow">random</a></b>(4), <b><a style="color: #660000;" href="http://linux.die.net/man/3/rpc" rel="nofollow">rpc</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/rpc_soc" rel="nofollow">rpc_soc</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/rpc_svc_calls" rel="nofollow">rpc_svc_calls</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/rpc_svc_reg" rel="nofollow">rpc_svc_reg</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/4/rtc" rel="nofollow">rtc</a></b>(4),<b><a style="color: #660000;" href="http://linux.die.net/man/3/sctp_connectx" rel="nofollow">sctp_connectx</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/session_api" rel="nofollow">session_api</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/shellout" rel="nofollow">shellout</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/2/signalfd" rel="nofollow">signalfd</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/5/slapd-ldap" rel="nofollow">slapd-ldap</a></b>(5), <b><a style="color: #660000;" href="http://linux.die.net/man/5/slapd-meta" rel="nofollow">slapd-meta</a></b>(5), <b><a style="color: #660000;" href="http://linux.die.net/man/3/snmp_agent_api" rel="nofollow">snmp_agent_api</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/snmp_alarm" rel="nofollow">snmp_alarm</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/snmp_api" rel="nofollow">snmp_api</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/snmp_sess_timeout" rel="nofollow">snmp_sess_timeout</a></b>(3),<b><a style="color: #660000;" href="http://linux.die.net/man/2/socket" rel="nofollow">socket</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/7/socket" rel="nofollow">socket</a></b>(7), <b><a style="color: #660000;" href="http://linux.die.net/man/5/ssh-ldap.conf" rel="nofollow">ssh-ldap.conf</a></b>(5), <b><a style="color: #660000;" href="http://linux.die.net/man/5/sssd-ldap" rel="nofollow">sssd-ldap</a></b>(5), <b><a style="color: #660000;" href="http://linux.die.net/man/2/syscalls" rel="nofollow">syscalls</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/7/tcp" rel="nofollow">tcp</a></b>(7), <b><a style="color: #660000;" href="http://linux.die.net/man/2/timerfd_create" rel="nofollow">timerfd_creat</p>
-<p>e</a></b>(2), <b><a style="color: #660000;" href="http://linux.die.net/man/4/tty_ioctl" rel="nofollow">tty_ioctl</a></b>(4), <b><a style="color: #660000;" href="http://linux.die.net/man/3/ualarm" rel="nofollow">ualarm</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/7/udp" rel="nofollow">udp</a></b>(7), <b><a style="color: #660000;" href="http://linux.die.net/man/3/usleep" rel="nofollow">usleep</a></b>(3), <b><a style="color: #660000;" href="http://linux.die.net/man/3/vga_waitevent" rel="nofollow">vga_waitevent</a></b>(3),<b><a style="color: #660000;" href="http://linux.die.net/man/1/zshmodules" rel="nofollow">zshmodules</a></b>(1)</p></blockquote>
-<h2 id="example-program">实例程序</h2>
-<h3 id="input-detect">输入监测</h3>
-<p>检测键盘有无输入，完整的程序如下：</p>
-<pre class="lang:default decode:true">#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
+}
+```
 
-#include &lt;unistd.h&gt;
+## 实例程序
 
-#include &lt;sys/select.h&gt;
-#include &lt;sys/time.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;sys/socket.h&gt;
-#include &lt;arpa/inet.h&gt;
+### 输入监测
+
+检测键盘有无输入，完整的程序如下：
+
+```cpp
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <unistd.h>
+
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 #define BUFLEN 32U
 
@@ -238,11 +236,11 @@ int main(int argc, char *argv[]) {
     fd_set rdfds;
     struct timeval tv;
     while (1) {
-        FD_ZERO(&amp;rdfds);
-        FD_SET(STDIN_FILENO, &amp;rdfds);
+        FD_ZERO(&rdfds);
+        FD_SET(STDIN_FILENO, &rdfds);
         tv.tv_sec = 2;
         tv.tv_usec = 0;
-        int cnt = select(STDIN_FILENO+1, &amp;rdfds, NULL, NULL, &amp;tv);
+        int cnt = select(STDIN_FILENO+1, &rdfds, NULL, NULL, &tv);
         switch (cnt) {
             case -1:
                 errpro(EXIT_FAILURE, "select");
@@ -252,7 +250,7 @@ int main(int argc, char *argv[]) {
                 continue;
                 break;
             default:
-                if (FD_ISSET(STDIN_FILENO, &amp;rdfds)) {
+                if (FD_ISSET(STDIN_FILENO, &rdfds)) {
                     char buf[BUFLEN];
                     cnt = read(STDIN_FILENO, buf, BUFLEN-1);
                     errpro(-1 == cnt, "read");
@@ -264,160 +262,15 @@ int main(int argc, char *argv[]) {
         }
     }
     return 0;
-}</pre>
-<h3 id="web-server">web 服务器</h3>
-<p>利用Select模型，设计的web服务器：</p>
-<pre class="lang:c++ decode:true" data-url="https://gist.githubusercontent.com/oxnz/855b94ee4a4aae3c8c88/raw/0378a779e499bd2ab8c7bffa70cbee836202019a/telnet.cpp">#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-
-#include &lt;unistd.h&gt;
-
-#include &lt;sys/select.h&gt;
-#include &lt;sys/time.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;sys/socket.h&gt;
-#include &lt;arpa/inet.h&gt;
-
-#define BUFLEN	10U
-unsigned char buf[BUFLEN];
-const unsigned short PORT(8888);
-#define BACKLOG	16U
-
-void errpro(int condition, const char *errmsg) {
-	if (condition) {
-		perror(errmsg);
-		exit(EXIT_FAILURE);
-	}
 }
+```
 
-int clientpro(int fda[], unsigned int idx) {
-	int ret(0);
-	int cnt = recv(fda[idx], buf, BUFLEN-1, 0);
-	errpro(-1 == cnt, "recv");
-	if (0 == cnt) { // client go off
-		printf("client[%u] goes offn", idx);
-	} else {
-		ret = cnt;
-		printf("--&gt;[0x%x]n", buf[0]);
-		switch (buf[0]) {
-			case 0x04:
-				printf("^Dn");
-				break;
-			case 0x73:
-				printf("getstatusn");
-				break;
-			case 0xff:
-				printf("client[%u] logoutn", idx);
-				return 0;
-				break;
-			default:
-				break;
-		}
-		buf[cnt] = ' ';
-		printf("message from client[%u]:n%s", idx, buf);
-		while (BUFLEN-1 == cnt) {
-			cnt = recv(fda[idx], buf, BUFLEN-1, 0);
-			ret += cnt;
-			errpro(-1 == cnt, "recv");
-			buf[cnt] = ' ';
-			printf("%s", buf);
-		}
-		char msg[] = "Hello, client xn";
-		msg[strlen(msg)-2] = idx + '0';
-		errpro(-1 == send(fda[idx], msg, strlen(msg)+1, 0), "send");
-	}
-	return ret;
-}
+### web 服务器
 
-int main(int argc, char *argv[]) {
-	struct sockaddr_in server_addr, client_addr;
-	socklen_t sin_size(sizeof(server_addr));
-	int sockfd;
-	errpro(-1 == (sockfd = socket(AF_INET, SOCK_STREAM, 0)), "socket");
-	int opval = 1;
-	errpro(-1 == setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &amp;opval,
-				sizeof(opval)), "setsockopt");
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(PORT);
-	server_addr.sin_addr.s_addr = INADDR_ANY;
-	memset(server_addr.sin_zero, 0, sizeof(server_addr.sin_zero));
+利用Select模型，设计的web服务器：
 
-	errpro(-1 == bind(sockfd, (struct sockaddr *)&amp;server_addr,
-				sin_size), "bind");
-	errpro(-1 == listen(sockfd, BACKLOG), "listen");
-	printf("listen on port: %un", PORT);
+{% gist oxnz/855b94ee4a4aae3c8c88 telnet.cpp %}
 
-	int maxsockfd(sockfd);
-	struct timeval tv;
-	unsigned int conn_cnt(0);
-	int fda[BACKLOG]; // accepted connection fds
-	memset(fda, 0, sizeof(fda));
-	fd_set fds;
-	while (1) {
-		// init file descriptor set
-		FD_ZERO(&amp;fds);
-		FD_SET(sockfd, &amp;fds);
-		// set timeout
-		tv.tv_sec = 10;
-		tv.tv_usec = 0;
-		// add active connection to fd set
-		for (unsigned int i = 0; i &lt; BACKLOG; ++i) {
-			if (fda[i] != 0) {
-				FD_SET(fda[i], &amp;fds);
-			}
-		}
-		switch (select(maxsockfd+1, &amp;fds, NULL, NULL, &amp;tv)) {
-			case -1:
-				errpro(EXIT_FAILURE, "select");
-				break;
-			case 0:
-				printf("timeoutn");
-				continue;
-				break;
-			default:
-				break;
-		}
-		// check every fd in the set
-		for (unsigned int i = 0; i &lt; conn_cnt; ++i) {
-			if (FD_ISSET(fda[i], &amp;fds)) {
-				if (0 == clientpro(fda, i)) {
-					--conn_cnt;
-					close(fda[i]);
-					FD_CLR(fda[i], &amp;fds);
-					fda[i] = 0;
-				}
-			}
-		}
-
-		// check whether a new connection comes
-		if (FD_ISSET(sockfd, &amp;fds)) {
-			int fd = accept(sockfd, (struct sockaddr *)&amp;client_addr, &amp;sin_size);
-			errpro(-1 == fd, "accept");
-
-			// add fd to queue
-			if (conn_cnt &lt; BACKLOG) {
-				fda[conn_cnt++] = fd;
-				printf("new connection client[%u] %s:%un", conn_cnt,
-						inet_ntoa(client_addr.sin_addr),
-						ntohs(client_addr.sin_port));
-				maxsockfd = fd &gt; maxsockfd ? fd : maxsockfd;
-			} else {
-				printf("max connections reached, ignore new connectionn");
-				char msg[] = "sorry, server is busy, please try latern";
-				errpro(-1 == send(fd, msg, strlen(msg)+1, 0), "send");
-				close(fd);
-			}
-		}
-		printf("client count: %un", conn_cnt);
-	}
-	// close active connections
-	for (unsigned int i = 0; i &lt; BACKLOG; ++i) {
-		fda[i] != 0 ? close(fda[i]) : 0;
-	}
-
-	return 0;
-}</pre>
 <h2 id="summary">总结</h2>
 <p>理解select模型的关键在于理解fd_set,为说明方便，取fd_set长度为1字节，fd_set中的每一bit可以对应一个文件描述符fd。则1字节长的fd_set最大可以对应8个fd。</p>
 <ol>
@@ -433,7 +286,9 @@ int main(int argc, char *argv[]) {
 <li>将fd加入select监控集的同时，还要再使用一个数据结构array保存放到select监控集中的fd，一是用于再select 返回后，array作为源数据和fd_set进行FD_ISSET判断。二是select返回后会把以前加入的但并无事件发生的fd清空，则每次开始 select前都要重新从array取得fd逐一加入（FD_ZERO最先），扫描array的同时取得fd最大值maxfd，用于select的第一个 参数。</li>
 <li>可见select模型必须在select前循环array（加fd，取maxfd），select返回后循环array（FD_ISSET判断是否有时间发生）。</li>
 </ol>
-<h2 id="refs">参考</h2>
+
+## References
+
 <ol class="refs">
 <li><a href="http://blog.csdn.net/tianmohust/article/details/6595998">http://blog.csdn.net/tianmohust/article/details/6595998</a></li>
 <li>http://publib.boulder.ibm.com/infocenter/aix/v7r1/index.jsp?topic=%2Fcom.ibm.aix.progcomm%2Fdoc%2Fprogcomc%2Fsocket_io_md.htm</li>
