@@ -1,16 +1,13 @@
 ---
 layout: post
-title: RHEL 7 network settings
+title: Network Settings
 date: 2016-04-19 09:31:32.000000000 +08:00
 type: post
 published: true
 status: publish
 categories:
-- Linux
-- network
-- RHEL
+- sysadm
 tags:
-- network
 - nmcli
 - rhel
 meta:
@@ -22,7 +19,15 @@ author:
   first_name: Will
   last_name: Z
 ---
+
+## Introduction
+
+A basic understanding of networking is important for system admin. Not only is it essential for getting your services online and running smoothly, it also give you the insight to diagnose problems.
+
+This article will privides an overview of the common network related operations.
 ## Network Connection
+
+<!--more-->
 
 ### New connection
 
@@ -35,8 +40,6 @@ nmcli connection add type ethernet ifname eno0 con-name wired
 {% highlight bash %}
 nmcli connection modify wired ipv4.method static ipv4.address 192.168.249.174/24
 {% endhighlight %}
-
-<!--more-->
 
 ### Bring it up/down
 

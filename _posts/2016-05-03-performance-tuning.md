@@ -6,10 +6,8 @@ type: post
 published: true
 status: publish
 categories:
-- Linux
-- RHEL
-- Server
-- UNIX
+- perf
+- sysadm
 tags:
 - prlimit
 - sysctl
@@ -147,7 +145,15 @@ for enforcing hard resource limits. These limits are set by the superuser and en
 for enforcing soft resource limits. These limits are ones that the user can move up or down within the permitted range by any pre-existing hard limits. The values specified with this token can be thought of as default values, for normal system usage.
 from `limits.conf(5)`
 
-## SEE ALSO
+## References
+
+### man pages
 
 * <code>getrlimit(2)</code>
 * <code>setrlimit(2)</code>
+
+### Web Resources
+
+* [Network Tuning](https://fasterdata.es.net/network-tuning/)
+* [Brendan's blog](http://dtrace.org/blogs/brendan/)
+* [Sysctl tweaks](https://wiki.mikejung.biz/Sysctl_tweaks)

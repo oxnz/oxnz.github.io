@@ -7,11 +7,9 @@ published: true
 status: publish
 categories:
 - Linux
-- RHEL
-- Server
+- sysadm
 tags:
 - NFS
-- share
 meta:
   _edit_last: '1'
 author:
@@ -21,6 +19,15 @@ author:
   first_name: Will
   last_name: Z
 ---
+
+## Introduction
+
+NFS(Network File System) is a distributed filesystem protocol used to provides remote directory access on a server. This helps leveraging storage space in a different location and to write to the same space from multiple clients.
+
+In this article, we will show how to configure NFS mounts on openSUSE. And the process would keep alike between different releases, such as Ubuntu, RHEL, CentOS, etc.
+
+<!--more-->
+
 ## Server setup (openSUSE)
 
 {% highlight bash %}
@@ -52,8 +59,6 @@ yum install nfs-utils
 {% highlight bash %}
 mount -t nfs 192.168.249.195:/var/nfs /mnt/
 {% endhighlight %}
-
-<!--more-->
 
 ## Verify
 

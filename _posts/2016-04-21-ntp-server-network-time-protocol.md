@@ -6,13 +6,10 @@ type: post
 published: true
 status: publish
 categories:
-- Linux
 - network
-- RHEL
-- Server
+- sysadm
 tags:
-- RHCE
-- RHCSA
+- ntp
 meta:
   _edit_last: '1'
 author:
@@ -22,27 +19,72 @@ author:
   first_name: Will
   last_name: Z
 ---
-<h2>Install packages</h2>
-<p><code>yum -y install ntp</code></p>
-<h2>pool.ntp.org</h2>
-<p>choose ntp server and add them to configure file</p>
-<pre>server 0.rhel.pool.ntp.org iburst
-server 1.rhel.pool.ntp.org iburst
-server 2.rhel.pool.ntp.org iburst
-server 3.rhel.pool.ntp.org iburst</pre>
+
+![NTP Server](/assets/ntp-server.png)
+
+## Introduction
+
+Setting your servers's clock and timezone properly is essential in ensuring the healthy operation of distrubted systems and maintain accurate log timestamps. This article will show you how to install and configure the NTP time synchronization service on an Red Hat Enterprise Linux 7.2 Server.
 
 <!--more-->
 
-<h2>setup client range</h2>
-<pre>restrict 192.168.249.0 mask 255.255.255.0 nomodify notrap</pre>
-<h2>Log</h2>
-<pre>logfile /var/log/ntp.log</pre>
-<h2>Firewall</h2>
-<pre># firewall-cmd --add-service=ntp --permanent
-# firewall-cmd --reload</pre>
-<h2>service management</h2>
-<pre># systemctl start ntpd
+## Set Timezone
+
+
+```shell
+# list available timezones
+$ timedatectl list-timezones
+# set desired timezone
+sudo timedatectl set-timezone Asia/Shanghai
+# verify the timezone has been set properly
+$ timedatectl
+```
+
+## Install
+
+```shell
+yum -y install ntp
+```
+
+## Configure
+
+Choose ntp servers and add them to the configure file
+
+```conf
+server 0.rhel.pool.ntp.org iburst
+server 1.rhel.pool.ntp.org iburst
+server 2.rhel.pool.ntp.org iburst
+server 3.rhel.pool.ntp.org iburst
+```
+
+### Setup Client Range
+
+```
+restrict 192.168.249.0 mask 255.255.255.0 nomodify notrap
+```
+
+### Log File
+
+```conf
+logfile /var/log/ntp.log
+
+### Firewall
+
+```shell
+# firewall-cmd --add-service=ntp --permanent
+# firewall-cmd --reload
+```
+
+## Service Management
+
+```shell
+# systemctl start ntpd
 # systemctl enable ntpd
-# systemctl status ntpd</pre>
-<h2>Verify</h2>
-<pre>ntpq -p</pre>
+# systemctl status ntpd
+```
+
+### Verify Server Configure
+
+```shell
+ntpq -p
+```

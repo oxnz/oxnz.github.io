@@ -6,10 +6,11 @@ type: post
 published: true
 status: publish
 categories:
-- Server
-tags:
-- bsd
 - sysadm
+tags:
+- freebsd
+- nfs
+- ssh
 meta:
   _edit_last: '1'
 author:
@@ -19,11 +20,22 @@ author:
   first_name: Will
   last_name: Z
 ---
-<p>Env</p>
-<pre><code>root@:/home/will # uname -a</code>
-FreeBSD  10.2-RELEASE FreeBSD 10.2-RELEASE #0 r286666: Wed Aug 12 19:31:38 UTC 2015     root@releng1.nyi.freebsd.org:/usr/obj/usr/src/sys/GENERIC  i386</pre>
+
+![FreeBSD](/assets/freebsd.png)
+
+## Introduction
+
+FreeBSD is a high performance operating system that is suitable for a variety of server roles. This article will cover some common system administration tasks with a FreeBSD server.
 
 <!--more-->
+
+## Environment
+
+```shell
+root@:/home/will # uname -a</code>
+FreeBSD  10.2-RELEASE FreeBSD 10.2-RELEASE #0 r286666: Wed Aug 12 19:31:38 UTC 2015     root@releng1.nyi.freebsd.org:/usr/obj/usr/src/sys/GENERIC  i386
+```
+
 <h2>Install</h2>
 <h2>System Config</h2>
 <h3>Boot Loader</h3>
