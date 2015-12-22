@@ -2,13 +2,25 @@
 layout: post
 title: Setup Jekyll for Github Pages
 date: 2016-05-11 15:47:48 +0800
-categories:
-- Linux
-tags:
-- jekyll
+categories: [jekyll, sysadm, ruby]
+tags: [jekyll]
 ---
 
+![jekyll-github](/assets/jekyll-github.png)
+
+## Introduction
+
+Jekyll is a simple static site generator that convert from Markdown source file to HTML pages. The result site is fast, portable and easy for servers like nginx to serve many users concurrently.
+
+Github Pages use jekyll to build site for user and repo pages. And the pages are hosted on github as a normal Git repository. So there is no differences between edit a source file and edit a post. The post is published when you push it to the upstream.
+
+This article introduces how to setup jekyll and the post-install steps like tweaks and adjustments.
+
+<!--more-->
+
 ## Install and run jekyll
+
+Even though Github can automatically build site from the repo conent. It is more convenient to setup a local jekyll server for debugging and testing purpose.
 
 Bash command history(some non-relative command are ommited):
 
@@ -21,10 +33,8 @@ Bash command history(some non-relative command are ommited):
 503  vi Gemfile # see below for content
 504  bundle install
 523  vi _config.yml # update config
-526  bundle exec jekyll serve --watch --host 0.0.0.0 # bind to all IPs
+526  bundle exec jekyll serve --watch --incremental --detach --host 0.0.0.0 # bind to all IPs
 {% endhighlight %}
-
-<!--more-->
 
 Gemfile content:
 
@@ -32,6 +42,86 @@ Gemfile content:
 source 'https://rubygems.org'
 gem 'github-pages', group: :jekyll_plugins
 {% endhighlight %}
+
+Ubuntu install ruby2.0. jekyll failed to start, need to specify some gem versionmanually, edit `vi /var/lib/gems/2.0.0/gems/jekyll-3.1.3/bin/jekyll`:
+
+{% highlight ruby %}
+gem 'jekyll', '=3.1.3'
+gem 'jekyll-watch', '=1.4.0'
+gem 'rb-fsevent', '=0.9.7'
+require 'jekyll'
+require 'mercenary'
+
+# Jekyll::PluginManager.require_from_bundler
+{% endhighlight %}
+
+### Plugins
+
+#### sitemap
+
+0. Install
+
+   ```shell
+   gem install jekyll-sitemap
+   ```
+
+0. Configure(`_config.yml`)
+
+   ```yml
+   gems:
+     - jekyll-sitemap
+   ```
+
+0. Notes
+
+   If you would like to exclude specific pages/posts from the sitemap set the sitemap flag to false in the front matter for the page/post.
+
+   ```yml
+   sitemap: false
+   ```
+
+## Depolyment
+
+### Travis CI
+
+create an `.travis.yml` in the root directory with the following contents:
+
+{% highlight yml %}
+language: ruby
+rvm:
+  - 2.2
+script: "bundle exec jekyll build"
+{% endhighlight %}
+
+Then the Travis CI would automatically build after each `git push`.
+
+## Adjust Styles
+
+add `_sass/_custom.scss`, edit `css/main.scss` to contains it:
+
+{% highlight highlight scss %}
+// Import partials from `sass_dir` (defaults to `_sass`)
+@import
+	"base",
+	"layout",
+	"syntax-highlighting",
+	"custom"
+;
+{% endhighlight %}
+
+### Adjust Font Family
+
+![avenir-next](/assets/avenir-next.png)
+
+Use 'Avenir Next' on OS X, proxima-nova on other platforms which does not have 'Avenir Next' installed by default.
+
+## Add Google Analytics
+
+Include the code before `body`.
+
+## Add Disqus Support
+
+Register an Disqus account and paste the embeded code.
 
 ## Migrate posts
 
@@ -45,7 +135,6 @@ gem install jekyll-import
 
 You can then use jekyll import. There are several options here. Here is the command that worked best for me:
 
-
 {% highlight bash %}
 ruby -rubygems -e 'require "jekyll-import";
 JekyllImport::Importers::WordpressDotCom.run({
@@ -55,6 +144,19 @@ JekyllImport::Importers::WordpressDotCom.run({
 })'
 {% endhighlight %}
 
+After this, some there may be some drafts in the `_drafts` directory with encoded file names, so we need to rename them:
+
+{% highlight python %}
+import os
+import urllib
+
+for subdir, dirs, files in os.walk('./_drafts'):
+    for f in files:
+		src = './_drafts/{}'.format(f)
+		dst = './_drafts/{}'.format(urllib.unquote(f))
+        print('{} -> {}'.format(src, dst)
+        os.rename(src, dst)
+{% endhighlight %}
 
 ## Edit posts
 
@@ -73,6 +175,33 @@ print_hi('Tom')
 {% endhighlight %}
 
 Check out the [Jekyll docs][jekyll] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll’s dedicated Help repository][jekyll-help].
+
+### Follow Kramdown’s indentation syntax for code blocks within lists
+
+With Github-flavored Markdown, when you insert a code block within a list, you can indent the code block **4** spaces.
+
+But with Kramdown, you must line up the indent of the code block with the first non-space character after the list item marker (e.g., `1.`). Usually this will mean indenting the code block **3** spaces instead of **4**.
+
+Thomas Leitner, the developer leading Kramdown, [explains it as follows](https://github.com/tomjohnson1492/kramdowntest/issues/1#issue-135448518):
+
+>
+The gist is that the indentation for the list contents is determined by the column number of the first non-space character after the list item marker.
+
+If you have 4 spaces instead of 3, Kramdown will set off the code with `code` tags instead of `pre` tags. This will make a huge difference, since `code` tags render inline whereas `pre` renders as a div block.
+
+## Check posts
+
+With more posts was added, there may be some malformed posts.
+
+The following code snippets find out which post has not include an layout instruction, in this case, the post would be rendered use the default layout, which may not what you want.
+
+{% highlight shell %}
+for f in ./_posts/*; do
+    if ! grep 'layout: post' "$f" > /dev/null 2>&1; then
+        echo "$f"
+    fi
+done
+{% endhighlight %}
 
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
