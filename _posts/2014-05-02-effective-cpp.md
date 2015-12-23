@@ -6,9 +6,9 @@ type: post
 published: true
 status: publish
 categories:
-- Reading
+- C++
+- dev
 tags:
-- c++
 - Effective C++
 meta:
   _edit_last: '1'

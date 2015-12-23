@@ -1,5 +1,8 @@
 ---
+layout: post
 title: "Resource reclaim when exit() called"
+categories: [dev, c]
+tags: [malloc, exit]
 ---
 
 What REALLY happens when you don't free after malloc?

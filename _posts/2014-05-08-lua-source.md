@@ -1,12 +1,13 @@
 ---
 layout: post
-title: 读 lua 源代码
+title: Read Lua Source Code
 date: 2014-05-08 12:52:56.000000000 +08:00
 type: post
 published: true
 status: publish
 categories:
-- RTFSC
+- source
+- lua
 tags:
 - lua
 meta:
@@ -24,19 +25,14 @@ author:
 
 ## 介绍
 
-想到之前看到别人说 lua 源代码比较优美，下下来看了一下，代码也不长，2w 多行，分布也是比较均匀的，就想看一看，顺便在这里做个笔记。
+Lua 应用比较广泛，主要是作为插件解释器。例如mysql proxy，VLC 等。Lua 源代码比较规范，代码也不长，2w 多行，分布也是比较均匀的，就想看一看，顺便在这里做个笔记。
 
-<ol>
-<li>lua 5.2.3 源码树</li>
-<li>lua 5.2.3 代码量</li>
-<li>README</li>
-<li>Makefile</li>
-<li>luaconf.h</li>
-<li>main</li>
-</ol>
-<p><!--more--></p>
-<h2>lua 5.2.3 源码树</h2>
-<pre class="lang:default decode:true" title="lua 5.2.3 源码树">[oxnz@iF8sg:~DOWN]% tree lua-5.2.3
+<!--more-->
+
+## lua 5.2.3 源码树
+
+{% highlight shell %}
+[will@iF8sg:~DOWN]% tree lua-5.2.3
 lua-5.2.3
 ├── Makefile
 ├── README
@@ -112,7 +108,9 @@ lua-5.2.3
     ├── lzio.c
     └── lzio.h
 
-2 directories, 71 files</pre>
+2 directories, 71 files
+{% endhighlight %}
+
 <h2>lua 5.2.3 代码量</h2>
 <pre class="lang:default decode:true">[oxnz@iF8sg:tmp]% wc -l /Users/oxnz/Downloads/lua-5.2.3/src/*
      187 /Users/oxnz/Downloads/lua-5.2.3/src/Makefile

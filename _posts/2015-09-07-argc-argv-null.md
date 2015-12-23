@@ -1,5 +1,8 @@
 ---
+layout: post
 title: "argv[argc] == null"
+categories: [dev, c, c++]
+tags: [argv]
 ---
 
 Is `argv[argc] == null` always true?

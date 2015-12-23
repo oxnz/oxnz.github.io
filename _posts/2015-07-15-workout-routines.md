@@ -1,5 +1,7 @@
 ---
+layout: post
 title: "Workout Routines"
+categories: [health]
 ---
 
 锻炼身体

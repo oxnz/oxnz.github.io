@@ -1,12 +1,17 @@
 ---
+layout: post
 title: "Sharepoint performance issues"
+categories: [windows]
+tags: [sharepoint]
 ---
+
+### Introduction
 
 This article describes various performance-related issues may occured on your sharepoint farm.
 
 <!--more-->
 
-## extremely slow at first load
+## Extremely slow at first load
 
 >
 There is a 'known issue' with SharePoint's initial load. SharePoint runs on the .Net framework on IIS, which goes to sleep by itself, or in your case an IISRESET restarts all the services.
@@ -73,3 +78,8 @@ as can requests that aren’t load balanced. Consider running the migration dire
 ### The source can be the bottleneck
 
 Consider all of the previous issues as to where the files are coming from?  Should you perform the upload from the file server, for example? Should you move or copy the files to disks that are local to the WFE to maximize performance of the actual upload? That kind of two-step process may help you migrate during specific time windows of  your service level agreements.
+
+## References
+
+* [Deploy Office Web Apps Server](https://technet.microsoft.com/en-us/library/jj219455.aspx)
+

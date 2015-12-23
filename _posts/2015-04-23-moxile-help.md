@@ -1,4 +1,5 @@
 ---
+layout: post
 title: "Moxile 帮助手册"
 ---
 
