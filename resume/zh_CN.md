@@ -12,7 +12,6 @@ author_login: Will Z
 author_email: yunxinyi@gmail.com
 categories: []
 tags: []
-permlink: /resume-zh_CN
 ---
 
 <style type="text/css">
@@ -115,7 +114,7 @@ strong {
 
 	技术和框架: MySQL proxy
 
-* #### 百度 Hi 消息搜素
+* #### [百度 Hi](https://im.baidu.com) 消息搜素
 
 	IM 消息搜索项目
 

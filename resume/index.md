@@ -12,7 +12,6 @@ author_login: Will Z
 author_email: yunxinyi@gmail.com
 categories: []
 tags: []
-permlink: /resume
 ---
 
 <style type="text/css">
@@ -72,7 +71,7 @@ strong {
 }
 </style>
 
-<i class="fa fa-language"></i> [简体中文](/resume-zh_CN/)
+<i class="fa fa-language"></i> [简体中文](/resume/zh_CN)
 {:class="lang"}
 
 # Will Z
@@ -119,11 +118,10 @@ Java/C++ Python Shell, MySQL, Linux
 
 ## Summary
 
-
 I am a passionate and competent software architect and researcher with diverse experience in Software Engineering, Software Development, Service Delivery, Support and Maintenance with focus on delivering high quality and complex projects. I am confident, self-motivated and hard working. I am pleased to meet new people and to attend seminars and user groups to keep myself up to date. I am target oriented and willing to swim on horizon of Information Technology Management and Software Development. I have strong Technical skills and a hunger to work with the latest technology.
 
 ## Education
 
 <i class="fa fa-university"></i> [Wuhan University](http://www.whu.edu.cn/){:target='_blank'}
 <i class="fa fa-graduation-cap"></i> Bachelor of Information Security
-<i class="fa fa-calendar"></i> 2011/09/01 - 2015/07/01
+&middot; 2011/09/01 - 2015/07/01
