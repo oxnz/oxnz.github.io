@@ -25,6 +25,9 @@ paginate: 10
 sass:
   style: compressed
 
+# View
+permalink: /:year/:month/:day/:title/
+
 defaults:
   -
     scope:
