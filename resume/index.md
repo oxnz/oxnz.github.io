@@ -27,14 +27,22 @@ strong {
 	display: none;
 }
 
-.post-content .lang {
+.post-content .ops {
 	float: right;
+}
+
+.post-content .ops > a {
+	padding-right: 5px;
+}
+
+.post-content .ops > a:last-child {
+	padding-right: 0;
 }
 
 .post-content .name {
 	font-size: 28px;
 	line-height: 40px;
-	font-weight: 600;
+	font-weight: 400;
 }
 
 .post-content .contact {
@@ -69,18 +77,31 @@ strong {
 	font-size: 15px;
 	line-height: 22px;
 }
+
+@media print {
+	.site-header,
+	.post-content .ops,
+	.site-footer {
+		display: none;
+	}
+}
 </style>
 
-<i class="fa fa-language"></i> [简体中文](/resume/zh_CN)
-{:class="lang"}
+[<i class="fa fa-language"></i>](/resume/zh_CN '简体中文')
+[<i class="fa fa-print"></i>](# 'Print Resume'){:onclick='window.print()'}
+[<i class="fa fa-download"></i>](/assets/resume.pdf 'Download Resume')
+{:class="ops"}
 
 # Will Z
 {:class="name"}
 
-<i class="fa fa-phone"></i> (+86) 185-1133-6380
-<i class="fa fa-envelope-o"></i> [yunxinyi@gmail.com](mailto:yunxinyi@gmail.com)
+<i class="fa fa-fw fa-phone"></i> (+86) 185-1133-6380
+<i class="fa fa-fw fa-envelope-o"></i> [yunxinyi@gmail.com](mailto:yunxinyi@gmail.com)
+<br />
+<i class="fa fa-fw fa-globe"></i> Blog: [https://oxnz.github.io](https://oxnz.github.io 'Blog')
+Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
 <br/>
-<i class="fa fa-map-marker"></i> Baidu Technology Park No.3 Building, No.10 Xibeiwang East Road, Haidian District, Beijing, China 100000
+<i class="fa fa-fw fa-map-marker"></i> Baidu Technology Park No.3 Building, No.10 Xibeiwang East Road, Haidian District, Beijing, China 100000
 {:class="contact"}
 
 ## Summary

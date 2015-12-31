@@ -27,14 +27,22 @@ strong {
 	display: none;
 }
 
-.post-content .lang {
+.post-content .ops {
 	float: right;
+}
+
+.post-content .ops > a {
+	padding-right: 5px;
+}
+
+.post-content .ops > a:last-child {
+	padding-right: 0;
 }
 
 .post-content .name {
 	font-size: 28px;
 	line-height: 40px;
-	font-weight: 600;
+	font-weight: 400;
 }
 
 .post-content .contact {
@@ -69,6 +77,7 @@ strong {
 	font-size: 15px;
 	line-height: 22px;
 }
+
 @media print {
 	.site-header,
 	.post-content .lang,
@@ -78,23 +87,28 @@ strong {
 }
 </style>
 
-<i class="fa fa-language"></i> [English](/resume/)
-{:class="lang"}
+[<i class="fa fa-language"></i>](/resume/ '英文简历')
+[<i class="fa fa-print"></i>](# '打印简历'){:onclick='window.print()'}
+[<i class="fa fa-download"></i>](/assets/resume.pdf '下载简历')
+{:class="ops"}
 
 # 张盼
 {:class="name"}
 
-<i class="fa fa-phone"></i> (+86) 185-1133-6380
-<i class="fa fa-envelope-o"></i> [yunxinyi@gmail.com](mailto:yunxinyi@gmail.com)
+<i class="fa fa-fw fa-phone"></i> (+86) 185-1133-6380
+<i class="fa fa-fw fa-envelope-o"></i> [yunxinyi@gmail.com](mailto:yunxinyi@gmail.com)
 <br/>
-<i class="fa fa-map-marker"></i> 北京市海淀区西北旺东路10号院百度科技园3号楼100000
+<i class="fa fa-fw fa-globe"></i> Blog: [https://oxnz.github.io](https://oxnz.github.io '博客')
+Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
+<br/>
+<i class="fa fa-fw fa-map-marker"></i> 北京市海淀区西北旺东路10号院百度科技园3号楼100000
 {:class="contact"}
 
 ## 概要
 
 **后台开发工程师** 2年大型企业搜索服务系统开发经验。
 
-熟悉可扩展性的大型企业搜索项目和服务的开发和部署。具有多种语言编程经验。数据MySQL 数据库及其优化。善于分析和解决问题。
+熟悉可扩展性的大型企业搜索项目和服务的开发和部署。具有多种语言编程经验。数据 MySQL 数据库及其优化。善于分析和解决问题。
 
 **求职意向** - 后台开发工作
 
