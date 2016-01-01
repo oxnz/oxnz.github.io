@@ -8,9 +8,9 @@ body {
 	background-color: #45197b;
 }
 
-.site-title {
-	color: #fff !important;
-	font-weight: normal;
+.site-header .site-title {
+	color: #fff;
+	font-weight: bold;
 }
 
 .site-header a:hover {
@@ -18,7 +18,11 @@ body {
 }
 
 .site-nav .page-link {
-	color: #418EF5;
+	color: #29B6F6;
+}
+
+.site-nav span.page-link {
+	font-weight: 600;
 }
 
 .post-title {
