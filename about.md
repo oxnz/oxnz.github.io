@@ -2,6 +2,7 @@
 layout: page
 status: publish
 published: true
+order: 100
 title: About
 author:
   display_name: Will Z
@@ -23,17 +24,6 @@ tags: []
 	font-weight: 900;
 }
 </style>
-
-lang: {{ page.lang }}
-
-# Tech Stack
-
-[![Build Status](https://travis-ci.org/oxnz/oxnz.github.io.svg?branch=master)](https://travis-ci.org/oxnz/oxnz.github.io)
-
-* [Google Analytics](https://analytics.google.com)
-* [Google Search Console](https://www.google.com/webmasters/tools/dashboard)
-* [Bing Webmaster](https://www.bing.com/webmaster)
-
 
 # Will Z
 
