@@ -14,14 +14,17 @@
       </a>
 
       <div class="trigger">
-        {% for p in site.pages %}
+        {% assign pages = site.pages | sort: 'order' %}
+        {% for p in pages %}
+        {% unless p.lang %}
           {% if p.title %}
             {% if p.url == page.url %}
-            <span class="page-link">{{ p.title }}</span>
+              <span class="page-link">{{ p.title }}</span>
             {% else %}
               <a class="page-link" href="{{ p.url | prepend: site.baseurl }}">{{ p.title }}</a>
             {% endif %}
           {% endif %}
+        {% endunless %}
         {% endfor %}
       </div>
     </nav>

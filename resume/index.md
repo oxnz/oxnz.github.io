@@ -2,6 +2,7 @@
 layout: page
 status: publish
 published: true
+order: 99
 title: Resume
 author:
   display_name: Will Z
@@ -31,12 +32,8 @@ strong {
 	float: right;
 }
 
-.post-content .ops > a {
+.post-content .ops > a:not(:last-child) {
 	padding-right: 5px;
-}
-
-.post-content .ops > a:last-child {
-	padding-right: 0;
 }
 
 .post-content .name {
