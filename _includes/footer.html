@@ -7,12 +7,12 @@
     <div class="footer-col-wrapper">
       <div class="footer-col  footer-col-1">
         <ul class="contact-list">
-          <li><a href="mailto:{{ site.email }}">
-            <i class="fa fa-envelope" aria-hidden="true"></i>
-            {{ site.email }}</a></li>
+          <li>
+            <i class="fa fa-fw fa-envelope-o" aria-hidden="true"></i>
+            <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+          </li>
+          <li><i class="fa fa-fw fa-rss"></i> subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></li>
         </ul>
-
-        <p class="rss-subscribe"><i class="fa fa-rss"></i> subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
       </div>
 
       <div class="footer-col  footer-col-2">
@@ -50,11 +50,16 @@
 
       <div class="footer-col  footer-col-3">
         <p class="text">{{ site.description }}</p>
-        <p class="text">
-        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="data:image/png;base64,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" /></a><br />Except where otherwise noted, contents on this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.</p>
       </div>
-    </div>
 
+    </div><!--footer-col-wrapper-->
+
+  </div><!--wrapper-->
+
+  <div class="site-info">
+    <div class="wrapper">
+      <p>Except where otherwise noted, contents on this site is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>.</p>
+    </div>
   </div>
 
   {% include google-analytics.html %}

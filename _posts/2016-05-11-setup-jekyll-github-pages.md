@@ -55,36 +55,58 @@ require 'mercenary'
 # Jekyll::PluginManager.require_from_bundler
 {% endhighlight %}
 
-### Plugins
+### Configure
 
-#### sitemap
-
-0. Install
-
-   ```shell
-   gem install jekyll-sitemap
-   ```
-
-0. Configure(`_config.yml`)
+0. Site Configure(`_config.yml`)
 
    ```yml
-   gems:
-     - jekyll-sitemap
+   gems: [jekyll-paginate, jekyll-sitemap, jekyll-gist, jekyll-seo-tag, jekyll-redirect-from]
+
+   # source .
+   # destination _site
+   # exclude [dir, file, ...]
+   # include: ['.htaccess']
+
+   # Conversion
+   timezone: Asia/Shanghai
+   excerpt_separator: <!--more-->
+
+   # Pagination
+   paginate: 10
+
+   # Sass
+   sass:
+     style: compressed
+
+   # View
+   permalink: /:year/:month/:day/:title/
    ```
 
-0. Notes
+	**Notes**
 
-   If you would like to exclude specific pages/posts from the sitemap set the sitemap flag to false in the front matter for the page/post.
+	If you would like to exclude specific pages/posts from the sitemap set the sitemap flag to false in the front matter for the page/post.
+
+	   ```yml
+	   sitemap: false
+	   ```
+0. Frontmatter
 
    ```yml
-   sitemap: false
+   layout: post
+   title: About
+   date: 2015-12-25 13:08:00 +0800
+   permalink: '/about'
+   published: false
+   category: sysadm
+   categories: [net, dev]
+   tags: [socket]
    ```
 
 ## Depolyment
 
 ### Travis CI
 
-create an `.travis.yml` in the root directory with the following contents:
+Create an `.travis.yml` in the root directory with the following contents:
 
 {% highlight yml %}
 language: ruby
@@ -176,7 +198,9 @@ print_hi('Tom')
 
 Check out the [Jekyll docs][jekyll] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll’s dedicated Help repository][jekyll-help].
 
-### Follow Kramdown’s indentation syntax for code blocks within lists
+### Kramdown’s Indentation Syntax
+
+#### Code Blocks Within Lists
 
 With Github-flavored Markdown, when you insert a code block within a list, you can indent the code block **4** spaces.
 
@@ -206,3 +230,9 @@ done
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
 [jekyll-help]: https://github.com/jekyll/jekyll-help
+
+## References
+
+* [http://jekyllrb.com/docs](http://jekyllrb.com/docs)
+* [shopify liquid docs](http://docs.shopify.com/themes/liquid-basics)
+* [Liquid for Designers](https://github.com/shopify/liquid/wiki/Liquid-for-Designers)
