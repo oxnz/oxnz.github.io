@@ -1,0 +1,31 @@
+# Gems
+gems: [jekyll-paginate]
+
+# Site settings
+title: Tech Stack
+email: yunxinyi+github@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+ Technical stack for nerds.
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://oxnz.github.io" # the base hostname & protocol for your site
+twitter_username: yunxinyi
+github_username:  oxnz
+
+# Build settings
+markdown: kramdown
+
+# Conversion
+timezone: Asia/Shanghai
+excerpt_separator: <!--more-->
+
+# Pagination
+paginate: 10
+
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+      type: "posts"
+    values:
+      layout: "default"
+      author: "Will Z"

@@ -1,0 +1,56 @@
+body {
+	font-weight: 300;
+}
+
+.site-header {
+	border-top-color: #19082c;
+	background-color: #45197b;
+}
+
+.site-title {
+	color: #fff !important;
+}
+
+.site-header a:hover {
+	text-decoration:none;
+}
+
+.site-nav .page-link {
+	color: #fff;
+}
+
+/**
+ * pagination
+ */
+.pagination {
+	text-align: center;
+	font-weight: normal;
+	font-size: small;
+}
+
+.pagination > a,
+.pagination > span {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.pagination>a:first-child,
+.pagination>span:first-child {
+	padding-right: 20px;
+}
+
+.pagination>a:last-child,
+.pagination>span:last-child {
+	padding-left: 20px;
+}
+
+pre,
+code {
+	font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+	font-size: 13px;
+}
+
+blockquote {
+	font-size: 95%;
+	letter-spacing: normal;
+}
