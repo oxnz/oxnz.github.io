@@ -7,18 +7,12 @@ author:
   display_name: Will Z
   login: Will Z
   email: yunxinyi@gmail.com
-  url: ''
+  url: 'https://oxnz.github.io'
 author_login: Will Z
 author_email: yunxinyi@gmail.com
-wordpress_id: 86
-wordpress_url: http://localhost/~oxnz/?page_id=86
-date: !binary |-
-  MjAxNC0wMi0yMyAxMzo1NzowMyArMDgwMA==
-date_gmt: !binary |-
-  MjAxNC0wMi0yMyAxMzo1NzowMyArMDgwMA==
-categories: []
+date: 2016-05-16T19:43:00 +0800
+categories: [resume]
 tags: []
-comments: []
 ---
 
 <style type="text/css">
@@ -30,19 +24,23 @@ comments: []
 }
 </style>
 
+lang: {{ page.lang }}
+
 # Tech Stack
 
 [![Build Status](https://travis-ci.org/oxnz/oxnz.github.io.svg?branch=master)](https://travis-ci.org/oxnz/oxnz.github.io)
 
-[Google Analytics](https://analytics.google.com)
-[Google Search Console](https://www.google.com/webmasters/tools/dashboard?hl=en&authuser=0&siteUrl=http://oxnz.github.io/&sig=ALjLGbMtvWBqzv2K_PniURTSZMiKB1ZNig)
+* [Google Analytics](https://analytics.google.com)
+* [Google Search Console](https://www.google.com/webmasters/tools/dashboard)
+* [Bing Webmaster](https://www.bing.com/webmaster)
+
 
 # Will Z
 
-<h4 class="profession">Web Designer & Software Developer</h4>
+Server Side Software Engineer
 
-##### Luo-jia-shan &middot; Wuchang &middot; Wuhan
+[Baidu, Inc](https://www.baidu.com){:target='_blank'} Server-Side Engineer &middot; July 2014 - Present
 
-Hello, My name is Will Z
+#### Education
 
-I'm a undergraduate student at the Wuhan University graduating in June of 2015 with a B.S. in Information Security. I have a passion for software develop as well as web disign and game development.
+[Wuhan University](http://www.whu.edu.cn/){:target='_blank'} &middot; Bachelor of Information Security &middot; 2011/09/01 - 2015/07/01

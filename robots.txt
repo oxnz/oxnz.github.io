@@ -1,1 +1,1 @@
-Sitemap: http://oxnz.github.io/sitemap.xml
+Sitemap: https://oxnz.github.io/sitemap.xml
