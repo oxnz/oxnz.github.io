@@ -34,5 +34,22 @@ defaults:
       path: "" # an empty string here means all files in the project
       type: "posts"
     values:
-      layout: "default"
+      layout: "post"
+      author:
+        login: oxnz
+        email: yunxinyi@gmail.com
+        display_name: Will Z
+        first_name: Will
+        last_name: Z
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
       author: "Will Z"
+      author:
+        login: oxnz
+        email: yunxinyi@gmail.com
+        display_name: Will Z
+        first_name: Will
+        last_name: Z
