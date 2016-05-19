@@ -13,6 +13,9 @@ author_login: Will Z
 author_email: yunxinyi@gmail.com
 categories: []
 tags: []
+redirect_from:
+  - /cv/
+  - /about-me/
 ---
 
 <style type="text/css">
@@ -103,40 +106,55 @@ Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
 
 ## Summary
 
-**Server-Side Engineer** with 2 years of experience in delivering high-scalable hybrid java/c++ solutions epspecially in enterprise search.
+**Server Side Engineer** with 2 years of experience in delivering high-scalable hybrid java/c++ solutions epspecially in enterprise search.
 
 Adept in building and deploying large scale systems and services for search. Multiple programming experience in c++, shell. Familiar with MySQL's performance optimization. Excellent analytical and problem solving skills.
 
 **Objective** - Challenging position with a creative work environment to enhance expertise in server side development.
 
-
 ## Professional Experience
 
-### Server-Side Engineer at [Baidu, Inc](https://www.baidu.com){:target='_blank'} &middot; July 2014 - Present
+### Server Side Engineer at [Baidu, Inc](https://www.baidu.com){:target='_blank'} &middot; July 2014 - Present
 
 * #### Server Log Process Project
 
-	process servers logs
+	Collecting and processing logs for statistics and diagnose.
+
+	Leading this project. Building a high-performance, scalable Elasticsearch cluster used for massive data collection, real-time analytics. Solving performance issues with Elasticsearch and Logstash.
 
 	Main Techonologies and Frameworks: Elastic Search, Logstash, Kibana, Nginx
 
+* #### Baidu Docs Maintance
+
+	Maintaining the historical Docs platform to keep providing services under a growing heavy load.
+
+	Main Techonologies and Frameworks: MySQL, C++, Shell
+
 * #### Baidu Hi Message Search Project
 
-	Index Baidu Hi Messages for search
+	Indexing Baidu Hi Messages and providing message search service for users on the cloud.
+
+	Design and implementation of the SolrCloud load balance module which proxy the index requests and queries to a smaller sets of servers other than the whole cluster to improve efficiency and reduce resouce usage.
+
+	Main Techonologies and Frameworks: C++, MySQL, SolrCloud, Zookeeper
 
 * #### Baidu Wiki Migration Project
 
-	Migrates Baidu Wiki from twiki to new Confluence
+	Migrating Baidu Wiki from twiki platform to Confluence based new wiki.
+
+	Writing various scripts to make the crawler system semi-automatic error fixing when crawling pages with massive various errors instead of manual checking and fixing.
 
 	Main Techonologies and Frameworks: Perl, Python and shell Scripts, Web Crawler, MySQL
 
 ## Technical Expertise
 
-Java/C++ Python Shell, MySQL, Linux
+C++, Java, Python, Shell, MySQL, Linux
 
+<!--
 ## Summary
 
 I am a passionate and competent software architect and researcher with diverse experience in Software Engineering, Software Development, Service Delivery, Support and Maintenance with focus on delivering high quality and complex projects. I am confident, self-motivated and hard working. I am pleased to meet new people and to attend seminars and user groups to keep myself up to date. I am target oriented and willing to swim on horizon of Information Technology Management and Software Development. I have strong Technical skills and a hunger to work with the latest technology.
+-->
 
 ## Education
 
