@@ -157,7 +157,7 @@ gem install jekyll-import
 
 You can then use jekyll import. There are several options here. Here is the command that worked best for me:
 
-{% highlight bash %}
+{% highlight shell %}
 ruby -rubygems -e 'require "jekyll-import";
 JekyllImport::Importers::WordpressDotCom.run({
 	"source" => "wordpress.xml",
@@ -236,3 +236,5 @@ done
 * [http://jekyllrb.com/docs](http://jekyllrb.com/docs)
 * [shopify liquid docs](http://docs.shopify.com/themes/liquid-basics)
 * [Liquid for Designers](https://github.com/shopify/liquid/wiki/Liquid-for-Designers)
+* [Jekyll Cheatsheet](http://ricostacruz.com/cheatsheets/jekyll.html)
+* [kdramdown syntax](http://kramdown.gettalong.org/syntax.html)
