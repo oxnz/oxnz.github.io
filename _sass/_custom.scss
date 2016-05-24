@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2016 Will Z, All Rights Reserved.
+ */
+
 body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -13,12 +17,23 @@ body {
 	font-weight: bold;
 }
 
+.site-header .site-title > .tech {
+	font-weight: bold;
+}
+
+.site-header .site-title > .stack {
+	font-weight: lighter;
+}
+
 .site-header a:hover {
 	text-decoration:none;
 }
 
 .site-nav .page-link {
 	color: #29B6F6;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 18px;
+	font-variant: small-caps;
 }
 
 .site-nav span.page-link {
@@ -27,9 +42,12 @@ body {
 
 .post-title {
 	letter-spacing: normal;
+	font-size: 40px;
 	line-height: 1.2;
 	margin-bottom: 10px;
 	color: #2d2d2d;
+	font-weight: 300;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .post-link {
@@ -117,6 +135,7 @@ dt {
 
 table {
 	border-collapse: collapse;
+	margin-bottom: 15px;
 }
 
 th,
