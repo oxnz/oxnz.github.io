@@ -227,10 +227,11 @@ Some basic rules:
 
 Generally speaking, the OS manufactories made their product good for common workloads by defaults. But in production, most server act as a specific character providing services, such as DB server, App Server, Proxy, etc. And so, the defaults may not the best.
 
-See Performance Tuning for more details about system optimization.
+See [Performance Tuning] for more details about system optimization.
 
 ### Tools
 
+* DTrace (mysql-5.7.11/support-files/dtrace)
 * Sysbench
 	* OLTP
 	* RO/RW
@@ -301,7 +302,7 @@ See [Connector J Configure] for more details about how to apply these settings.
 
 ### System Configuration
 
-See MySQL Primer - Up and Running for more details
+See [MySQL Primer - Up and Running] for more details
 
 ### MySQL Configuration
 
@@ -505,6 +506,11 @@ Query rewrites can in placed in two points:
 * pre-parse
 * post-parse (more efficient)
 
+Source Code
+
+* mysql-5.7.11/plugin/rewriter
+* mysql-5.7.11/plugin/rewrite_example
+
 ### SELECT
 
 >
@@ -536,3 +542,5 @@ MySQL Cluster supports a join pushdown optimization whereby a qualifying join is
 [Compression]: https://dev.mysql.com/doc/internals/en/compression.html
 [Difference between TCP_CORK and TCP_NODELAY]: http://stackoverflow.com/questions/22124098/is-there-any-significant-difference-between-tcp-cork-and-tcp-nodelay-in-this-use
 [Connector J Configure]: https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-reference-configuration-properties.html
+[Performance Tuning]: {% post_url 2016-05-03-performance-tuning %}
+[MySQL Primer - Up and Running]: {% post_url 2014-09-23-mysql-primer-up-and-running %}

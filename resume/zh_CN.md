@@ -1,7 +1,7 @@
 ---
 layout: page
 status: publish
-published: true
+published: false
 lang: zh_CN
 title: Resume
 author:

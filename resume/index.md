@@ -1,7 +1,7 @@
 ---
 layout: page
 status: publish
-published: true
+published: false
 order: 99
 title: Resume
 author:
