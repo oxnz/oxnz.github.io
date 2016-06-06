@@ -28,6 +28,26 @@ payload = {'key1': 'value1', 'key2': 'value2'}
 r = requests.get('http://httpbin.org/get', params=payload)
 {% endhighlight %}
 
+## Authentication
+
+```python
+from requests.auth import HTTPBasicAuth
+auth = HTTPBasicAuth('username', 'password')
+
+# this is a short hand for HTTPBasicAuth
+auth = ('username', 'password')
+
+# digest auth
+from requests.auth import HTTPDigestAuth
+auth = HTTPBasicAuth('username', 'password')
+
+url = 'http://api.github.com'
+r = requests.get(url, auth=auth)
+
+# or pass auth in the url
+url = 'http://username:password@api.github.com'
+```
+
 ## Response Content
 
 {% highlight python %}
