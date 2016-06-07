@@ -152,7 +152,7 @@ The plan would tell:
 * which indexes can be used
 * which indexes are used
 * how tables refer to each other
-* how many rows the oprimizer estimates to retrieve from each table
+* how many rows the optimizer estimates to retrieve from each table
 
 
 Type
@@ -213,6 +213,16 @@ Some basic rules:
 * monitoring is the must, do not do anything without monitoring
 * keep thinking about what you are doing
 
+### Optimization Chances
+
+* Deploy
+
+	Deploy optimal would eliminate many potential performance issues.
+
+* When there are performance issues
+* tack performance into consideration when developing
+* keep optimizing while business grows
+
 ### General Steps
 
 0. Hardware
@@ -249,6 +259,10 @@ See [Performance Tuning] for more details about system optimization.
 	* Nagios
 	* dim_STAT
 * System Monitoring (See system tunning for details)
+* MySQL Proxy
+	* Query Rewrite
+	* Load Balance
+	* Read/Write Separation
 
 ### Memory
 
@@ -333,13 +347,16 @@ See [MySQL Primer - Up and Running] for more details
 	* cache used for opened table handlers
 	* increse this if Opened_tables is high
 * sort_buffer_size
-* max_tmp_tables 32
-* tmp_table_size 16M
 * read_rnd_buffer_size 256K
 * read_buffer_size
 * query_cache_limit
 * query_cache_size
 	* disable cache: `SELECT SQL_NO_CACHE id, name FROM customer`
+* max_tmp_tables 32
+* tmp_table_size 16M
+	* The maximum size of internal in-memory temporary tables
+* max_heap_table_size
+	* sets the maximum size to which user-created MEMORY tables are permitted to grow
 
 ### InnoDB-Specific
 
@@ -352,6 +369,7 @@ See [MySQL Primer - Up and Running] for more details
 	* disable OS cache while innodb is caching already
 * innodb_additional_mem_pool_size
 * innodb_buffer_pool_size (128M by default)
+	* innodb_buffer_pool_size = n * innodb_buffer_pool_chunk_size * innodb_buffer_pool_instances
 	* cache both data and indexes
 	* reduce disk I/O
 	* up to 80% on a dedicated system
@@ -375,7 +393,19 @@ See [MySQL Primer - Up and Running] for more details
 
 ## MySQL Replication
 
+## Database Privileges Optimization
+
+Simplifying the privileges established by GRANT statements enables MySQL to reduce permission-checking overhead when clients execute statements.
+
 ## Database Optimization
+
+### Optimizing Data Size
+
+### Optimizing MySQL Data Types
+
+### Optimizing for Many Tables
+
+### Internal Temporary Table Use in MySQL
 
 ### Normalization
 
@@ -439,8 +469,29 @@ is used to keep balance between:
 
 ## Index Optimization
 
+* Indexes are used to find rows with specific column values quickly
+* All MySQL data types can be indexed
+* Most MySQL indexes(PRIMARY KEY, UNIQUE, FULLTEXT) are stored in B-Trees
+* Indexes on spatial data types use R-trees
+* MEMORY tables also support hash indexes
+* InnoDB uses inverted lists for FULLTEXT indexes
+* Unnecessary indexes waste space and waste time for MySQL to determine which indexes to use
+* Indexes also add to the cost of inserts, updates, and deletes because each index must be updated
+* You must find the right balance to achieve fast queries using the optimal set of indexes.
+
+MySQL uses indexes for these operations:
+
+* To find the rows matching a WHERE clause quickly
+* To eliminate rows from consideration
+	* use the most selective index among multi indexes
+* Any leftmost prefix of a multi-column index can be used by the optimizer
+* To retrieve rows from other tables when performing joins.
+* To find the MIN() OR MAX() value for a specific indexed column
+* To sort or group a table if the sorting or grouping is done on a leftmost prefix of a usable index
+* In some cases, a query can be optimized to retrieve values without consulting the data rows
+
 ```sql
-create index on orders()
+create index idx_name on table_name (col1, col2, ...);
 ```
 
 There are several types of index in MySQL:
@@ -454,6 +505,12 @@ There are several types of index in MySQL:
 	* R-Trees (MyISAM, spatial index)
 * Hash index (MEMORY and NDB)
 
+cardinality
+: a property which affects the ability to cluster, sort and search data. It is therefore an important measurement for the query planners in DBs, it is a heuristic which they can use to choose the best plans.
+
+* Max cardinality: All values are unique
+* Min cardinality: All values are the same
+
 Index can help speeding up most queries, but can lead slower writing with each added index.
 
 * an index on the whole column is not always necessary
@@ -466,6 +523,14 @@ Index can help speeding up most queries, but can lead slower writing with each a
 	* word searches in text
 	* searches on serveral columns
 
+#### Index Condition Pushdown Optimization
+
+* ICP is used for the range, ref, eq_ref and ref_or_null
+* ICP is used only for secondary indexes for InnoDB tables
+* The goal of ICP is to reduce the number of full-record reads and thereby reduce IO operations
+* For InnoDB clusted indexes, the complete record is already read into the InnoDB buffer, Using ICP in this case does not reduce IO
+* The ICP optimization is not supported with secondary indexes created on generated virtual columns
+
 ### InnoDB-Specific Optimization
 
 InnoDB uses clustered index, so the length of PRIMARY KEY is extremely important
@@ -473,6 +538,8 @@ InnoDB uses clustered index, so the length of PRIMARY KEY is extremely important
 The rows are always dynamic, using VARCHAR instead of CHAR is almost always better
 
 Maintenance operations needed after many UPDATE/DELETE operations, cause the pages can become underfilled.
+
+InnoDB automatically extends each secondary index by appending the primary key columns to it.
 
 * Use BTREE (Red-black binary tree) index when
 	* key duplication is high
@@ -511,11 +578,6 @@ Source Code
 * mysql-5.7.11/plugin/rewriter
 * mysql-5.7.11/plugin/rewrite_example
 
-### SELECT
-
->
-MySQL Cluster supports a join pushdown optimization whereby a qualifying join is sent in its entirety to MySQL Cluster data nodes, where it can be distributed among them and executed in parallel. For more information about this optimization, see [Conditions for NDB pushdown joins](https://dev.mysql.com/doc/refman/5.6/en/mysql-cluster-options-variables.html#ndb_join_pushdown-conditions)
-
 ## Conclusion
 
 * It is Application Performance what Matters
@@ -538,6 +600,7 @@ MySQL Cluster supports a join pushdown optimization whereby a qualifying join is
 * [BASIC MYSQL PERFORMANCE TUNING](https://mediatemple.net/community/products/dv/204404044/making-it-better:-basic-mysql-performance-tuning-)
 * [tunning primer](https://launchpadlibrarian.net/78745738/tuning-primer.sh)
 * [SQL Syntax for Prepared Statements](http://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepared-statements.html)
+* [Tuning InnoDB Concurrency Tickets](https://www.percona.com/blog/2010/05/24/tuning-innodb-concurrency-tickets/)
 
 [Compression]: https://dev.mysql.com/doc/internals/en/compression.html
 [Difference between TCP_CORK and TCP_NODELAY]: http://stackoverflow.com/questions/22124098/is-there-any-significant-difference-between-tcp-cork-and-tcp-nodelay-in-this-use

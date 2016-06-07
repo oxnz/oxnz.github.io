@@ -87,9 +87,37 @@ Recommendations
 
 ### MySQL Server
 
-* package manager
-* pre-built binary
-* source code
+Make data directory
+
+```shell
+mkdir /var/mysql
+chown -R mysql:mysql /var/mysql
+```
+
+Create Configure File
+
+```shell
+vim /etc/my.cnf
+```
+
+#### package manager
+
+#### pre-built binary
+
+```shell
+tar zxf mysql-5.7.12.tar.gz
+vim my.cnf
+# run as current user
+./bin/mysqld --defaults-file=my.cnf --initialize
+# alternative: run as mysql
+sudo -u mysql ./bin/mysqld --defaults-file=my.cnf --initialize
+```
+
+```sql
+alter user 'root'@'localhost' identified by 'password';
+```
+
+#### source code
 
 #### Plugins
 
@@ -189,6 +217,22 @@ EXPORT MYSQL_TCP_PORT
 
 ### First Run
 
+```shell
+sudo -u mysql /usr/local/mysql/bin/mysqld_safe &
+```
+
+#### Update Password
+
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'passphrase';
+```
+
+#### Shutdown
+
+```shell
+/usr/local/mysql/bin/mysqladmin shutdown -u root -p
+```
+
 Invoke `mysql_secure_installation` to:
 
 0. set root password
@@ -280,6 +324,63 @@ logical backup  | mysqldump
 0. chagne buffer merge
 0. perge
 
+## High Availability
+
+See [High Availability] for more details.
+
+### MySQL Replication
+
+#### Performance
+
+* Multi-Threaded Slaves
+* Binary Log Group Commit
+* Optimized Row-Based Replication
+
+#### Failover & Recovery
+
+* Global Transaction Identifers
+* Replication Failover & Admin Utilities
+* Crash Safe Slaves & Binlogs
+
+#### Data Integrity
+
+* Replication Event Checksums
+
+#### Dev/Ops Agility
+
+* Replication Utilities
+* Time-Delayed Replication
+* Remote Binlog Backup
+* Informational Log Events
+* Server UUIDs
+
+## Migration
+
+### Tools
+
+* logical migrate
+	* mysqldump
+	* mysqlpump (5.7)
+	* mysqldumper
+* MySQL Utilities
+	* mysqldbexport
+	* mysqldbimport
+* SELECT * INTO OUTFILE * FROM table
+* xtrabackup
+
+It is recommond to use logical migration when the data size is small, otherwise phsical migration would performs better.
+
+### Inspect Table Size
+
+```sql
+SELECT table_name,
+  data_length/1024/1024 AS 'data_length(MB)',
+  index_length/1024/1024 AS 'index_length(MB)',
+  (data_length + index_length)/1024/1024 AS 'total(MB)'
+FROM information_schema.tables
+WHERE table_schema='test' AND table_name = 't1';
+```
+
 ## MySQL Replication
 
 ### Setup Slaves
@@ -302,7 +403,33 @@ Replication and CASCADE foreign key cautious
 
 ## Upgrade
 
-`mysql_upgrade`
+### In-place Upgrade
+
+0. shut down the old MySQL version
+0. replace the old MySQL binaries with the new ones
+0. restart MySQL on the existing data directory
+0. run `mysql_upgrade`
+
+### Logical Upgrade
+
+0. export existing data from the old MySQL version using `mysqldump`
+
+   ```sql
+   mysqldump -u root -p database > database.sql
+   ```
+
+0. install the new MySQL version
+0. loading the dump file into the new MySQL version
+
+   ```sql
+   mysql -u root -p database < database.sql
+   ```
+
+0. run `mysql_upgrade`
+
+   ```sql
+   mysql_upgrade
+   ```
 
 ## Downgrade
 
@@ -312,3 +439,5 @@ Replication and CASCADE foreign key cautious
 * [option files](https://dev.mysql.com/doc/refman/5.7/en/option-files.html)
 * [Overview of MySQL Programs](https://dev.mysql.com/doc/refman/5.7/en/programs-overview.html)
 * [MySQL Server and Server-Startup Programs](https://dev.mysql.com/doc/refman/5.7/en/programs-server.html)
+
+[High Availability]: 

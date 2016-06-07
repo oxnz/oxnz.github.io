@@ -272,13 +272,6 @@ show plugins;
 * Demand operating mode
 * Counting query cache efficiency
 
-#### Query Types
-
-* select
-* insert
-* update
-* delete
-
 #### Disadvantages
 
 * No control on invalidation

@@ -33,6 +33,23 @@ This article described some basic usage of mysql server and introduce intermedia
 
 ## Overview
 
+### MySQL Workbench
+
+`mysql-workbench-community-6.3.6-src//plugins/wb.admin/frontend/wb_admin_monitor.py`
+
+#### Server Status
+
+`mforms.newServerStatusWidget()`
+
+#### Load
+
+```python
+if self.server_profile.target_is_windows:
+	self.cpu_usage.set_description("CPU")
+else:
+	self.cpu_usage.set_description("Load")
+```
+
 * CPU
 	* queued tasks
 * MEM
@@ -157,8 +174,6 @@ DROP innodb_lock_monitor
 ```
 
 ### InnoDB Status
-
-# TODO: MySQL workbench internals
 
 * read reqs: Innodb_buffer_pool_read_requests /second
 * write reqs: Innodb_buffer_pool_write_requests / second
