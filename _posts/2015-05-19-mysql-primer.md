@@ -22,8 +22,32 @@ author:
 
 ## Introduction
 
-* Concepts
-* Up and Running
-* Infrastructure
-* Measurements
-* Performance
+MySQL is an open-source relational database management system (RDBMS).
+
+<!--more-->
+
+## [Concepts]
+
+Theory and Concepts about Database Systems, especially MySQL.
+
+## [Up and Running]
+
+Setting up and running MySQL Server, Replication, Backup and Recovery, etc.
+
+## [Infrastructure]
+
+Infrastructure of MySQL and InnoDB engine.
+
+## [Measurements]
+
+How to measure MySQL performance.
+
+## [Performance]
+
+Performance Optimization for MySQL.
+
+[Concepts]: {% post_url 2014-02-27-mysql-primer-concepts %}
+[Up and Running]: {% post_url 2014-09-23-mysql-primer-up-and-running %}
+[Infrastructure]: {% post_url 2015-11-14-mysql-primer-infrastructure %}
+[Measurements]: {% post_url 2015-12-27-mysql-primer-measurements %}
+[Performance]: {% post_url 2016-03-21-mysql-primer-performance	%}
