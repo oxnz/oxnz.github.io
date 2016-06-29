@@ -1,7 +1,7 @@
 ---
 layout: page
 status: publish
-published: false
+published: true
 order: 99
 title: Resume
 author:
@@ -148,7 +148,11 @@ Adept in building and deploying large scale systems and services for search. Mul
 
 ## Technical Expertise
 
-C++, Java, Python, Shell, MySQL, Linux
+* **Programming** C, Python, Shell
+
+* **Software** MySQL
+
+* **System** Linux
 
 <!--
 ## Summary
