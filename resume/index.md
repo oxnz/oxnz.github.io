@@ -4,13 +4,6 @@ status: publish
 published: true
 order: 99
 title: Resume
-author:
-  display_name: Will Z
-  login: Will Z
-  email: yunxinyi@gmail.com
-  url: 'https://oxnz.github.io'
-author_login: Will Z
-author_email: yunxinyi@gmail.com
 categories: []
 tags: []
 redirect_from:
@@ -18,150 +11,77 @@ redirect_from:
   - /about-me/
 ---
 
-<style type="text/css">
-strong {
-	font-weight: 600;
-}
-
-.post-header {
-	margin-bottom: 0;
-}
-
-.post-title {
-	display: none;
-}
-
-.post-content .ops {
-	float: right;
-}
-
-.post-content .ops > a:not(:last-child) {
-	padding-right: 5px;
-}
-
-.post-content .name {
-	font-size: 28px;
-	line-height: 40px;
-	font-weight: 400;
-}
-
-.post-content .contact {
-	color: #666;
-	font-size: 14px;
-	line-height: 20px;
-}
-
-.post-content h1,
-.post-content h2,
-.post-content h3,
-.post-content h4,
-.post-content h5,
-.post-content h6 {
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-weight: 600;
-}
-
-.post-content h2 {
-	font-size: 17px;
-	line-height: 28px;
-	padding-bottom: 4px;
-	border-bottom: 1px solid #ededed;
-}
-
-.post-content h3 {
-	font-size: 16px;
-	line-height: 22px;
-}
-
-.post-content h4 {
-	font-size: 15px;
-	line-height: 22px;
-}
-
-@media print {
-	.site-header,
-	.post-content .ops,
-	.site-footer {
-		display: none;
-	}
-}
-</style>
+<link href="/css/resume.css" rel="stylesheet" />
 
 [<i class="fa fa-language"></i>](/resume/zh_CN '简体中文')
 [<i class="fa fa-print"></i>](# 'Print Resume'){:onclick='window.print()'}
 [<i class="fa fa-download"></i>](/assets/resume.pdf 'Download Resume')
 {:class="ops"}
 
-# Will Z
+# Pan Zhang
 {:class="name"}
 
-<i class="fa fa-fw fa-phone"></i> (+86) 185-1133-6380
-<i class="fa fa-fw fa-envelope-o"></i> [yunxinyi@gmail.com](mailto:yunxinyi@gmail.com)
+(+86) 185-1133-6380
+[will_d_thomas@icloud.com](mailto:will_d_thomas@icloud.com)
 <br />
-<i class="fa fa-fw fa-globe"></i> Blog: [https://oxnz.github.io](https://oxnz.github.io 'Blog')
+Blog: [https://oxnz.github.io](https://oxnz.github.io 'Blog')
 Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
-<br/>
-<i class="fa fa-fw fa-map-marker"></i> Baidu Technology Park No.3 Building, No.10 Xibeiwang East Road, Haidian District, Beijing, China 100000
 {:class="contact"}
 
-## Summary
+<!--
+Beijing, P.R. China
+-->
 
-**Server Side Engineer** with 2 years of experience in delivering high-scalable hybrid java/c++ solutions epspecially in enterprise search.
+## Server Side Engineer
 
-Adept in building and deploying large scale systems and services for search. Multiple programming experience in c++, shell. Familiar with MySQL's performance optimization. Excellent analytical and problem solving skills.
-
-**Objective** - Challenging position with a creative work environment to enhance expertise in server side development.
+* **Innovative software engineer** with 2 years of experience in delivering high-scalable solutions especially in enterprise search and knowledge management
+* **Target oriented** and eager to learn new things, striving for continued excellence
+* **Proven diagnostic abilities** with attention to details and ability to work effectively in a fast-paced environment
 
 ## Professional Experience
 
-### Server Side Engineer at [Baidu, Inc](https://www.baidu.com){:target='_blank'} &middot; July 2014 - Present
+<b>Server Side Engineer</b> at <b>[Baidu, Inc](https://www.baidu.com){:target='_blank'}</b> (July 2014 to Present,
+Baidu is the biggest search engine firm in China)
 
-* #### Server Log Process Project
+Design and implement services run at server side.
+Support and maintain with focus on delivering high quality and complex solutions.
+Collaborating with project manager, cross-functional teams to ensure on-time service delivery.
 
-	Collecting and processing logs for statistics and diagnose.
+<b>Key accomplishments:</b>
 
-	Leading this project. Building a high-performance, scalable Elasticsearch cluster used for massive data collection, real-time analytics. Solving performance issues with Elasticsearch and Logstash.
+* Platformized the enterprise search service in a group of 4, got company's <b>P1 platform classification</b> (service availability > 99.9%, full documentation, over 0.5 million api call/day, easy to use interfaces)
+* Solved various difficulties with the legacy document platform, resulting in keep providing services under a growing heavy load.
+	* Optimized the system and MySQL servers to improve performance by 50%
+	* Build an <b>ELK stack</b> for MySQL monitoring and provides real-time log analytics service for other 4 systems
+* Shared <b>MySQL optimization</b> (twice) and <b>scripting skills</b> (once) on department's technical seminars
+* Designed and developed a business logic independent monitor module for an enterprise search project and has been <b>reused twice</b>
+* Cut the migration time from 2 months to 1 month by building semi-automated programs to fix errors in migrating company's wiki system (about 1 million pages)
+* Crafted an high performance AD log processing tool in <b>python and C</b>
+* Got company's <b>Good Coder</b> certification (shell)
 
-	Main Techonologies and Frameworks: Elastic Search, Logstash, Kibana, Nginx
-
-* #### Baidu Docs Maintance
-
-	Maintaining the historical Docs platform to keep providing services under a growing heavy load.
-
-	Main Techonologies and Frameworks: MySQL, C++, Shell
-
-* #### Baidu Hi Message Search Project
-
-	Indexing Baidu Hi Messages and providing message search service for users on the cloud.
-
-	Design and implementation of the SolrCloud load balance module which proxy the index requests and queries to a smaller sets of servers other than the whole cluster to improve efficiency and reduce resouce usage.
-
-	Main Techonologies and Frameworks: C++, MySQL, SolrCloud, Zookeeper
-
-* #### Baidu Wiki Migration Project
-
-	Migrating Baidu Wiki from twiki platform to Confluence based new wiki.
-
-	Writing various scripts to make the crawler system semi-automatic error fixing when crawling pages with massive various errors instead of manual checking and fixing.
-
-	Main Techonologies and Frameworks: Perl, Python and shell Scripts, Web Crawler, MySQL
+<!--
+* Developed the backend for online edit service (document management, statistics report)
+-->
 
 ## Technical Expertise
 
-* **Programming** C, Python, Shell
-
-* **Software** MySQL
-
-* **System** Linux
-
-<!--
-## Summary
-
-I am a passionate and competent software architect and researcher with diverse experience in Software Engineering, Software Development, Service Delivery, Support and Maintenance with focus on delivering high quality and complex projects. I am confident, self-motivated and hard working. I am pleased to meet new people and to attend seminars and user groups to keep myself up to date. I am target oriented and willing to swim on horizon of Information Technology Management and Software Development. I have strong Technical skills and a hunger to work with the latest technology.
--->
+<b>Platforms:</b>
+Linux(RHEL, Ubuntu)/Unix(FreeBSD, OS X)
+<br />
+<b>Languages:</b>
+C (proficient) > Python > Shell > C++ (intermediate) > Java
+<br />
+<b>Tools:</b>
+MySQL > MongoDB, Apache, Nginx, Git/SVN
+<br />
+<b>Development:</b>
+Object-oriented Design (OOD), Agile Development, Solutions Architecture, Technical Documentation, Test-driven, Quality Assurance
 
 ## Education
 
-<i class="fa fa-university"></i> [Wuhan University](http://www.whu.edu.cn/){:target='_blank'}
-<i class="fa fa-graduation-cap"></i> Bachelor of Information Security
-&middot; 2011/09/01 - 2015/07/01
+[Wuhan University](http://en.whu.edu.cn/){:target='_blank'}
+&middot;
+B.S. in Information Security
+&middot; 2011 - 2015
+&middot;
+Second class scholarship (2012)

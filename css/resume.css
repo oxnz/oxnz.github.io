@@ -1,0 +1,91 @@
+@import 'roboto.css';
+
+b,
+strong,
+dt {
+	font-weight: 400;
+}
+
+ul {
+	margin-bottom: 5px;
+}
+
+p {
+	margin-bottom: 5px;
+}
+
+li {
+	padding: 2px 0 2px 0;
+}
+
+.post-header {
+	margin-bottom: 0;
+}
+
+.post-title {
+	display: none;
+}
+
+.post-content {
+	color: #212121;
+	font: 300 16px/24px Roboto,sans-serif;
+}
+
+.post-content .ops {
+	float: right;
+}
+
+.post-content .ops > a:not(:last-child) {
+	padding-right: 5px;
+}
+
+.post-content .name {
+	font-size: 24px;
+	line-height: 40px;
+	font-weight: 400;
+	margin-bottom: 0px;
+	text-align: center;
+}
+
+.post-content .contact {
+	color: #666;
+	font-size: 14px;
+	line-height: 20px;
+	text-align: center;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+	font-weight: 500;
+}
+
+.post-content h2 {
+	font-size: 16px;
+	line-height: 24px;
+	border-bottom: 1px solid #ccc;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.post-content h3 {
+	font-size: 15px;
+	line-height: 22px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+@media print {
+	.site-header,
+	.post-content .ops,
+	.site-footer {
+		display: none;
+	}
+	.post-content {
+		font: 300 14px/22px Roboto,sans-serif;
+	}
+}
+
