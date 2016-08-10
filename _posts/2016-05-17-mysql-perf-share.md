@@ -13,17 +13,21 @@ tags:
 
 MySQL 凭借着开源社区和 Oracle 公司的支持，快速迭代变为很多公司关系型数据库的首选。
 
-本文着眼于 MySQL 的性能优化, 系统的介绍了性能优化的各个方面，末尾介绍了文档平台数据库优化过程中几个有代表性的例子。
+本文着眼于 MySQL 的性能优化, 系统的介绍了性能优化的各个方面，从系统的选择，安装使用到性能测量，优化，末尾介绍了文档平台数据库优化过程中几个有代表性的例子。
+
+由于数据库优化设计内容众多，本文仅列出大纲，具体内容分布在对应的文章中。
 
 <!--more-->
 
 ## 安排
 
-* [安装&使用]({% post_url 2014-09-23-mysql-primer-up-and-running %}) 5min
-* [MySQL 架构]({% post_url 2015-11-14-mysql-primer-infrastructure %}) 5min
-* [MySQL 测量]({% post_url 2015-12-27-mysql-primer-measurements %}) 10min
-* [性能调优]({% post_url 2016-03-21-mysql-primer-performance	%}) 20min
-* 案例分析		 5min
+2016-05-24T15:30:00 +0800 - 2016-05-24T18:20:00 +0800
+
+* [安装&使用]({% post_url 2014-09-23-mysql-primer-up-and-running %}) 10min
+* [MySQL 架构]({% post_url 2015-11-14-mysql-primer-infrastructure %}) 10min
+* [MySQL 测量]({% post_url 2015-12-27-mysql-primer-measurements %}) 30min
+* [性能调优]({% post_url 2016-03-21-mysql-primer-performance	%}) partial
+* 案例分析
 
 ## 目录
 
@@ -145,7 +149,7 @@ SHOW GLOBAL STATUS;
 
 优化事物的慢查询
 
-### Query 优化
+## Query 优化
 
 ### Query Cache
 
