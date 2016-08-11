@@ -9,14 +9,6 @@ categories:
 - Algorithm
 tags:
 - sort
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ## 排序算法介绍
@@ -34,94 +26,107 @@ author:
 
 ## 排序算法比较
 
-<table border="1" cellpadding="10">
+<table border="1">
 <tbody>
 <tr>
-<th rowspan="2">方法</th>
-<th colspan="3">时间复杂度</th>
-<th rowspan="2">空间复杂度</th>
-<th rowspan="2">稳定性</th>
-<th rowspan="2">复杂性</th>
+<th rowspan="2">Name</th>
+<th colspan="3">Time Complexity</th>
+<th rowspan="2">Space Complexity</th>
+<th rowspan="2">stability</th>
+<th rowspan="2">Implementation Complexity</th>
 </tr>
 <tr>
-<th>平均情况</th>
-<th>最坏情况</th>
-<th>最好情况</th>
+<th>Average-Case</th>
+<th>Worst-Case</th>
+<th>Best-Case</th>
 </tr>
 <tr>
-<th>直接插入排序</th>
+<th>Insertion Sort</th>
 <td>O(n^2)</td>
 <td>O(n^2)</td>
 <td>O(n)</td>
 <td>O(1)</td>
-<td><span style="color: #008000;">稳定</span></td>
-<td>简单</td>
+<td><span style="color: #008000;">stable</span></td>
+<td>Simple</td>
 </tr>
 <tr>
-<th>冒泡排序</th>
+<th>Bubble Sort</th>
 <td>O(n^2)</td>
 <td>O(n^2)</td>
 <td>O(n)</td>
 <td>O(1)</td>
-<td><span style="color: #008000;">稳定</span></td>
-<td>简单</td>
+<td><span style="color: #008000;">stable</span></td>
+<td>Simple</td>
 </tr>
 <tr>
-<th>直接选择排序</th>
+<th>Selection Sort</th>
 <td>O(n^2)</td>
 <td>O(n^2)</td>
 <td>O(n^2)</td>
 <td>O(1)</td>
-<td><span style="color: #ff0000;">不稳定</span></td>
-<td>简单</td>
+<td><span style="color: #ff0000;">unstable</span></td>
+<td>Simple</td>
 </tr>
 <tr>
-<th>希儿排序</th>
+<th>Shell Sort</th>
 <td>O(n^1.3)</td>
 <td></td>
 <td></td>
 <td>O(1)</td>
-<td><span style="color: #ff0000;">不稳定</span></td>
-<td>较复杂</td>
+<td><span style="color: #ff0000;">unstable</span></td>
+<td>Complex</td>
 </tr>
 <tr>
-<th>快速排序</th>
+<th>Quick Sort</th>
 <td>O(nlog2n)</td>
 <td>O(n^2)</td>
 <td>O(nlog2n)</td>
 <td>O(log2n)</td>
-<td><span style="color: #ff0000;">不稳定</span></td>
-<td>较复杂</td>
+<td><span style="color: #ff0000;">unstable</span></td>
+<td>Complex</td>
 </tr>
 <tr>
-<th>堆排序</th>
+<th>Heap Sort</th>
 <td>O(nlog2n)</td>
 <td>O(nlog2n)</td>
 <td>O(nlog2n)</td>
 <td>O(1)</td>
-<td><span style="color: #ff0000;">不稳定</span></td>
-<td>较复杂</td>
+<td><span style="color: #ff0000;">unstable</span></td>
+<td>Complex</td>
 </tr>
 <tr>
-<th>归并排序</th>
+<th>Merge Sort</th>
 <td>O(nlog2n)</td>
 <td>O(nlog2n)</td>
 <td>O(nlog2n)</td>
 <td>O(n)</td>
-<td><span style="color: #008000;">稳定</span></td>
-<td>较复杂</td>
+<td><span style="color: #008000;">stable</span></td>
+<td>Complex</td>
 </tr>
 <tr>
-<th>基数排序</th>
+<th>Radix Sort</th>
 <td>O(d(n+1))</td>
 <td>O(d(n+r))</td>
 <td>O(d(n+r))</td>
 <td>O(r)</td>
-<td><span style="color: #008000;">稳定</span></td>
-<td>较复杂</td>
+<td><span style="color: #008000;">stable</span></td>
+<td>Complex</td>
 </tr>
 </tbody>
 </table>
+
+## Features
+
+### Insertion Sort
+
+>
+The average case is also quadratic, which makes insertion sort impractical for sorting large arrays.
+However, **insertion sort is one of the fastest algorithms for sorting very small arrays**, even faster than quicksort; indeed, **good quicksort implementations use insertion sort for arrays smaller than a certain threshold, also when arising as subproblems**; the exact threshold must be determined experimentally and depends on the machine, but is commonly around ten.
+<br/>[-from Wikipedia](https://en.wikipedia.org/wiki/Insertion_sort)
+
+>
+Insertion sort's advantage is that it only scans as many elements as needed to determine the correct location of the k+1st element, while selection sort must scan all remaining elements to find the absolute smallest element.
+<br/>-from Wikipedia
 
 ## 实现
 
@@ -170,7 +175,7 @@ void selection_sort(int *a, int len) {
 
 ### 希儿排序
 
-<p>希尔排序，也称递减增量排序算法，是插入排序的一种更高效的改进版本。希尔排序是非稳定排序算法。</p>
+<p>希尔排序，也称递减增量排序算法，是插入排序的一种更高效的改进版本。希尔排序是非stable排序算法。</p>
 <p>希尔排序是基于插入排序的以下两点性质而提出改进方法的：</p>
 <p>插入排序在对几乎已经排好序的数据操作时， 效率高， 即可以达到线性排序的效率<br />
 但插入排序一般来说是低效的， 因为插入排序每次只能将数据移动一位</p>
