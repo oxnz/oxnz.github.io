@@ -4,7 +4,9 @@ title: fwrite perf issue
 
 ## Introduction
 
-This article addresses one glibc related I/O performance issue.
+This article addresses one I/O performance issue in glibc caused by buffer.
+
+<!--more-->
 
 ## Table of Contents
 
