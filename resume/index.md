@@ -54,9 +54,9 @@ Collaborating with project manager, cross-functional teams to ensure on-time ser
 	* Optimized the system and MySQL servers to improve performance by 50%
 	* Build an <b>ELK stack</b> for MySQL monitoring and provides real-time log analytics service for other 4 systems
 * Shared <b>MySQL optimization</b> (twice) and <b>scripting skills</b> (once) on department's technical seminars
-* Designed and developed a business logic independent monitor module for an enterprise search project and has been <b>reused twice</b>
+* Designed and developed a business logic independent monitor module for an enterprise search project in <b>Java and C++</b> and has been <b>reused twice</b>
 * Cut the migration time from 2 months to 1 month by building semi-automated programs to fix errors in migrating company's wiki system (about 1 million pages)
-* Crafted an high performance AD log processing tool in <b>python and C</b>
+* Crafted a high performance AD log processing tool in <b>python and C</b>
 * Got company's <b>Good Coder</b> certification (shell)
 
 <!--
