@@ -5,7 +5,7 @@ gems: [jekyll-paginate, jekyll-sitemap, jekyll-gist, jekyll-seo-tag, jekyll-redi
 title: Tech Stack
 email: yunxinyi+github@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
- Technical stack for nerds.
+  Technical stack for one nerd.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "https://oxnz.github.io" # the base hostname & protocol for your site
 twitter_username: yunxinyi
@@ -35,21 +35,20 @@ defaults:
       type: "posts"
     values:
       layout: "post"
+      hreflangs: "en"
       author:
         login: oxnz
         email: yunxinyi@gmail.com
-        display_name: Will Z
-        first_name: Will
-        last_name: Z
+        display_name: oxnz
+      categories: "misc"
+      tags: "misc"
   -
     scope:
       path: ""
       type: "pages"
     values:
-      author: "Will Z"
+      hreflangs: "en"
       author:
         login: oxnz
         email: yunxinyi@gmail.com
-        display_name: Will Z
-        first_name: Will
-        last_name: Z
+        display_name: oxnz
