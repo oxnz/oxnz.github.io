@@ -10,14 +10,6 @@ categories:
 - sysadm
 tags:
 - NFS
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ## Introduction

@@ -9,15 +9,6 @@ categories:
 - Service
 tags:
 - deamon
-meta:
-  _edit_last: '1'
-  _wp_old_slug: deamon-%e5%ae%9e%e7%8e%b0
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ## Introduction

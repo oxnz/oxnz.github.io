@@ -8,14 +8,6 @@ status: publish
 categories:
 - C++
 tags: []
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 <p>前两天看到一个问题，<strong>一个类的成员函数是否可以delete this </strong>？<br />
 据出题者的意思来看，是认为这样的问题一般比较少人会遇到，而这样就可以了解一下对方对未知问题的分析和解决思路。</p>

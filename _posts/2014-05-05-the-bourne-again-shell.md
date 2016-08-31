@@ -10,14 +10,6 @@ categories:
 tags:
 - bash
 - shell
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 <p style="text-align: right;">英文作者：<a href="http://www.aosabook.org/en/intro1.html#ramey-chet">Chet Ramey</a></p>
 <p style="text-align: right;">原文链接：<a href="http://www.aosabook.org/en/bash.html">The Bourne-Again Shell</a></p>
@@ -27,7 +19,9 @@ author:
 <p>bash 处理更像一个shell管道：在从终端或者脚本中读取之后，数据被传送经过一系列阶段，在每一个阶段中进行变换，直到shell最终执行一个命令并手机它的返回状态。<br />
 <!--more--><br />
 这一章将会从管道的视角介绍bash的主要组件：输入处理、解析、字展开和其他命令处理以及命令的执行。这些组件作为管道供数据从键盘或文件读入，并送到一个执行的命令。</p>
-<p>[caption id="attachment_1351" align="aligncenter" width="569"]<a href="https://blog-oxnz.rhcloud.com/wp-content/uploads/2014/05/bash-article-diagram.png"><img class="size-full wp-image-1351" src="{{ site.baseurl }}/assets/bash-article-diagram.png" alt="图 3.1: Bash 组件架构" width="569" height="453" /></a> 图 3.1: Bash 组件架构[/caption]</p>
+
+![图 3.1: Bash 组件架构](/assets/bash-arch.png)
+
 <h3>3.1.1. Bash</h3>
 <p>bash 是 GNU 操作系统中出现的shell, 通常在Linux 内核之上实现。同时也出现在一些其他操作系统中供，例如 Mac OS X。它提供了相比历史版本sh功能提升，无论是在交互还是编程使用方面。</p>
 <p>bash 的名字是 Bourne-Again SHell 的首字母缩写, 一个结合了 Stephen Bourne (目前 Unix shell /bin/sh 的直接祖先的作者, 曾经在 Bell Labs Seventh Edition Research version of Unix 供职过) 名字和通过重新实现而重生的概念的双关语。bash 的原作者是 Brian Fox, Free Software Foundation 的一名员工。 我是目前的开发者和维护者，一名在 Ohio 的 Case Western Reserve 大学的志愿者。</p>

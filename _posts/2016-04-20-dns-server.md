@@ -12,14 +12,6 @@ tags:
 - bind
 - dns
 - named
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ![DNS Server](/assets/dns-server.png)

@@ -10,72 +10,82 @@ categories:
 - dev
 tags:
 - Effective C++
-meta:
-  _edit_last: '1'
-  _wp_old_slug: effective-c
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
-<h2>介绍</h2>
+
+## 介绍
+
 <p>从网络上整理的Effective C++ 读书笔记，鉴于其中有些部分内容太老，因为参考1的文章成语2006年，而最近有新出 C++11，其中有些内容需要更新，以反映语言的新变化。另外其中有些内容基于我自己的理解做了适当的更改，包括但不限于删除，添加和修改。</p>
-<ol>
-<li>介绍</li>
-<li>改变旧有的C习惯：(shifting from C to C++)</li>
-<li>内存管理：(memory management)</li>
-<li>构造函数，析构函数和Assignment运算符：(Constructors, Destructors, and Assignment Operators)</li>
-<li>类与函数的设计和声明：(Classes and Funcations: Design and Declaration)</li>
-<li>类与函数实现：(Classes and Functions: Implementation)</li>
-<li>继承关系和面向对象设计(Inheritance and object-Oriented Design)</li>
-<li>杂项讨论：(Miscellany)</li>
-<li>参考</li>
-</ol>
-<p><!--more--></p>
-<h2>改变旧有的C习惯：(shifting from C to C++)</h2>
-<div class="panel panel-primary">
-<div class="panel-heading">1. 尽量以const和inline取代#define(prefer const and inline to define)</div>
-<div class="panel-body">宏虽然有很多问题，但还是有优点的：<br />
-使用灵活，可以随时改变定义：</p>
-<pre class="lang:default decode:true">#define eval(a, b) ((a) + (b))
-    cout &lt;&lt; eval(3, 2) &lt;&lt; endl;
+
+<!--more-->
+
+## Table of Contents
+
+* TOC
+{:toc}
+
+## 改变旧有的C习惯：(shifting from C to C++)
+
+### 1. 尽量以const和inline取代#define(prefer const and inline to define)
+
+宏虽然有很多问题，但还是有优点的:
+
+* 使用灵活，可以随时改变定义:
+
+```cpp
+#define eval(a, b) ((a) + (b))
+    cout << eval(3, 2) << endl;
 #undef eval
 #define eval(a, b) ((a) - (b))
-    cout &lt;&lt; eval(3, 2) &lt;&lt; endl;</pre>
-<p>还可以使用 define 与 undef 来更细粒度的制定宏的存在区间。</p>
-<p>宏不能访问对象的私有成员<br />
-宏的定义很容易产生二意性</p>
-<p>内联函数和宏的区别在于，宏是由预处理器对宏进行替代，而内联函数是通过编译器控制来实现的。而且内联函数是真正的函数，只是在需要用到的时候，内联函数像宏一样的展开，所以取消了函数的参数压栈，减少了调用的开销。你可以象调用函数一样来调用内联函数，而不必担心会产生于处理宏的一些问题。</p>
-<p>我们可以用Inline来定义内联函数，不过，任何在类的说明部分定义的函数都会被自动的认为是内联函数。内联函数必须是和函数体申明在一起，才有效。当然，内联函数也有一定的局限性。就是函数中的执行代码不能太多了，如果，内联函数的函数体过大，一般的编译器会放弃内联方式，而采用普通的方式调用函数。这样，内联函数就和普通函数执行效率一样了。</p>
-</div>
-</div>
-<h3>2. 尽量以取代(prefer iostream to stdio.h)</h3>
-<div class="panel panel-primary">
-<div class="panel-heading">3. 尽量以new和delete取代malloc和free(prefer new and delete to malloc and free)</div>
-<div class="panel-body">
-<pre class="lang:default decode:true">string* stringArray1 = static_cast&lt;string*&gt;(malloc(10*sizeof(string)));
-string* stringArray2 = new string[10];</pre>
-<p>stringArray1 points to enough memory for 10 string objects,but no objects have been constructed in that memory,and you have no way to initialize the objects in the array;<br />
-stringArray2 points to an array of fully constructed string objects,each of whick can safely be used in any operation taking a string;</p>
-<pre class="lang:default decode:true">free(stringArray1);
-delete [] stringArray2;</pre>
-<p>the call to free will release the memory pointed to by stringArray1,but no destructor will be called on the strong objects in that memory,if the string objects themselves allocated memory,as string objects are wont to all the memory they allocated will be lost<br />
-delete is called on stringArray2,a destructor is called for each object in array before any memory is released.<br />
-Mixing new and delete with malloc and free is usually a bad idea;<br />
-new 相当于下面的调用：</p>
-<pre class="lang:default decode:true">A* pa = (A*)malloc(sizeof(A)); // alloc memory
-pa-&gt;A::A(3); // call the constructor
-return pa;   // return pointer</pre>
-<p>虽然从效果上看，这三句话也得到了一个有效的指向堆上的A对象的指针pa，但区别在于，<span style="color: #ff0000;">当malloc失败时，它不会调用分配内存失败处理程序new_handler，而使用new的话会的。</span></p>
-</div>
-</div>
-<div class="panel panel-primary">
-<div class="panel-heading">4. 尽量使用C++风格的注释(prefer C++ style commnents)</div>
+    cout << eval(3, 2) << endl;
+```
+
+* 还可以使用 define 与 undef 来更细粒度的制定宏的存在区间
+* 宏不能访问对象的私有成员
+* 宏的定义很容易产生二意性
+
+内联函数和宏的区别在于，宏是由预处理器对宏进行替代，而内联函数是通过编译器控制来实现的。而且内联函数是真正的函数，只是在需要用到的时候，内联函数像宏一样的展开，所以取消了函数的参数压栈，减少了调用的开销。你可以象调用函数一样来调用内联函数，而不必担心会产生于处理宏的一些问题。
+
+我们可以用Inline来定义内联函数，不过，任何在类的说明部分定义的函数都会被自动的认为是内联函数。内联函数必须是和函数体申明在一起，才有效。当然，内联函数也有一定的局限性。就是函数中的执行代码不能太多了，如果，内联函数的函数体过大，一般的编译器会放弃内联方式，而采用普通的方式调用函数。这样，内联函数就和普通函数执行效率一样了。
+
+### 2. 尽量以取代(prefer iostream to stdio.h)
+
+### 3. 尽量以new和delete取代malloc和free(prefer new and delete to malloc and free)
+
+```cpp
+string* stringArray1 = static_cast<string*>(malloc(10*sizeof(string)));
+string* stringArray2 = new string[10];
+```
+
+stringArray1 points to enough memory for 10 string objects,but no objects have been constructed in that memory,and you have no way to initialize the objects in the array;
+
+stringArray2 points to an array of fully constructed string objects,each of whick can safely be used in any operation taking a string;
+
+```cpp
+free(stringArray1);
+delete [] stringArray2;
+```
+
+the call to free will release the memory pointed to by stringArray1,but no destructor will be called on the strong objects in that memory,if the string objects themselves allocated memory,as string objects are wont to all the memory they allocated will be lost
+
+delete is called on stringArray2,a destructor is called for each object in array before any memory is released.
+
+Mixing new and delete with malloc and free is usually a bad idea;
+
+new 相当于下面的调用:
+
+```cpp
+A* pa = (A*)malloc(sizeof(A)); // alloc memory
+pa->A::A(3); // call the constructor
+return pa;   // return pointer
+```
+
+虽然从效果上看，这三句话也得到了一个有效的指向堆上的A对象的指针pa，但区别在于，<span style="color: #ff0000;">当malloc失败时，它不会调用分配内存失败处理程序new_handler，而使用new的话会的。</span>
+
+### 4. 尽量使用C++风格的注释(prefer C++ style commnents)
+
 <div class="panel-body">c++的单行注释<code>"//"</code>主要是为了解决传统c中<code>"/*"</code>和<code>"*/"</code>错误匹配的问题。</div>
 </div>
-<h2>内存管理：(memory management)</h2>
+## 内存管理：(memory management)
 <h3>5. 使用相同形式的new和delete(Use the same form in corresponding uses of new and delete)</h3>
 <div class="panel panel-primary">
 <div class="panel-heading">6. 记得在destructor中以delete对付pointer member(Use delete on pointer member in destructors)</div>
@@ -134,21 +144,28 @@ assignment运算符总是必须传回一个reference，并且指向其左侧参�
 </ul>
 <p>17. 在operator=中检查是否“自己赋值给自己”(Check for assignment to self in operator=)</p>
 <p>aliasing问题不只出现在operator=函数内，只要出现reference和pointer，任何代表兼容类型的对象名称，都可能实际上指向 同一个对象。</p>
-<h2>类与函数的设计和声明：(Classes and Funcations: Design and Declaration)</h2>
-<p>18. 努力让接口完满且最小化(Strive for class interfaces that are complete and minimal)</p>
+
+## 类与函数的设计和声明：(Classes and Funcations: Design and Declaration)
+
+### 18. 努力让接口完满且最小化(Strive for class interfaces that are complete and minimal)
+
 <ul>
 <li>o. client interface: 一个开放给class的用户并为他们所使用的接口。一般而言，接口中只有函数，如果其中也有数据，会导致很多问题。见E20。</li>
 <li>o. 设计类的接口的一个准则是：完满且最小化，complete and minimal。完满是指，让class的用户可以通过接口完成任何合理的工作；最小化是指，尽量使接口函数最少，不至于有两个函数功能重叠。</li>
 <li>o. friend函数虽然不属于class member functions，但是也应该纳入接口完满性和最小化的考虑。参考E19。</li>
 </ul>
-<p>19. 区分member functions，non-member functions和friend functions(Differentiate among member of functions, non-member functions, and friend functions)</p>
+
+### 19. 区分member functions，non-member functions和friend functions(Differentiate among member of functions, non-member functions, and friend functions)
+
 <ul>
 <li>*. virtual function必须是class member。</li>
 <li>*. 不要让operator&gt;&gt;和operator&lt;&lt;成为member。如果operator&lt;&lt;还需要访问class的private/protected成员，那么最多也就是让它成为friend。</li>
 <li>*. 只有non-member function才能在其left hand side参数身上实施隐式类型转换。因此如果需要在左参身上实施隐式类型转换，就要将函数声明为non-member functions。进一步，如果该function还要访问类中的非公有成员，就要在类中声明该 函数为friend。</li>
 <li>*. 除了上面提到operator&lt;&lt;，operator&gt;&gt;，左参隐式转换等问题，如果一个function与一个类在意义上相关，就应该把这个函数声明为这个类的member function。</li>
 </ul>
-<p>20. 避免将data members放在公开接口中(Avoid data members in the public interface)</p>
+
+### 20. 避免将data members放在公开接口中(Avoid data members in the public interface)
+
 <div class="panel panel-primary">
 <div class="panel-heading">21. 尽可能使用const(Use const whenever possible)</div>
 <div class="panel-body">
@@ -375,7 +392,9 @@ class A { void f(); }; // private f
 <li>step3 不要提供要拒绝的函数的定义，这样member function和friend function就不能调用它们。</li>
 </ol>
 <p>28. 尝试切割global namespace（全局命名空间）(Partition the global namespace)</p>
-<h2>类与函数实现：(Classes and Functions: Implementation)</h2>
+
+## 类与函数实现：(Classes and Functions: Implementation)
+
 <p>29. 避免传回内部数据的handles(Avoid returning)<br />
 handle to internal data是指指向类内部数据成员的指针或者引用，要避免返回一个指向内部数据的handle，是因为，该handle所代表的内容是不应该被函数调用者所 见的。当调用者得到了指向类内部数据的指针或者引用时，那么private也就对他失去了限制意义，他可以随心所欲的通过该handle修改类中 private member的内容。更为严重的是，handle所对应的对象终了时，handle也跟着终了，这可能比调用者预期的要快，最常见的是当某对象为临时对象 时，调用者得到临时对象中某个成员的handle，但是由于临时对象及该handle的销毁，调用者得到的handle已经不知所踪了。</p>
 <p>对于const member function，返回指向内部数据的指针或者引用是不好的行为，因为看似const的内容实际上可以被client所修改；对于non-const member function，返回指向内部数据的指针或者引用，也是不妥的，特别是涉及到临时对象时，这个handle可能成为空悬的(dangling)。应该尽可能的避免传回指向内部数据的指针或者引用，即所谓handles to interal data。</p>
@@ -389,7 +408,9 @@ handle to internal data是指指向类内部数据成员的指针或者引用，
 32. 尽可能延缓变量定义式的出现(Postpone varible definitions as long as possible)<br />
 33. 明智的运用inlining(Use inlining judiciously)<br />
 34. 将文件之间的编译依赖关系降至最低(Minimize compilation dependencies between files)</p>
-<h2>继承关系和面向对象设计(Inheritance and object-Oriented Design)</h2>
+
+## 继承关系和面向对象设计(Inheritance and object-Oriented Design)
+
 <p>35. 确定你的public inheritance模塑出“is-a”关系(Make sure public inheritance models)<br />
 36. 区分接口函数和实现继承(Differentiate between inheritance of interface and inheritance of implementaion)<br />
 37. 绝对不要重新定义继承而来的非虚拟函数(Never redefine an inherited nonvitual function)<br />
@@ -400,7 +421,9 @@ handle to internal data是指指向类内部数据成员的指针或者引用，
 42. 明智的运用私有继承(Use private inheritance judiciously)<br />
 43. 明智的运用多继承(Use muliple inhertance judiciously)<br />
 44. 说出你的意思并了解你所说的每一句话(Say what you mean; understand what you're saying)</p>
-<h2>杂项讨论：(Miscellany)</h2>
+
+## 杂项讨论：(Miscellany)
+
 <div class="panel panel-primary">
 <div class="panel-heading">45. 清楚知道C++编译器为我们完成和调用那些函数(Know what function C++ silently writes and calls)</div>
 <div class="panel-body">一个空的类被编译之后，会被编译器插入几个函数：<br />
@@ -479,7 +502,7 @@ inline const Empty* Empty::operator&amp;() const { return this; }</pre>
 </div>
 </div>
 <p>50. 加强自己对C++的了解(Improve your understanding of C++)</p>
-<h2>参考</h2>
-<ol>
-<li><a style="background-color: #f3f3f3;" title="Gama的EffectiveC++笔记" href="http://blog.chinaunix.net/uid/20405949/sid-44089-list-1.html">Gama的EffectiveC++笔记</a><span style="color: #565656;">（25）</span></li>
-</ol>
+
+## 参考
+
+* [Gama的EffectiveC++笔记](http://blog.chinaunix.net/uid/20405949/sid-44089-list-1.html)

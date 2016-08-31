@@ -11,15 +11,6 @@ categories:
 tags:
 - c++
 - stl
-meta:
-  _wp_old_slug: ! '%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b%e8%bd%ac%e8%87%aa%e9%85%b7%e5%a3%b3'
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 <p style="color: rgb(85, 85, 85); text-align: right;">转自 coolshell，<a title="函数式编程" href="http://coolshell.cn/articles/10822.html" target="_blank">原文链接</a></p>
 <p style="color: #555555;">当我们说起函数式编程来说，我们会看到如下函数式编程的长相：</p>

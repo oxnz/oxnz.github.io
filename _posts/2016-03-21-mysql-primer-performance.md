@@ -10,14 +10,6 @@ categories:
 - MySQL
 tags:
 - MySQL
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ![MySQL Performance Balance](/assets/mysql-perf-balance.png)
@@ -262,7 +254,9 @@ See [Performance Tuning] for more details about system optimization.
 * MySQL Proxy
 	* Query Rewrite
 	* Load Balance
-	* Read/Write Separation
+	* Read/Write Splitting
+
+![MySQL Proxy](/assets/mysql-proxy.png)
 
 ### Memory
 

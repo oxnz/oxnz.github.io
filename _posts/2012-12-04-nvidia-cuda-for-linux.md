@@ -11,12 +11,6 @@ tags:
 - nvidia
 meta:
   _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 <p>NVIDIA CUDA for Linux 起步<br />
 系统需求:</p>

@@ -6,18 +6,10 @@ type: post
 published: true
 status: publish
 categories:
-- Linux
-- Driver
-tags:
+- sysadm
 - driver
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
+tags:
+- nvidia
 ---
 
 在内核升级后自动安装NVIDIA驱动

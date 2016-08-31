@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 收集Linux系统信息
+title: Collect Linux System Information
 date: 2012-11-27 23:32:38.000000000 +08:00
 type: post
 published: true
@@ -14,34 +14,28 @@ tags:
 - lscpu
 - lshw
 - lspci
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
-## 摘要
+## Introduction
+
+This article described a guide to collect linux system informations.
 
 早些时候在 stackoverflow 上看到有人问有关系统驱动问题，而驱动是和硬件分不开的，所以回答问题的人很热心的反反复复问了好多有关具体的硬件信息，到最后却发现是软件问题。由此可见，系统的问题往往涉及很多方面，而提问的时候最好能附上自己的系统信息，这样懂的人很容易就可以帮你找到问题所在，下面简单介绍几种信息的收集方法。
 
 <!--more-->
 
-## 目录
+## Table of Contents
 
 * TOC
 {:toc}
 
-## 硬件信息
+## Hardware Information
 
 硬件信息可以使用 `lshw` 来收集
 
 下列的命令更精确的显示了某个方面硬件的信息
 
-### PCI信息
+### PCI
 
 PCI和PCI Express，是计算机常使用的一种高速总线。操作系统中的PCI/PCI-E设备驱动以及操作系统内核，都需要访问PCI及PCI-E配置空间。PCI/PCI-E设备的正常运行，离不开PCI/PCI-E配置空间。 通过读写PCI/PCI-E配置空间，可以更改设备运行参数，优化设备运行。本文介绍用户空间可以读取、修改、扫描PCI/PCIE设备的用户命令及使用。
 
@@ -64,7 +58,7 @@ PCI和PCI Express，是计算机常使用的一种高速总线。操作系统中
 
 <code>lspci &gt; info.pci.txt</code>
 
-### USB信息
+### USB
 
 <code>lsusb &gt; info.usb.txt</code>
 
@@ -128,19 +122,25 @@ L1i cache: 32K
 L2 cache: 2048K
 ```
 
-## 系统总览信息
+## System Info
 
-一般用<code>uname -a</code>就可以了
+`uname -a`
 
-## 环境信息
+example output:
+
+```
+Linux oxnz-virtual-ubuntu 3.13.0-83-generic #127-Ubuntu SMP Fri Mar 11 00:25:37 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+```
+
+## Environment Information
 
 <code>env</code>可以显示所有的环境变量，也可以制定特定的环境变量，例如:<code>echo $PATH</code>即显示<code>PATH</code>变量
 
-## 系统日志
+## System Log
 
 系统日志一般使用<code>dmesg</code>查看
 
-### 模块信息
+## kernel module information
 
 lsmod 用于显示Linux 内核中的模块信息
 
@@ -161,7 +161,7 @@ crc_itu_t 12627 1 firewire_core
 r8169 56321 0
 ```
 
-### initramfs信息
+## initramfs
 
 lsinitramfs 用于列出 initramfs image 的内容
 

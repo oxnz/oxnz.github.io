@@ -10,14 +10,6 @@ categories:
 - MySQL
 tags:
 - MySQL
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ## Introduction
@@ -289,6 +281,38 @@ with_option:
 * mysql.server — MySQL Server Startup Script
 * mysqld_multi — Manage Multiple MySQL Servers
 
+### Partitioning
+
+#### Partitioning Types
+
+* RANGE
+* LIST
+* COLUMNS
+* HASH
+* KEY
+* subpartitioning
+
+#### Restrictions & Limitations
+
+* Query cache not supported
+* Foreign keys not supported for partitioned InnoDB tables
+* Partitioned tables do not support FULLTEXT indexes or searches
+* Temporary tables cannot be partitioned
+* A partitioning key must be either an integer or an expression that resolves to an integer
+
+#### Performance Considerations
+
+* Filesystem operations
+* MyISAM and partition file descriptor usage
+	* MySQL use 2 file descriptor for each partition
+* Table locks
+* Storage engine
+	* generally tend to be faster with MyISAM tables than with InnoDB or NDB tables
+* Indexes; partition pruning
+* Performance with LOAD DATA
+
+[Partitioning](http://dev.mysql.com/doc/refman/5.7/en/partitioning.html)
+
 ## Backup and Recovery
 
 ### InnoDB Backup and Recovery
@@ -350,11 +374,25 @@ See [High Availability] for more details.
 
 * Replication Utilities
 * Time-Delayed Replication
+	* To protect against user mistakes on the master (DBA rollback to the time just before the disaster)
+	* To test how the system behaves when there is a lag
+	* To inspect what the database looked like long ago, without having to reload a backup. ( 1 week ago)
 * Remote Binlog Backup
 * Informational Log Events
 * Server UUIDs
 
 ## Migration
+
+### Inspect Table Size
+
+```sql
+SELECT table_name,
+  data_length/1024/1024 AS 'data_length(MB)',
+  index_length/1024/1024 AS 'index_length(MB)',
+  (data_length + index_length)/1024/1024 AS 'total(MB)'
+FROM information_schema.tables
+WHERE table_schema='test' AND table_name = 't1';
+```
 
 ### Tools
 
@@ -370,20 +408,60 @@ See [High Availability] for more details.
 
 It is recommond to use logical migration when the data size is small, otherwise phsical migration would performs better.
 
-### Inspect Table Size
+### mysqlpump
+
+* Parallel processing of databases, and of objects within databases, to speed up the dump process
+* Dumping of user accounts as account-management statements (CREATE USER, GRANT) rather than as inserts into the mysql system database
+* Capability of creating compressed output
+* Progress indicator (the values are estimates)
+* For dump file reloading, faster secondary index creation for InnoDB tables by adding indexes after rows are inserted
+
+### Copy *.ibd Files
+
+* Large amount of data
+* Temporary interrupt of service is acceptable
+
+Prerequisite
+
+innodb_file_per_table = 1 && engine = InnoDB
+
+Create new table the same as old one:
 
 ```sql
-SELECT table_name,
-  data_length/1024/1024 AS 'data_length(MB)',
-  index_length/1024/1024 AS 'index_length(MB)',
-  (data_length + index_length)/1024/1024 AS 'total(MB)'
-FROM information_schema.tables
-WHERE table_schema='test' AND table_name = 't1';
+CREATE DATABASE db2;
+USE db2;
+CREATE TABLE tbl LIKE db1.tbl;
+```
+
+Discard tablespace:
+
+```sql
+ALTER TABLE tbl DISCARD TABLESPACe;
+```
+
+Lock for export:
+
+```sql
+FLUSH TABLES tbl FOR EXPORT;
+```
+
+Copy *.ibd and *.cfg files
+
+Release lock:
+
+```sql
+UNLOCK TABLES;
+```
+
+Import data:
+
+```sql
+ALTER TABLE tbl2 IMPORT TABLESPACE;
 ```
 
 ## MySQL Replication
 
-### Setup Slaves
+### Master/Slave Replication
 
 Either
 
@@ -400,6 +478,53 @@ Transactions that fails on the master do not affect replication at all.
 **Note**
 
 Replication and CASCADE foreign key cautious
+
+### Master/Master Replication
+
+my.cnf
+
+```conf
+[mysqld]
+server-id = 1 # 2 for backup
+log-bin = mysql-bin
+auto-increment-increment = 2
+auto-increment-offset = 1
+slave-skip-errors = all
+```
+
+```sql
+show master status;
++-----------------+----------+--------------+------------------+-------------------+
+| File            | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++-----------------+----------+--------------+------------------+-------------------+
+| rmbp-bin.000001 |      154 |              |                  |                   |
++-----------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
+```
+
+setup master
+
+```sql
+GRANT  REPLICATION SLAVE ON *.* TO 'replication'@'192.168.0.%' IDENTIFIED  BY 'replication';
+flush  privileges;
+change  master to
+    master_host='192.168.0.17{2,4}',
+    master_user='replication',
+    master_password='replication',
+    master_log_file='rmbp-bin.000001',
+    master_log_pos=106;
+start  slave;
+```
+
+Verify
+: check if Slave_IO_Running/Slave_SQL_Running is both YES
+
+```sql
+show slave status;
+```
+
+Keepalived
+: setup hot standby backup
 
 ## Upgrade
 

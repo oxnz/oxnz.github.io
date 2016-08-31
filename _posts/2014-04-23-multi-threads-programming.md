@@ -10,14 +10,6 @@ categories:
 - UNIX
 tags:
 - threading
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 <p>     线程间无需特别的手段进行通信，因为线程间可以共享数据结构，也就是一个全局变量可以被两个线程同时使用。不过要注意的是线程间需要做好同步，一般用mutex。可以参考一些比较新的UNIX/Linux编程的书，都会提到Posix线程编程，比如《UNIX环境高级编程（第二版）》、《UNIX系统编程》等等。 linux的消息属于IPC，也就是进程间通信，线程用不上。</p>
 <p><!--more--></p>

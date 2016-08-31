@@ -1,6 +1,6 @@
 ---
 layout: post
-title: FreeBSD System Admin
+title: System Administration - FreeBSD
 date: 2016-04-19 19:02:42.000000000 +08:00
 type: post
 published: true
@@ -11,14 +11,6 @@ tags:
 - freebsd
 - nfs
 - ssh
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ![FreeBSD](/assets/freebsd.png)

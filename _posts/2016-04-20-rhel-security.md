@@ -9,15 +9,6 @@ categories:
 - sysadm
 tags:
 - ssh
-meta:
-  _edit_last: '1'
-  _oembed_afcb6e016ca1ac409119433fe2263395: ! '{{unknown}}'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ![Securing SSH](/assets/securing-ssh.png)

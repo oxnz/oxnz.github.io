@@ -10,41 +10,11 @@ categories:
 - Network
 - UNIX
 tags: []
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
-<p>基本概念<br />
-基本接口<br />
-2.1. 打开一个socket<br />
-2.2. 将socket绑定定指定的端口—bind<br />
-2.3. 侦听socket—listen (服务器端)<br />
-2.4. 等待接收请求—accept (服务器端)<br />
-2.5. 连接到socket—connect<br />
-2.6. 利用socket传输数据<br />
-2.6.1. read和write<br />
-2.6.2. recv和send<br />
-2.6.3. recvfrom和sendto<br />
-2.6.4. recvmsg和sendmsg<br />
-2.7. 套接字的关闭close/shutdown<br />
-3. 最常用的服务器模型.<br />
-3.1. 循环服务器:<br />
-3.1.1. 循环服务器之UDP服务器<br />
-3.1.2. 循环服务器之TCP服务器<br />
-3.2. 并发服务器<br />
-3.2.1. 并发服务器之TCP服务器<br />
-3.2.2. 并发服务器之多路复用I/O<br />
-3.2.3. 并发服务器之UDP服务器<br />
-4. 实例分析<br />
-5. 参考链接及文章</p>
-<p><!--more--></p>
-<h1>基本概念</h1>
-<p>说到网络编程,不得不先提到OSI参考模型,其七层模型从下到上分别为</p>
+
+## 基本概念
+
+### OSI参考模型,其七层模型从下到上分别为
 <ol>
 <li>物理层(Physical Layer,PH)</li>
 <li>数据链路层(Data Link Layer,DL)</li>
@@ -54,6 +24,9 @@ author:
 <li>表示层(Presentation Layer,P)</li>
 <li>应用层(Application Layer,A)</li>
 </ol>
+
+<!--more-->
+
 <p>现在最流行的网络协议无疑就是TCP/IP(Transmission Control Protocol/Internet Protocol)协议.<br />
 注:<br />
 l IP （Internet Protocol），网际协议；IP是TCP/IP的最底层，高层协议都要转化为IP包，IP包含了源地址和目的地址，路由决策也发生在IP层；<br />

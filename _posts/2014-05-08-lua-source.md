@@ -10,15 +10,6 @@ categories:
 - lua
 tags:
 - lua
-meta:
-  _edit_last: '1'
-  _wp_old_slug: '1578'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 <a href="https://www.lua.org/images/lua.gif"><img class="wp-image-1581 size-full" src="{{ site.baseurl }}/assets/lua.gif" alt="Lua logo" width="128" height="128" /></a> Lua logo
