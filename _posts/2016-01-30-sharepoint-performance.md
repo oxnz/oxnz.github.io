@@ -11,6 +11,95 @@ This article describes various performance-related issues may occured on your sh
 
 <!--more-->
 
+## Table of Contents
+
+* TOC
+{:toc}
+
+## Site Collection and Site Management
+
+* new site
+* new sub-site
+* new document library
+* new document
+* [Move site collections between databases in SharePoint 2013](https://technet.microsoft.com/en-us/library/cc825328.aspx?f=255&MSPPError=-2147217396)
+* [SharePoint Database is too big](https://social.msdn.microsoft.com/Forums/en-US/781797ac-df99-4ad0-b132-5dd16baaac3c/sharepoint-database-is-too-big?forum=sharepointgeneralprevious)
+
+dbo.roleassignment
+
+## Inspect SQL Server 2012
+
+### count all tables
+
+```sql
+select obj.name, idx.rows
+from sys.sysobjects as obj
+inner join
+sys.sysindexes as idx
+on obj.id = idx.id
+where
+(obj.type = 'u') and (idx.indid in (0, 1))
+order by idx.rows desc;
+```
+
+### inspect sites
+
+```sql
+select top 10 SiteId from dbo.RoleAssignment;
+select count(*) from dbo.RoleAssignment group by SiteId;
+select Id, Deleted, AppSiteDomainId, UsersCount, DiskUsed from dbo.AllSites;
+select count(*) from dbo.Perms where ScopeUrl like '%/wikisite/%';
+```
+
+### Insepct queries
+
+```sql
+SELECT
+(total_elapsed_time / execution_count)/1000 N'Avg Time (ms)'
+,total_elapsed_time/1000 N'Total Time (ms)'
+,total_worker_time/1000 N'Total CPU Time (ms)'
+,total_physical_reads N'Total Physical Reads'
+,total_logical_reads/execution_count N'Logical Reads Every Time'
+,total_logical_reads N'Total Logical Reads'
+,total_logical_writes N'Total Logical Writes'
+,execution_count N'Exec Times'
+,SUBSTRING(st.text, (qs.statement_start_offset/2) + 1,
+((CASE statement_end_offset
+WHEN -1 THEN DATALENGTH(st.text)
+ELSE qs.statement_end_offset END
+- qs.statement_start_offset)/2) + 1) N'Exec Stmt'
+,creation_time N'Stmt Compile Time'
+,last_execution_time N'Last Exec Time'
+FROM
+sys.dm_exec_query_stats AS qs CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) st
+WHERE
+SUBSTRING(st.text, (qs.statement_start_offset/2) + 1,
+((CASE statement_end_offset
+WHEN -1 THEN DATALENGTH(st.text)
+ELSE qs.statement_end_offset END
+- qs.statement_start_offset)/2) + 1) not like '%fetch%'
+ORDER BY
+total_elapsed_time / execution_count DESC;
+```
+
+### References
+
+* [Tuning SQL Server 2012 for SharePoint 2013: (01) Key SQL Server and SharePoint Server Integration Concepts](https://channel9.msdn.com/series/tuning-sql-server-2012-for-sharepoint-2013/tuning-sql-server-2012-for-sharepoint-2013-01-key-sql-server-and-sharepoint-server-integration-conce)
+* [Troubleshooting slow sharepoint 2013 list views](http://sharepoint-community.net/profiles/blogs/troubleshooting-slow-sharepoint-2013-list-views)
+
+### Research
+
+* dbo.roleassignment
+* dbo.docstreams
+
+### Sharepoint 2013 Command Line Admin
+
+```
+$siteUrl = "http://spapp01/sites/wiki"
+$web = Get-SPWeb $siteUrl
+$listref = $web.Lists[$list]
+```
+
 ## Extremely slow at first load
 
 >
@@ -82,4 +171,5 @@ Consider all of the previous issues as to where the files are coming from?  Shou
 ## References
 
 * [Deploy Office Web Apps Server](https://technet.microsoft.com/en-us/library/jj219455.aspx)
+* [Software boundaries and limits for SharePoint 2013](https://technet.microsoft.com/en-us/library/cc262787%28v=office.15%29.aspx?f=255&MSPPError=-2147217396)
 
