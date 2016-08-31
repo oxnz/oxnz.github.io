@@ -10,42 +10,32 @@ categories:
 - dev
 tags:
 - select
-meta:
-  _edit_last: '1'
-  _wp_old_slug: linux%e4%b8%adselect-io%e5%a4%8d%e7%94%a8%e6%9c%ba%e5%88%b6
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
-### Introduction
 
-最近在看 Linux/Unix 网络编程，谢了三篇关于 select、poll 和 epoll 的文章。本篇介绍select，<a title="Linux poll" href="http://xinyi.sourceforge.net/linux-poll/" target="_blank">第二篇</a>介绍poll，<a title="Linux epoll" href="http://xinyi.sourceforge.net/linux-epool/" target="_blank">第三篇</a>介绍 epoll。
+## Introduction
+
+本篇为 Linux I/O 事件通知机制系列第一篇，介绍 select。 其他两篇为:
+
+* [第二篇介绍 poll](/2014/05/03/linux-poll/)
+* [第三篇介绍 epoll](/2014/04/26/linux-epool/)
 
 <!--more-->
+
+## Table of Contents
 
 * TOC
 {:toc}
 
-## select 原理图
+## select, pselect, FD_CLR, FD_ISSET, FD_SET, FD_ZERO - synchronous I/O multiplexing
 
-[caption id="attachment_1395" align="aligncenter" width="475"]<a href="https://blog-oxnz.rhcloud.com/wp-content/uploads/2014/04/2429699_1331492431cuPx.gif"><img class="wp-image-1395 size-full" src="{{ site.baseurl }}/assets/2429699_1331492431cuPx.gif" alt="select 原理图" width="475" height="467" /></a> select 原理图，摘自<a href="http://publib.boulder.ibm.com/infocenter/iseries/v5r3/index.jsp?topic=%2Frzab6%2Frzab6xnonblock.htm">IBM iSeries 信息中心</a>[/caption]</p>
-
-## man 手册
-
-<blockquote>
-<h2>Name</h2>
-<p>select, pselect, FD_CLR, FD_ISSET, FD_SET, FD_ZERO - synchronous I/O multiplexing</p>
-<h2>Synopsis</h2>
-<pre class="lang:default decode:true ">/* According to POSIX.1-2001 */
-#include &lt;sys/select.h&gt;
+```c
+/* According to POSIX.1-2001 */
+#include <sys/select.h>
 
 /* According to earlier standards */
-#include &lt;sys/time.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;unistd.h&gt;
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 int select(int nfds, fd_set *readfds, fd_set *writefds,
            fd_set *exceptfds, struct timeval *timeout);
@@ -55,16 +45,20 @@ int  FD_ISSET(int fd, fd_set *set);
 void FD_SET(int fd, fd_set *set);
 void FD_ZERO(fd_set *set);
 
-#include &lt;sys/select.h&gt;
+#include <sys/select.h>
 
 int pselect(int nfds, fd_set *readfds, fd_set *writefds,
             fd_set *exceptfds, const struct timespec *timeout,
-            const sigset_t *sigmask);</pre>
+            const sigset_t *sigmask);
+```
+
 <p>Feature Test Macro Requirements for glibc (see <b><a href="http://linux.die.net/man/7/feature_test_macros">feature_test_macros</a></b>(7)):</p>
 <dl compact="compact">
 <dt><b>pselect</b>(): _POSIX_C_SOURCE &gt;= 200112L || _XOPEN_SOURCE &gt;= 600</dt>
 </dl>
-<h2>Description</h2>
+
+## Description
+
 <p><b>select</b>() 和 <b>pselect</b>() 运行程序来监控多个文件描述符，等待至少一个文件描述符对一些类型的 I/O 操作 (例如输入)变为就绪状态。文件描述符就绪意味着可以进行对应的操作 (e.g., <b><a style="color: #660000;" href="http://linux.die.net/man/2/read">read</a></b>(2))而不阻塞。</p>
 <p><b>select</b>() 和 <b>pselect</b>() 的操作是相同的, 除了以下三点不同:</p>
 <dl compact="compact">
@@ -84,14 +78,21 @@ int pselect(int nfds, fd_set *readfds, fd_set *writefds,
 <dt>
 </dt>
 </dl>
-<pre class="code">ready = pselect(nfds, &amp;readfds, &amp;writefds, &amp;exceptfds,
-                timeout, &amp;sigmask);</pre>
-<p>等同于原子执行以下调用:</p>
-<pre class="code">sigset_t origmask;
 
-pthread_sigmask(SIG_SETMASK, &amp;sigmask, &amp;origmask);
-ready = select(nfds, &amp;readfds, &amp;writefds, &amp;exceptfds, timeout);
-pthread_sigmask(SIG_SETMASK, &amp;origmask, NULL);</pre>
+```c
+ready = pselect(nfds, &readfds, &writefds, &exceptfds, timeout, &sigmask);
+```
+
+<p>等同于原子执行以下调用:</p>
+
+```c
+sigset_t origmask;
+
+pthread_sigmask(SIG_SETMASK, &sigmask, &origmask);
+ready = select(nfds, &readfds, &writefds, &exceptfds, timeout);
+pthread_sigmask(SIG_SETMASK, &origmask, NULL);
+```
+
 <p><b>pselect</b>() 存在的原因在于如果有人想要等待一个文件描述符就绪或者一个信号发生，就需要一个原子测试来防止竞争条件(to prevent race conditions)。(Suppose the signal handler sets a global flag and returns. Then a test of this global flag followed by a call of <b>select</b>() could hang indefinitely if the signal arrived just after the test but just before the call. By contrast, <b>pselect</b>() allows one to first block signals, handle the signals that have come in, then call <b>pselect</b>() with the desired <i>sigmask</i>, avoiding the race.)</p>
 <p><b>The timeout</b></p>
 <dl compact="compact">
@@ -111,9 +112,13 @@ pthread_sigmask(SIG_SETMASK, &amp;origmask, NULL);</pre>
 </dd>
 <dt>(However, see below on the POSIX.1-2001 versions.)有些代码使用三个空集合、nfds为0，<em>timeout</em>不为NULL<i> 来调用</i> <b>select</b>()作为一种可移植的方法来达到亚秒精度的睡眠(subsecond precision)。在 Linux 系统中, <b>select</b>() 修改 <i>timeout</i> 来反映剩余的睡眠时间; 大多数其他实现并无此操作。(POSIX.1-2001 permits either behavior.) This causes problems both when Linux code which reads <i>timeout</i> is ported to other operating systems, and when code is ported to Linux that reuses a <i>struct timeval</i> for multiple <b>select</b>()s in a loop without reinitializing it. <span style="color: #ff0000;">最好还是把调用 <b>select</b>() 之后的 <i>timeout</i> 当做未定义的值。</span></dt>
 </dl>
-<h2>Return Value</h2>
+
+## Return Value
+
 <p>成功时, <b>select</b>() 和 <b>pselect</b>() 返回三个集合中文件描述符数目(也就是, 三个集合 <i>readfds</i>, <i>writefds</i>, <i>exceptfds </i>中被设置的位的总数) ；超时的时候返回0。 有错误的情况下返回 -1， 并且 <i>errno</i> 被适当设置；集合和 <i>timeout</i> 变成未定义的，所以<span style="color: #ff0000;">不要在错误发生之后依赖它们的内容</span>。</p>
-<h2>Errors</h2>
+
+## Errors
+
 <dl compact="compact">
 <dt><b>EBADF</b></dt>
 <dd>集合中含有无效的文件描述符。(可能是有的文件描述符已经被关闭，或者有错误发生。)</dd>
@@ -124,12 +129,13 @@ pthread_sigmask(SIG_SETMASK, &amp;origmask, NULL);</pre>
 <dt><b>ENOMEM</b></dt>
 <dd>为内部表分配内存失败。</dd>
 </dl>
-<h2>Versions</h2>
-<p><b>pselect</b>() was added to Linux in kernel 2.6.16. Prior to this, <b>pselect</b>() was emulated in glibc (but see BUGS).</p>
-<h2>Conforming To</h2>
+
+## Conforming To
 <p><b>select</b>() conforms to POSIX.1-2001 and 4.4BSD (<b>select</b>() first appeared in 4.2BSD). Generally portable to/from non-BSD systems supporting clones of the BSD socket layer (including System V variants). However, note that the System V variant typically sets the timeout variable before exit, but the BSD variant does not.</p>
 <p><b>pselect</b>() is defined in POSIX.1g, and in POSIX.1-2001.</p>
-<h2>Notes</h2>
+
+## Notes
+
 <p><i>fd_set</i> 是一个固定大小的缓冲区。调用 <b>FD_CLR</b>() 或者 <b>FD_SET</b>() 的 <i>fd</i> 值为负或者不小于 <b>FD_SETSIZE</b> 将会导致未定义的行为。而且, POSIX 要求 <i>fd</i> 为有效的文件描述符。</p>
 <p>Concerning the types involved, the classical situation is that the two fields of a <i>timeval</i> structure are typed as <i>long</i> (as shown above), and the structure is defined in<i>&lt;<a style="color: #660000;" href="http://linux.die.net/include/sys/time.h" rel="nofollow">sys/time.h</a>&gt;</i>. The POSIX.1-2001 situation is</p>
 <dl compact="compact">
@@ -157,7 +163,9 @@ pthread_sigmask(SIG_SETMASK, &amp;origmask, NULL);</pre>
 </dd>
 <dt>This allows the system call to obtain both a pointer to the signal set and its size, while allowing for the fact that most architectures support a maximum of 6 arguments to a system call.</dt>
 </dl>
-<h2>Bugs</h2>
+
+## Bugs
+
 <p>Glibc 2.0 provided a version of <b>pselect</b>() that did not take a <i>sigmask</i> argument.</p>
 <p>Starting with version 2.1, glibc provided an emulation of <b>pselect</b>() that was implemented using <b><a style="color: #660000;" href="http://linux.die.net/man/2/sigprocmask" rel="nofollow">sigprocmask</a></b>(2) and <b>select</b>(). This implementation remained vulnerable to the very race condition that <b>pselect</b>() was designed to prevent. Modern versions of glibc use the (race-free) <b>pselect</b>() system call on kernels where it is provided.</p>
 <p>On systems that lack <b>pselect</b>(), reliable (and more portable) signal trapping can be achieved using the self-pipe trick. In this technique, a signal handler writes a byte to a pipe whose other end is monitored by <b>select</b>() in the main program. (To avoid possibly blocking when writing to a pipe that may be full or reading from a pipe that may be empty, nonblocking I/O is used when reading from and writing to the pipe.)</p>

@@ -11,31 +11,23 @@ categories:
 tags:
 - network
 - poll
-meta:
-  _edit_last: '1'
-author:
-  login: oxnz
-  email: yunxinyi@gmail.com
-  display_name: Will Z
-  first_name: Will
-  last_name: Z
 ---
 
 ## 介绍
 
-最近在看 Linux/Unix 网络编程，写了三篇关于 select、poll 和 epoll 的文章。<a title="Linux select" href="http://xinyi.sourceforge.net/linux-select/" target="_blank">第一篇</a>介绍select，本篇介绍poll，<a style="color: #0095da;" title="Linux epoll" href="http://xinyi.sourceforge.net/linux-epool/" target="_blank">第三篇</a>介绍 epoll。
+本篇为 Linux I/O 事件通知机制系列第二篇，介绍 poll。 其他两篇为:
+
+* [第一篇介绍 poll](/2014/04/30/linux-select/)
+* [第三篇介绍 epoll](/2014/04/26/linux-epool/)
 
 <!--more-->
+
+## Table of Contents
 
 * TOC
 {:toc}
 
-## man 手册
-
-Name
-: poll, ppoll - wait for some event on a file descriptor
-
-## Synopsis
+## poll, ppoll - wait for some event on a file descriptor
 
 {% highlight c %}
 #include <poll.h>
@@ -151,7 +143,9 @@ struct timespec {
 <dd>adv. 不确定地，无限期地；模糊地，不明确地</dd>
 </dl>
 )阻塞。
-<h2>返回值</h2>
+
+## 返回值
+
 <p>成功时返回正值，代表具有非0 <i>revents </i>成员的结构体的数目(换言之, 那些描述符有事件或者错误报告的)。 0表示超时，没有文件描述符就绪事件。错误的时候返回-1，且适当设置 errno。</p>
 
 ## Errors
@@ -167,13 +161,8 @@ struct timespec {
 <dd>没有足够的内存分配给文件描述符表。</dd>
 </dl>
 
-## Versions
-
-<b>poll</b>() 系统调用在 Linux 2.1.23 中引入。 在没有这个系统调用的旧内核中，glibc (and the old Linux libc) <b>poll</b>() wrapper function 提供了使用 <b><a href="http://linux.die.net/man/2/select" rel="nofollow">select</a></b>(2) 模拟的版本。
-
-<b>ppoll</b>() 系统调用 在 Linux kernel 2.6.16 中加入。库函数 <b>ppoll</b>() 在 glibc 2.4中加入。
-
 ## Conforming To
+
 `poll()` conforms to POSIX.1-2001. `ppoll()` is Linux-specific.
 
 ## Notes
