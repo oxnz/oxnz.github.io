@@ -151,7 +151,13 @@ pre {
     }
 }
 
-
+/**
+ * abbr
+ */
+abbr[title] {
+	cursor: help;
+	border-bottom: 1px dotted #777;
+}
 
 /**
  * Wrapper
