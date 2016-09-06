@@ -16,6 +16,27 @@ This article describes various performance-related issues may occured on your sh
 * TOC
 {:toc}
 
+## System Prepare
+
+### Reset Duplicate SIDs
+
+```
+C:\Windows\system32\sysprep\sysprep.exe /generalize /restart
+whoami /user
+```
+
+## Create
+
+```
+New-OfficeWebAppsFarm -InternalURL xxx -AllowHttp -EditingEnabled
+New-SPWOPIBinding -ServerName <String> [-Action <String>] [-AllowHTTP <SwitchParameter>] [-Application <String>] [-AssignmentCollection <SPAssignmentCollection>] [-Confirm [<SwitchParameter>]] [-Extension <String>] [-FileName <String>] [-ProgId <String>] [-WhatIf [<SwitchParameter>]]
+New-SPWOPIBinding -ServerName "owa.bpitsp.com"
+Set-SPWOPIZone [[-Zone] <String>] [-AssignmentCollection <SPAssignmentCollection>] [-Confirm [<SwitchParameter>]] [-WhatIf [<SwitchParameter>]]
+Set-SPWOPIZone -Zone "internal-http"
+```
+
+[Set-SPWOPIZone](https://technet.microsoft.com/en-us/library/jj219451.aspx)
+
 ## Site Collection and Site Management
 
 * new site
