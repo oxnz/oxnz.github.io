@@ -15,7 +15,9 @@ redirect_from:
 
 [<i class="fa fa-language"></i>](/resume/zh_CN '简体中文')
 [<i class="fa fa-print"></i>](# 'Print Resume'){:onclick='window.print()'}
+<!--
 [<i class="fa fa-download"></i>](/assets/resume.pdf 'Download Resume')
+-->
 {:class="ops"}
 
 # Pan Zhang

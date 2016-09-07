@@ -7,11 +7,12 @@ dt {
 }
 
 ul {
+	margin-top: 5px;
 	margin-bottom: 5px;
 }
 
 p {
-	margin-bottom: 5px;
+	margin: 0;
 }
 
 li {
@@ -61,6 +62,7 @@ li {
 .post-content h5,
 .post-content h6 {
 	font-weight: 500;
+	margin: 5px auto;
 }
 
 .post-content h2 {
