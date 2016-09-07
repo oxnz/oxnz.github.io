@@ -44,7 +44,6 @@ body {
 	letter-spacing: normal;
 	font-size: 40px;
 	line-height: 1.2;
-	margin-bottom: 10px;
 	color: #2d2d2d;
 	font-weight: 300;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -99,18 +98,10 @@ body {
 /**
  * post meta
  */
+.post-meta time,
 .cat,
 .tag {
-	display: inline-block;
-	padding: 2px 4px;
-	margin: 0px 2px;
-	border: 1px solid #eee;
-	border-radius: 5px;
-	line-height: 1;
-	vertical-align: middle;
-	color: #337ab7;
-	text-align: center;
-	white-space: nowrap;
+	color: #2a7ae2;
 }
 
 .site-footer .site-info {
@@ -135,11 +126,15 @@ dt {
 
 table {
 	border-collapse: collapse;
-	margin-bottom: 15px;
+	margin: $spacing-unit / 2 auto;
+}
+
+th {
+	font-weight: 600;
 }
 
 th,
 td {
-	border-bottom: 1px solid #ddd;
+	border: 1px solid #ddd;
 	padding: 4px;
 }

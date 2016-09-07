@@ -34,7 +34,8 @@ h1, h2, h3, h4, h5, h6,
 p, blockquote, pre,
 ul, ol, dl, figure,
 %vertical-rhythm {
-    margin-bottom: $spacing-unit / 2;
+	margin: $spacing-unit / 3 auto;
+//    margin-bottom: $spacing-unit / 2;
 }
 
 
@@ -72,7 +73,8 @@ ul, ol {
 li {
     > ul,
     > ol {
-         margin-bottom: 0;
+		margin-top: 0;
+		margin-bottom: 0;
     }
 }
 
@@ -113,7 +115,7 @@ blockquote {
     color: $grey-color;
     border-left: 4px solid $purple-color-light;
 	background: #F3EFFE;
-    padding: $spacing-unit / 2;
+    padding: $spacing-unit / 3 $spacing-unit / 2;
     font-size: 18px;
     letter-spacing: -1px;
     font-style: italic;

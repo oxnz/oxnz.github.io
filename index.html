@@ -4,21 +4,21 @@ layout: default
 
 <div class="home">
 
-  <h1 class="page-heading">Posts</h1>
+  <h1 class="page-heading">Articles</h1>
 
   <ul class="post-list">
     {% for post in paginator.posts %}
-      <li>
-        <h2>
-          <a class="post-link"
-            href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-        <p><span class="post-meta">
-          <i class="fa fa-calendar-o" aria-hidden="true"></i>
-          {{ post.date | date: "%b %-d, %Y" }}
-        </span></p>
-        {{ post.excerpt }}
-      </li>
+    <li>
+      <h2>
+        <a class="post-link"
+          href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      </h2>
+      <h4 class="post-meta">
+        <time datetime="{{ post.date | date_to_xmlschema }}" itemprop="datePublished">{{ post.date | date: "%B %-d %Y" }}</time>
+        by <a href="mailto:{{ post.author.email }}">{{ post.author.display_name }} </a>
+      </h4>
+      {{ post.excerpt }}
+    </li>
     {% endfor %}
   </ul>
 
