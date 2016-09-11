@@ -11,20 +11,16 @@ tags:
 - sort
 ---
 
-## 排序算法介绍
-
-* 冒泡排序
-* 插入排序
-* 选择排序
-* 希儿排序
-* 快速排序
-* 堆排序
-* 归并排序
-* 基数排序
+This article describe some sorting algorithms.
 
 <!--more-->
 
-## 排序算法比较
+## Table of Contents
+
+* TOC
+{:toc}
+
+## Complexity
 
 <table border="1">
 <tbody>
@@ -115,22 +111,9 @@ tags:
 </tbody>
 </table>
 
-## Features
-
-### Insertion Sort
-
->
-The average case is also quadratic, which makes insertion sort impractical for sorting large arrays.
-However, **insertion sort is one of the fastest algorithms for sorting very small arrays**, even faster than quicksort; indeed, **good quicksort implementations use insertion sort for arrays smaller than a certain threshold, also when arising as subproblems**; the exact threshold must be determined experimentally and depends on the machine, but is commonly around ten.
-<br/>[-from Wikipedia](https://en.wikipedia.org/wiki/Insertion_sort)
-
->
-Insertion sort's advantage is that it only scans as many elements as needed to determine the correct location of the k+1st element, while selection sort must scan all remaining elements to find the absolute smallest element.
-<br/>-from Wikipedia
-
 ## 实现
 
-### 冒泡排序
+### 冒泡排序 (bubble sort)
 
 ```c
 void bubble_sort(int a[], int n) {
@@ -142,18 +125,33 @@ void bubble_sort(int a[], int n) {
 }
 ```
 
-### 插入排序
+### 插入排序 (insertion sort)
+
+insertion sort is an online algorithm
+
+>
+The average case is also quadratic, which makes insertion sort impractical for sorting large arrays.
+However, **insertion sort is one of the fastest algorithms for sorting very small arrays**, even faster than quicksort; indeed, **good quicksort implementations use insertion sort for arrays smaller than a certain threshold, also when arising as subproblems**; the exact threshold must be determined experimentally and depends on the machine, but is commonly around ten.
+<br/>[-from Wikipedia](https://en.wikipedia.org/wiki/Insertion_sort)
+
+>
+Insertion sort's advantage is that it only scans as many elements as needed to determine the correct location of the k+1st element, while selection sort must scan all remaining elements to find the absolute smallest element.
+<br/>-from Wikipedia
+
+Implementation
 
 ```c
 void insert_sort(int a[], int n) {
-    for (int i = 1; i < n; ++i) {         for (int j = i; j > 0 &amp;&amp; a[j] < a[j-1]; --j) {
+    for (int i = 1; i < n; ++i)
+        for (int j = i; j > 0 && a[j] < a[j-1]; --j)
             swap(a[j-1], a[j]);
-        }
-    }
 }
 ```
 
-### 选择排序
+### 选择排序 (selection sort)
+
+* standard selection sort
+* tree (NlgN) (tournament sort)
 
 ```c
 void selection_sort(int *a, int len) {
@@ -161,8 +159,8 @@ void selection_sort(int *a, int len) {
     for(i = 0; i < len - 1; i ++) {
         min = i;
         //查找最小值
-        for(j = i + 1; j < len; j ++)             if(a[min] > a[j])
-                min = j;
+        for(j = i + 1; j < len; j ++)
+            if(a[min] > a[j]) min = j;
         //交换
         if(min != i) {
             t = a[min];
@@ -173,7 +171,7 @@ void selection_sort(int *a, int len) {
 }
 ```
 
-### 希儿排序
+### 希儿排序 (shell sort)
 
 <p>希尔排序，也称递减增量排序算法，是插入排序的一种更高效的改进版本。希尔排序是非stable排序算法。</p>
 <p>希尔排序是基于插入排序的以下两点性质而提出改进方法的：</p>
@@ -192,7 +190,7 @@ void shell_sort(int* a, int n) {
 }
 ```
 
-### 快速排序
+### 快速排序 (quicksort)
 
 快速排序是由东尼·霍尔所发展的一种排序算法。在平均状况下，排序 n 个项目要Ο(n log n)次比较。在最坏状况下则需要Ο(n2)次比较，但这种状况并不常见。事实上，快速排序通常明显比其他Ο(n log n) 算法更快，因为它的内部循环（inner loop）可以在大部分的架构上很有效率地被实现出来。
 
@@ -220,7 +218,7 @@ void quicksort(T array[], Index left, Index right) {
 }
 ```
 
-### 堆排序
+### 堆排序 (heapsort)
 
 ```c
 //#筛选算法#%
@@ -266,7 +264,7 @@ void heap_sort(int d[], int n) {
 }
 ```
 
-### 归并排序
+### 归并排序 (mergesort)
 
 ```c
 /**
@@ -336,10 +334,14 @@ void merge_array(int *list1, int list1_size, int *list2, int list2_size) {
 }
 ```
 
-### 基数排序
+### count sort
+
+### 基数排序 (radix sort)
 
 基数排序（英语：Radix sort）是一种非比较型整数排序算法，其原理是将整数按位数切割成不同的数字，然后按每个位数分别比较。由于整数也可以表达字符串（比如名字或日期）和特定格式的浮点数，所以基数排序也不是只能使用于整数。基数排序的发明可以追溯到1887年赫尔曼·何乐礼在打孔卡片制表机（Tabulation Machine）上的贡献[1]。
 
 它是这样实现的：将所有待比较数值（正整数）统一为同样的数位长度，数位较短的数前面补零。然后，从最低位开始，依次进行一次排序。这样从最低位排序一直到最高位排序完成以后, 数列就变成一个有序序列。
 
 基数排序的方式可以采用LSD（Least significant digital）或MSD（Most significant digital），LSD的排序方式由键值的最右边开始，而MSD则相反，由键值的最左边开始。
+
+### bucket sort

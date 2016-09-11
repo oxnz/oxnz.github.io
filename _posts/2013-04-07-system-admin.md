@@ -7,7 +7,7 @@ tags: [RHEL]
 
 ## Introduction
 
-System administration
+System administration handbook.
 
 <!--more-->
 
@@ -220,6 +220,62 @@ SPT: server process time
 	* nobarrier
 * I/O scheduler
 	* deadline
+
+### Others
+
+
+* acpi-support 这个是关于电源支持的默认是1,2,3,4,5下启动
+* acpid acpi的守护程序，默认是2-5开启
+* alsa alsa声音子系统
+* alsa-utils
+* apmd power management
+* anacron 这是一个用于执行到时间没有执行的程序的服务
+* atd 和anacron: task management
+* bluez-utiles
+* bootlogd
+* cron 指定时间运行程序的服务
+* cupsys 打印机服务
+* dbus 消息总线系统
+* dns-clean 拨号连接用的
+* evms 企业卷管理系统
+* fetchmail
+* gdm gnome
+* halt
+* hdparm
+* hotkey-setup
+* hotplug 这个是用于热插拔的
+* hplip hp打印机专用的
+* ifrename 网络接口重命名
+* ifupdown 这个使用来打开网络的
+* ifupdown-clean 同上
+* klogd linux守护程序，接受来自内核和发送信息到syslogd的记录，并记录为一个文件
+* linux-restricted-modules-common 这个使用来使用受限制的模块的，你可以从/lib/linux-restricted-modules下查看
+* lvm 逻辑卷管理器
+* makedev 用来创建设备到/dev/
+* mdamd 管理raid用
+* module-init-tools 从/etc/modules 加在扩展模块的
+* networking 增加网络接口和配置dns用
+* ntp-server 与ubuntu时间服务器进行同步的
+* pcmcia 激活pcmica设备
+* powernowd 用于管理cpu的客户端程序，如果有变频功能，比如amd的quite' cool 那么就开启它
+* ppp 拨号用的
+* ppp-dns 一样
+* readahead 预加载服务
+* reboot 重启用的
+* rmnologin
+* rsync rsync协议守护
+* screen-cleanup
+* sendsigs 重启和关机时向所有进程发送消息
+* stop-bootlogd 从2,3,4,5级别停止bootlogd
+* sudo
+* sysklogd 用于记录系统日志信息
+* udev 用户空间dev文件系统
+* udev-mab 同上
+* umountfs 用来卸载文件卷的
+* urandom 生成随即数的
+* usplash 那个漂亮的启动画面
+* vbesave 显卡bios配置工具
+* xorg-common 设置x服务ice socket
 
 ## References
 

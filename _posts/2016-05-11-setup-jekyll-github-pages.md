@@ -18,6 +18,11 @@ This article introduces how to setup jekyll and the post-install steps like twea
 
 <!--more-->
 
+## Table of Contents
+
+* TOC
+{:toc}
+
 ## Install and run jekyll
 
 Even though Github can automatically build site from the repo conent. It is more convenient to setup a local jekyll server for debugging and testing purpose.
