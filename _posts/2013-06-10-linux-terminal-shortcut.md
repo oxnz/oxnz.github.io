@@ -7,18 +7,6 @@ categories:
 tags: [terminal]
 ---
 
-<style type="text/css">
-kbd {
-	padding: 2px 4px;
-	font-size: 90%;
-	color: #fff;
-	background-color: #333;
-	border-radius: 3px;
-	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.25);
-	box-shadow:inset 0 -1px 0 rgba(0,0,0,.25);
-}
-</style>
-
 ## Line Editing
 
 Shortcut            | Explain

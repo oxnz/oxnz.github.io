@@ -1,106 +1,110 @@
 ---
 layout: post
-title: "Moxile 帮助手册"
+title: "Moxile Help"
+categories: [moxile]
+tags: [moxile]
+redirect_from:
+  - /moxile/help/
 ---
 
 **Moxile**, the missing Markdown editor designed for productivity. It comes with **Live Preview**.  It offers full support for regular 	Markdown Syntax as well as Github flavored markdown extension.
 
 <!--more-->
 
-## 目录
+## Table of Contents
 
-* Markdown 介绍
-* 编辑器
-	* 快捷键
-* 预览器
-* 语法
-	* 基本语法
-	* 扩展语法
+* TOC
+{:toc}
 
-### 概览
+## Overview
 
-- [x] 编辑器可以和预览器互换位置
-
-> ###Markdown
+>
+**Markdown**
 >
 >Markdown is a way to style text on the web. You control the display of the document; formatting words as bold or italic, adding images, and creating lists are just a few of the things we can do with Markdown. Mostly, Markdown is just regular text with a few non-alphabetic characters thrown in, like # or *.
 
+### Features
 
-### 编辑器
+- editor and viewer could be swapped
+- syntax highlight
+- math support
+- auto save
+- powerful actions
+- featured picture inserter
+- light and dark theme built-in, support customize
+- HTML and PDF export support
+- UTF-8 support
+- full retina support
+- QuickLook support
+- multiple screen support
 
-#### 快捷键
+### Editor
 
-操作    | 快捷键
--------|:----------
-新建    | <kbd>Command + N</kbd>
-打开    | <kbd>Command + O</kbd>
-保存    |	<kbd>Command + S</kbd>
-另存为  | <kbd>Command + Shift + S</kbd>
-关闭    | <kbd>Command + W</kbd>
-打印预览	| <kbd> Command + Shift + P</kbd>
-打印	    | <kbd> Command + P</kbd>
-查找   	| <kbd> Command + F</kbd>
-替换	   | <kbd> Command + Shift + F</kbd>
-粗体	   | <kbd> Command + B</kbd>
-斜体	   | <kbd> Command + I</kbd>
-删除线  | <kbd> Command + U</kbd>
-大写    | <kbd> Ctrl + U</kbd>
-首字母大写	| <kbd> Ctrl + Option + U</kbd>
-小写	    | <kbd> Ctrl + Shift + U</kbd>
-內联代码	| <kbd> Command + K</kbd>
-块引用	| <kbd> Ctrl + Q</kbd>
-标题	    | <kbd> Command + 1..6</kbd>
-增大字体	| <kbd> Command + Option + +</kbd>
-减小字体	| <kbd> Command + Option + -</kbd>
-注释	    | <kbd> Command + /</kbd>
-任务列表	| <kbd> Command + T</kbd>
-无序列表	| <kbd> Command + L</kbd>
-增加缩进	| <kbd> Command + ]</kbd>
-减小缩进	| <kbd> Command + [</kbd>
-更新预览	| <kbd> Command + R</kbd>
-放大	    | <kbd> Command + +</kbd>
-缩小	    | <kbd> Command + -</kbd>
-重置缩放	| <kbd> Command + 0</kbd>
-最小化	| <kbd> Command + M</kbd>
-全屏     | <kbd> Command + Shift + F</kbd>
+### Viewer
 
-- [x] 语法高亮
-- [x] 数学公式支持
-- [x] 自动保存
-- [x] powerful actions
-- [x] featured picture inserter
-- [x] 内建多种主题，并支持主题定制
-- [x] HTML 和 PDF 导出支持
-- [x] UTF-8 支持
-- [x] 视网膜屏幕支持
-- [x] QuickLook 支持
-- [x] 多屏幕支持
+- inspector support
+- syntax highlight
+- live preview
+- github and article theme built-in, support customize
+- support external renderer like 'pandoc' and 'docutils'
 
-### 预览器
+### Keyboard Shortcuts
 
-- [x] 开发者工具支持
-- [x] 代码语法高亮
-- [x] 实时预览
-- [x] 多种主题支持，并支持主题定制
-- [x] 支持外部渲染器，例如 'pandoc' 和 'docutils'
+Option            | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shortcut&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+------------------|---------------------------------
+New               | <kbd>⌘ N</kbd>
+Open              | <kbd>⌘ O</kbd>
+Save              | <kbd>⌘ S</kbd>
+Save As           | <kbd>⌘ ⇧ S</kbd>
+Close             | <kbd>⌘ W</kbd>
+Print Preview     | <kbd>⌘ ⇧ P</kbd>
+Print             | <kbd>⌘ P</kbd>
+Find              | <kbd>⌘ F</kbd>
+Replace           | <kbd>⌘ ⇧ F</kbd>
+Strong            | <kbd>⌘ B</kbd>
+Emphasis          | <kbd>⌘ I</kbd>
+Strikethrough     | <kbd>⌘ U</kbd>
+Uppercase         | <kbd>⌃ U</kbd>
+Titlecase         | <kbd>⌃ ⌥ U</kbd>
+Lowercase         | <kbd>⌃ ⇧ U</kbd>
+Inline code       | <kbd>⌘ K</kbd>
+Blockquote        | <kbd>⌃ Q</kbd>
+Header 1..6       | <kbd>⌘ 1..6</kbd>
+Increse font size | <kbd>⌘ ⌥ +</kbd>
+Decrese font size | <kbd>⌘ ⌥ -</kbd>
+Comment           | <kbd>⌘ /</kbd>
+Task List         | <kbd>⌘ T</kbd>
+Bulluted List     | <kbd>⌘ L</kbd>
+Increse Indent    | <kbd>⌘ ]</kbd>
+Decrese Indent    | <kbd>⌘ [</kbd>
+Update preview    | <kbd>⌘ R</kbd>
+Zoom in           | <kbd>⌘ +</kbd>
+Zoom out          | <kbd>⌘ -</kbd>
+Zoom reset        | <kbd>⌘ 0</kbd>
+Minimize          | <kbd>⌘ M</kbd>
+Fullscreen        | <kbd>⌘ ⇧ F</kbd>
 
-## 语法
+See [Mac keyboard shortcuts](https://support.apple.com/en-us/HT201236) for more information.
 
-### 基本语法
+## Syntax
 
-#### 粗体和斜体
+### Basic Syntax
 
-**strong** or __strong__ ( ⌘ + B )
+#### Strong and Emphasis
 
-*emphasize* or _emphasize_ ( ⌘ + I )
+`**strong**` or `__strong__` ( <kbd>⌘ B</kbd> )
 
-#### 块引用
+`*emphasize*` or `_emphasize_` ( <kbd>⌘ I</kbd> )
 
-> 大于号 ==&gt;== 用作块引用标记
+#### blockquote
 
-#### 超链接和邮件地址
+```
+> Right angle brackets > are used for block quotes.
+```
 
-Feed back goes <errpro@icloud.com>, for more information visit our website [Moxile](http://moxile.errpro.com).
+#### Link and Email
+
+Feed back goes <errpro@icloud.com>, visit our website [moxile] for more information.
 
 A [reference style][moxile] link. Input id, then anywhere in the doc, define the link with corresponding id:
 
@@ -108,7 +112,7 @@ A [reference style][moxile] link. Input id, then anywhere in the doc, define the
 
 Titles ( or called tool tips ) in the links are optional.
 
-#### 图片
+#### Image
 
 Inline image: `![Moxile icon](mox.png "Moxile Icon")`, title is optional.
 
@@ -117,44 +121,52 @@ Reference style image:
 	![Moxile icon][mox-icon]
 	[mox-icon]: mox.png "Moxile"
 
-#### 内联代码和代码块
+#### Inline code and Code block
 
 Inline code are surround by `backtick` key. To create a block code, Indent each line by at least 1 tab, or 4 spaces:
 
+```
 	function greet() {
 		console.log("Hello world");
 	}
+```
 
-####  有序列表
+####  Ordered List
 
 Ordered lists are created using "1." + Space:
 
+```
 1. first list item
 2. second list item
 3. third list item
+```
 
-#### 无序列表
+#### Unordered List
 
 Unordered list are created using "*" + Space:
 
+```
 * Unordered list item
 * Unordered list item
 * Unordered list item
+```
 
 Or using "-" + Space:
 
+```
 - Unordered list item
 - Unordered list item
 - Unordered list item
+```
 
-#### 硬换行
+#### Hard Linebreak
 
-End a line with two or more spaces will create a hard linebreak, called `<br />` in HTML. (⇧ + ↩)
+End a line with two or more spaces will create a hard linebreak, called `<br />` in HTML. ( <kbd>⇧ + ↩</kbd> )
 
 
 Above line ended with 2 spaces.
 
-#### 水平分隔符
+#### Horizontal Rule
 
 Three or more asterisks or dashes:
 
@@ -164,29 +176,33 @@ Three or more asterisks or dashes:
 
 - - - -
 
-#### 标题
+#### Header
 
-Setext-style:
+**Setext-style**
 
+```
 This is H1
 ==========
 
 This is H2
 ----------
+```
 
-atx-style:
+**atx-style**
 
+```
 # This is H1
 ## This is H2
 ### This is H3
 #### This is H4
 ##### This is H5
 ###### This is H6
+```
 
 
-### 扩展语法
+### Extra Syntax
 
-#### 脚注
+#### Footnote
 
 Footnotes work mostly like reference-style links. A footnote is made of two things: a marker in the text that will become a superscript number; a footnote definition that will be placed in a list of footnotes at the end of the document. A footnote looks like this:
 
@@ -197,7 +213,7 @@ That's some text with a footnote.[^1]
 
 #### Strikethrough
 
-Wrap with 2 tilde characters (⌘ + B):
+Wrap with 2 tilde characters ( <kbd>⌘ B</kbd> ):
 
 `~~Strikethrough~~`
 
@@ -218,7 +234,7 @@ function hello() {
 }
 {% endhighlight %}
 
-#### 表格
+#### Table
 
 A simple table looks like this:
 
@@ -241,11 +257,14 @@ First Header | Second Header | Third Header
 Left         | Center        | Right
 Left         | Center        | Right
 
-#### 任务列表
+#### Task List
 
 Task list is a GFM(github flavored markdown) extension
 
+```
 - [ ] uncomplete task item
 - [x] completed task
-- [X] another completed task
+- [x] another completed task
+```
 
+[moxile]: /moxile
