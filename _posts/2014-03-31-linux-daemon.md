@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Linux deamon
+title: Linux Daemon
 date: 2014-03-31 15:02:28.000000000 +08:00
 type: post
 published: true
@@ -8,7 +8,7 @@ status: publish
 categories:
 - Service
 tags:
-- deamon
+- daemon
 ---
 
 ## Introduction
@@ -95,7 +95,7 @@ tags:
 fork()两次，将孙子进程“过继”给1号进程init，如果孙子进程成功，其父进程将会是系统1号进程init，如果失败，将由init负责收拾残局。
 
 ```c
-void deamonize() {
+void daemonize() {
 	if (fork())
 		exit(0);	// exit parent process
 	setsid();	// become session leader, discard controlling terminal
@@ -113,21 +113,27 @@ void deamonize() {
 }
 ```
 
-## wait和waitpid
+## wait 和 waitpid
 
 两者相同点都是用于在创建子进程之后，阻塞自己，然后检查自己的子进程中是否有僵尸进程存在，如果存在，该父进程就释放僵尸进程占用的资源，并返回，如果没有这样的僵尸进程，就一直阻塞。
 
-不同点是后者还有两个pid和option参数。
+不同点是后者还有 pid 和 option 两个参数:
 
-pid：当pid &gt; 0时，只等待进程号为pid的进程退出；pid == -1时，等待任意子进程，作用等同于wait；pid == 0时，等待同一进程组中任意子进程；pid &lt; -1 时，等待某个进程组的任意进程，该进程组的组号为pid的绝对值。
+* pid
+	* pid &gt; 0 时，只等待进程号为pid的进程退出；
+	* pid == -1时，等待任意子进程，作用等同于wait；
+	* pid == 0时，等待同一进程组中任意子进程；
+	* pid &lt; -1 时，等待某个进程组的任意进程，该进程组的组号为pid的绝对值。
+* option
+	* WNOHANG 使得waitpid立即返回而不管有没有子进程退出；
+	* WUNTRACED 是指其子进程集合中，如果有子进程是STOPED状态，就立即返回，如果该进程是被traced的，那么即使不提供WUNTRACED参数，也立即返回。
 
-option：有两个值，WNOHANG和WUNTRACED，前者使得waitpid立即返回而不管有没有子进程退出；后者是指其子进程集合中，如果有子进程是STOPED状态，就立即返回，如果该进程是被traced的，那么即使不提供WUNTRACED参数，也立即返回。
-
-于是可以看出，wait是等待第一个退出的子进程，而waitpid是等待指定子进程退出。因此对于多进程服务器，使用waitpid可以避免因为第一个子进程退出调用了wait，而造成剩余子进程没有wait来处理，引起的僵尸进程的问题。
+于是可以看出，wait 是等待第一个退出的子进程，而 waitpid 是等待指定子进程退出。
+因此对于多进程服务器，使用 waitpid 可以避免因为第一个子进程退出调用了 wait，而造成剩余子进程没有 wait 来处理，引起的僵尸进程的问题。
 
 ## 僵尸进程的处理
 
-僵尸进程是无法使用kill或者killall来杀死的，虽然僵尸进程并不占用很多系统资源（只是占用进程表process table中的一个项），但是过多的僵尸进程还是会对系统性能造成影响（达到系统进程数上限），因此应尽可能避免:
+僵尸进程是无法使用 kill 或者 killall 来杀死的，虽然僵尸进程并不占用很多系统资源（只是占用进程表process table中的一个项），但是过多的僵尸进程还是会对系统性能造成影响（达到系统进程数上限），因此应尽可能避免:
 
 	1. 改写父进程：如上所述，fork两次，将init作为其父进程，由系统负责清理
 	2. kill掉僵尸进程的父进程，交由系统处理
@@ -139,6 +145,104 @@ ps auwx  可以查看系统中僵尸进程，僵尸进程的状态会被标注�
 ps axf   以树形展示进程表
 ps axm   列出线程，linux下进程线程一致
 ps aux   列出进程的详细信息
+```
+
+## glibc/misc/daemon()
+
+```c
+/*-
+ * Copyright (c) 1990, 1993
+ *	The Regents of the University of California.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)daemon.c	8.1 (Berkeley) 6/4/93";
+#endif /* LIBC_SCCS and not lint */
+
+#include <errno.h>
+#include <fcntl.h>
+#include <paths.h>
+#include <unistd.h>
+#include <sys/stat.h>
+
+#include <device-nrs.h>
+#include <not-cancel.h>
+
+int
+daemon (int nochdir, int noclose)
+{
+	int fd;
+
+	switch (__fork()) {
+	case -1:
+		return (-1);
+	case 0:
+		break;
+	default:
+		_exit(0);
+	}
+
+	if (__setsid() == -1)
+		return (-1);
+
+	if (!nochdir)
+		(void)__chdir("/");
+
+	if (!noclose) {
+		struct stat64 st;
+
+		if ((fd = open_not_cancel(_PATH_DEVNULL, O_RDWR, 0)) != -1
+		    && (__builtin_expect (__fxstat64 (_STAT_VER, fd, &st), 0)
+			== 0)) {
+			if (__builtin_expect (S_ISCHR (st.st_mode), 1) != 0
+#if defined DEV_NULL_MAJOR && defined DEV_NULL_MINOR
+			    && (st.st_rdev
+				== makedev (DEV_NULL_MAJOR, DEV_NULL_MINOR))
+#endif
+			    ) {
+				(void)__dup2(fd, STDIN_FILENO);
+				(void)__dup2(fd, STDOUT_FILENO);
+				(void)__dup2(fd, STDERR_FILENO);
+				if (fd > 2)
+					(void)__close (fd);
+			} else {
+				/* We must set an errno value since no
+				   function call actually failed.  */
+				close_not_cancel_no_status (fd);
+				__set_errno (ENODEV);
+				return -1;
+			}
+		} else {
+			close_not_cancel_no_status (fd);
+			return -1;
+		}
+	}
+	return (0);
+}
 ```
 
 ## 参考

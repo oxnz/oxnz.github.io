@@ -121,7 +121,7 @@ Overview
 * MySQL Information Schema
 * MySQL Performance Schema
 
-```mysql
+```sql
 select EVENT_NAME, max(SUM_TIMER_WAIT)/1000000000000 as WaitTM from events_waits_summary_global_by_event_name group by 1 order by 2 desc limit 5;
 select EVENT_NAME, max(SUM_TIMER_WAIT)/1000000000000 as WaitTM from events_waits_summary_by_instance group by 1 order by 2 desc limit 5;
 ```
@@ -256,7 +256,7 @@ See [Performance Tuning] for more details about system optimization.
 	* Load Balance
 	* Read/Write Splitting
 
-![MySQL Proxy](/assets/mysql-proxy.png)
+![MySQL Proxy](/assets/mysql-proxy.jpg)
 
 ### Memory
 
@@ -527,9 +527,9 @@ Index can help speeding up most queries, but can lead slower writing with each a
 
 ### InnoDB-Specific Optimization
 
-InnoDB uses clustered index, so the length of PRIMARY KEY is extremely important
+InnoDB uses clustered index, so the length of PRIMARY KEY is extremely important.
 
-The rows are always dynamic, using VARCHAR instead of CHAR is almost always better
+The rows are always dynamic, using VARCHAR instead of CHAR is almost always better.
 
 Maintenance operations needed after many UPDATE/DELETE operations, cause the pages can become underfilled.
 

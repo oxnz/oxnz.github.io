@@ -279,6 +279,15 @@ SPT: server process time
 
 ## Command
 
+### kill
+
+```shell
+# kill a process group
+kill -1234
+```
+
+### find
+
 find
 
 ```shell

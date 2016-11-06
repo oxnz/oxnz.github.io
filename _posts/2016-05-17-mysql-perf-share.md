@@ -250,8 +250,7 @@ select
 
 ```sql
 set global sort_buffer_size = 8M;
-set global sort_buffer_size = 32M；
-目前是2M
+set global sort_buffer_size = 32M;
 +-------------------+--------+
 | Variable_name | Value |
 +-------------------+--------+
@@ -262,7 +261,8 @@ set global sort_buffer_size = 32M；
 +-------------------+--------+
 
 set global query_cache_min_res_unit = 4096*2
-set global query_cache_min_res_unit = 1024;flush query cache;
+set global query_cache_min_res_unit = 1024;
+flush query cache;
 set global query_cache_min_res_unit = 2048;
 set global query_cache_limit = 2*1024*1024;
 flush query cache;

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: MySQL Primer - Develope Rules
+title: MySQL Primer - Develop Rules
 date: 2016-06-13 18:42:00.000000000 +08:00
 type: post
 published: true
@@ -37,7 +37,7 @@ This article described some basic rules in developing involed with MySQL Server.
 
 ## Naming Rules
 
-### Database/Table Nameing Rules
+### Database/Table Naming Rules
 
 * Unifined database/table name (no more than 32 chars)
 * Meaningful names
@@ -80,7 +80,7 @@ bigint    | 8     | -9223372036854775808/9223372036854775807/1844674407370955161
 	* Use UNSIGNED to store non-negtive num
 	* Use VARBINARY for case-sensitive varaible length string
 	* Use DECIMAL instead of FLOAT/DOUBLE for precision float
-* Do not use TEXT/BLOB if possible, split table if TEXT/BLOG is needed
+* Do not use TEXT/BLOB if possible, split table if TEXT/BLOB is needed
 * Use TIMESTAMP to store time
 * DO NOT store plain password
 * Use NOT NULL if possible, because NULL field is
@@ -167,5 +167,13 @@ bigint    | 8     | -9223372036854775808/9223372036854775807/1844674407370955161
 * Do not do batch update/query under heavy load time
 * Promotion Activites need DBA assessment
 * Do not run admin/statistics query from backend
+
+## Usage
+
+### INSERT
+
+```sql
+INSERT INTO table (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;
+```
 
 ## References

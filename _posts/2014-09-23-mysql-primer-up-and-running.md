@@ -96,7 +96,7 @@ vim /etc/my.cnf
 
 #### pre-built binary
 
-```shell
+```console
 tar zxf mysql-5.7.12.tar.gz
 vim my.cnf
 # run as current user
@@ -105,15 +105,11 @@ vim my.cnf
 sudo -u mysql ./bin/mysqld --defaults-file=my.cnf --initialize
 ```
 
-```sql
-alter user 'root'@'localhost' identified by 'password';
-```
-
 #### source code
 
 #### Plugins
 
-```shell
+```console
 $ mysql_plugin -P
 mysql_plugin would have been started with the following arguments:
 --datadir=/var/lib/mysql
@@ -129,7 +125,7 @@ back_log < (system back_log)
 
 #### Default Configure
 
-```shell
+```console
 [will@rhel7.2.vmg]$ my_print_defaults mysqld
 --datadir=/var/lib/mysql
 --socket=/var/lib/mysql/mysql.sock
@@ -219,12 +215,6 @@ sudo -u mysql /usr/local/mysql/bin/mysqld_safe &
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'passphrase';
 ```
 
-#### Shutdown
-
-```shell
-/usr/local/mysql/bin/mysqladmin shutdown -u root -p
-```
-
 Invoke `mysql_secure_installation` to:
 
 0. set root password
@@ -280,6 +270,12 @@ with_option:
 * mysqld_safe — MySQL Server Startup Script
 * mysql.server — MySQL Server Startup Script
 * mysqld_multi — Manage Multiple MySQL Servers
+
+#### Shutdown
+
+```shell
+/usr/local/mysql/bin/mysqladmin shutdown -u root -p
+```
 
 ### Partitioning
 

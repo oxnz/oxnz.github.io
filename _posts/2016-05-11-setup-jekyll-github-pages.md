@@ -48,7 +48,7 @@ source 'https://rubygems.org'
 gem 'github-pages', group: :jekyll_plugins
 {% endhighlight %}
 
-Ubuntu install ruby2.0. jekyll failed to start, need to specify some gem versionmanually, edit `vi /var/lib/gems/2.0.0/gems/jekyll-3.1.3/bin/jekyll`:
+Ubuntu install ruby2.0. jekyll failed to start, need to specify some gem version manually, edit `vi /var/lib/gems/2.0.0/gems/jekyll-3.1.3/bin/jekyll`:
 
 {% highlight ruby %}
 gem 'jekyll', '=3.1.3'

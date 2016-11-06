@@ -30,6 +30,33 @@ This article is intend for
 
 ## Query Optimization
 
+### Overview
+
+* Add index appropriatly
+* Optimize sub-query
+* Minimize the number of full table scans
+* Keep table statistics up to date by using `ANALYZE TABLE` stmt **periodically**
+* Optimizing InnoDB Queries
+	* specify an efficient primary key
+	* do not specify too many or too long columns in the primary key
+	* do not create a separate secondary index for each column
+		* try to create a small number of concatenated indexes instead
+		* with a covering index the query might be able to avoid reading the table data at all
+	* declare column `NOT NULL` if appropriate
+	* Optimizing InnoDB Read-Only Transactions
+		* The transaction is started with the `START TRANSACTION READ ONLY` statement
+		* The autocommit setting is turned on, so that the transaction is guaranteed to be a single statement, and the single statement making up the transaction is a “non-locking” SELECT statement
+			* NO `SELECT FOR UPDATE`
+			* NO `LOCK IN SHARED MODE`
+	* Use Query Cache
+* Avoid transforming the query in ways that make it hard to understand, especially if the optimizer does some of the same transformations automatically
+* Adjust the size and properties of the memory areas that MySQL uses for caching
+* Even for a query that runs fast using the cache memory areas, you might still optimize further so that they require less cache memory, making your application more scalable
+* Deal with locking issues, where the speed of your query might be affected by other sessions accessing the tables at the same time
+
+>
+MySQL Cluster supports a join pushdown optimization whereby a qualifying join is sent in its entirety to MySQL Cluster data nodes, where it can be distributed among them and executed in parallel. For more information about this optimization, see [Conditions for NDB pushdown joins](https://dev.mysql.com/doc/refman/5.6/en/mysql-cluster-options-variables.html#ndb_join_pushdown-conditions)
+
 ### Query Cache
 
 ### Prepared Statements
@@ -60,33 +87,6 @@ Source Code
 * SQL_CACHE
 * SQL_NO_CACHE
 
-#### Overview
-
-* Add index appropriatly
-* Optimize sub-query
-* Minimize the number of full table scans
-* Keep table statistics up to date by using `ANALYZE TABLE` stmt **periodically**
-* Optimizing InnoDB Queries
-	* specify an efficient primary key
-	* do not specify too many or too long columns in the primary key
-	* do not create a separate secondary index for each column
-		* try to create a small number of concatenated indexes instead
-		* with a covering index the query might be able to avoid reading the table data at all
-	* declare column `NOT NULL` if appropriate
-	* Optimizing InnoDB Read-Only Transactions
-		* The transaction is started with the START TRANSACTION READ ONLY statement
-		* The autocommit setting is turned on, so that the transaction is guaranteed to be a single statement, and the single statement making up the transaction is a “non-locking” SELECT statement
-			* NO `SELECT FOR UPDATE`
-			* NO `LOCK IN SHARED MODE`
-	* Use Query Cache
-* Avoid transforming the query in ways that make it hard to understand, especially if the optimizer does some of the same transformations automatically
-* Adjust the size and properties of the memory areas that MySQL uses for caching
-* Even for a query that runs fast using the cache memory areas, you might still optimize further so that they require less cache memory, making your application more scalable
-* Deal with locking issues, where the speed of your query might be affected by other sessions accessing the tables at the same time
-
->
-MySQL Cluster supports a join pushdown optimization whereby a qualifying join is sent in its entirety to MySQL Cluster data nodes, where it can be distributed among them and executed in parallel. For more information about this optimization, see [Conditions for NDB pushdown joins](https://dev.mysql.com/doc/refman/5.6/en/mysql-cluster-options-variables.html#ndb_join_pushdown-conditions)
-
 #### WHERE
 
 * Removal of unnecessary parentheses
@@ -99,20 +99,24 @@ MySQL Cluster supports a join pushdown optimization whereby a qualifying join is
 * For each table in a join, a simpler `WHERE` is constructed to get a fast `WHERE` evaluation for the table and also to skip rows as soon as possible
 * All constant tables are read first before any other tables in the query. A constant table is any of the following:
 	* An empty table or a table with one row
-	* A table that is used with a `WHERE` clause on a `PRIMARY KEY` or a `UNIQUE` index, where all index parts are compared to constant expressions and are defined as NOT NULL
+	* A table that is used with a `WHERE` clause on a `PRIMARY KEY` or a `UNIQUE` index, where all index parts are compared to constant expressions and are defined as `NOT NULL`
 * The best join combination for joining the tables is found by trying all possibilities
 	*  If all columns in ORDER BY and GROUP BY clauses come from the same table, that table is preferred first when joining
 * If there is an ORDER BY clause and a different GROUP BY clause, or if the ORDER BY or GROUP BY contains columns from tables other than the first table in the join queue, a temporary table is created
 * If you use the SQL_SMALL_RESULT option, MySQL uses an in-memory temporary table
 * Each table index is queried, and the best index is used unless the optimizer believes that it is more efficient to use a table scan
 * In some cases, MySQL can read rows from the index without even consulting the data file
-* Before each row is output, those that do not match the HAVING clause are skipped
+* Before each row is output, those that do not match the `HAVING` clause are skipped
 
 #### Range Optimization
 
 #### ORDER BY
 
 Eliminate unneeded sorting overhead by specifying `ORDER BY NULL`
+
+* Do not depend on order when ORDER BY is missing.
+* Always specify ORDER BY if you want a particular order -- in some situations the engine can eliminate the ORDER BY because of how it does some other step.
+* GROUP BY forces ORDER BY. (This is a violation of the standard. It can be avoided by using ORDER BY NULL.)
 
 In some cases, MySQL can use an index to satisfy an ORDER BY clause without doing extra sorting.
 
@@ -164,7 +168,7 @@ There are two ways to execute a GROUP BY query through index access:
 * LEFT JOIN
 * RIGHT JOIN
 
-### Where
+### WHERE
 
 ## DML (Data Manipulation Language) Optimization
 
@@ -179,7 +183,7 @@ Optimizations:
 
 * merge or separate insert operations
 	* bulk_insert_buffer_size
-* LOAD DATA INFILE
+* `LOAD DATA INFILE`
 	* 20 times faster
 * emit default values to eliminate needed parse operations
 
@@ -188,11 +192,12 @@ Optimizations:
 An update statement is optimized like a SELECT query with the additional overhead of a write
 
 * do multi updates if there is locking
-* OPTIMIZE TABLE
+* `OPTIMIZE TABLE`
 
 ### DELETE
 
-TRUNCATE TABLE is faster, but not transaction-safe
+`TRUNCATE TABLE` is faster, but not transaction-safe
 
 ## References
 
+* [LOAD DATA INFILE Syntax](http://dev.mysql.com/doc/refman/5.7/en/load-data.html)

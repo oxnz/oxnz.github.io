@@ -37,9 +37,9 @@ This article described some basic usage of mysql server and introduce intermedia
 
 ```python
 if self.server_profile.target_is_windows:
-	self.cpu_usage.set_description("CPU")
+    self.cpu_usage.set_description("CPU")
 else:
-	self.cpu_usage.set_description("Load")
+    self.cpu_usage.set_description("Load")
 ```
 
 * CPU
