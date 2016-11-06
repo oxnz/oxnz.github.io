@@ -107,7 +107,9 @@ Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
 		* 平台接入审核流程开发
 		* 后台升级改造，添加基于角色的访问控制
 	* 参与多个**开源项目**（包括 bash-completion, bash-it, homebrew, oh-my-zsh 等);
+	* 工作中工具编写 （文件传输，系统部署，迁移等）
 	* 著有 [Moxile](https://itunes.apple.com/us/app/moxile/id989166472) 编辑器, 被国内外多个软件分发网站编辑推荐
+	* Stackoverflow profile: [stackoverflow.com/users/2273296/oxnz](https://stackoverflow.com/users/2273296/oxnz)
 
 {:class="proj-list"}
 

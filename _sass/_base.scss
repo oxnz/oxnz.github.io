@@ -113,8 +113,8 @@ a {
  */
 blockquote {
     color: $grey-color;
-    border-left: 4px solid $purple-color-light;
-	background: #F3EFFE;
+    border-left: 4px solid $red-color;
+	background: $background-color-dark;
     padding: $spacing-unit / 3 $spacing-unit / 2;
     font-size: 18px;
     letter-spacing: -1px;
@@ -135,7 +135,7 @@ code {
     font-size: 15px;
     border: 1px solid $grey-color-light;
     border-radius: 3px;
-    background-color: #eef;
+    background-color: $background-color-dark;
 }
 
 code {

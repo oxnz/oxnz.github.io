@@ -109,6 +109,26 @@ body {
 	color: #828282;
 }
 
+/**
+ * code
+ */
+
+.highlighter-rouge .highlight {
+	background-color: $background-color-dark;
+}
+
+code {
+	color: $red-color;
+}
+
+pre code {
+	color: #0C3C26;
+}
+
+/**
+ * other
+ */
+
 kbd {
 	padding: 2px 4px;
 	font-size: 90%;
@@ -125,9 +145,20 @@ code {
 	font-size: 13px;
 }
 
+h1 > code,
+h2 > code,
+h3 > code,
+h4 > code,
+h5 > code,
+h6 > code {
+	font-size: 80%;
+}
+
 blockquote {
 	font-size: 95%;
 	letter-spacing: normal;
+	color: rgba(69, 25, 123, 0.77);
+	font-style: normal;
 }
 
 dt {
@@ -135,16 +166,22 @@ dt {
 }
 
 table {
-	border-collapse: collapse;
+	border-collapse: separate;
+	border-spacing: 1px;
+	background-color: rgba(42, 171, 237, 0.25);
 	margin: $spacing-unit / 2 auto;
 }
 
 th {
 	font-weight: 600;
+	background-color: #F8F9FC;
+}
+
+td {
+	background-color: #fff;
 }
 
 th,
 td {
-	border: 1px solid #ddd;
 	padding: 4px;
 }
