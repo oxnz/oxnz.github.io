@@ -904,3 +904,4 @@ from `limits.conf(5)`
 * [RHEL 6 Perf Tuning Guide](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Performance_Tuning_Guide/)
 * [Linux Broadband Tweaks](http://www.speedguide.net/articles/linux-tweaking-121)
 * [Increasing TCP's Initial Window](https://tools.ietf.org/html/rfc6928)
+* [System Analysis and Tuning Guide](https://doc.opensuse.org/documentation/leap/tuning/html/book.sle.tuning/index.html)

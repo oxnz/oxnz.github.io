@@ -546,9 +546,9 @@ for idx, elem in enumerate(arr, 0):
 
 ### String Formatting
 
-Prefer format than %
+Prefer `format` than `%`
 
-#### % String Formatting
+#### `%` String Formatting
 
 #### `format`
 
@@ -1025,6 +1025,18 @@ class Task(object):
 
 ## Frameworks
 
+### Numerical
+
+* scipy and numpy
+* pandas
+* SymPy
+* matplotlib
+* Traits
+* Chaco
+* TVTK
+* VPython
+* OpenCV
+
 ### Http
 
 ### HTTP Reqeusts
@@ -1228,6 +1240,66 @@ Standard commands:
 * upload            upload binary package to PyPI
 * check             perform some checks on the package
 
+## `pythonrc`
+
+```python
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+#
+# Copyright (c) 2013-2015 Z
+# All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
+try:
+    import readline
+    import rlcompleter
+    import os
+    import atexit
+except ImportError as e:
+    print(e)
+else:
+    class TabCompleter(rlcompleter.Completer):
+        """Completer that support tab indenting"""
+        def complete(self, text, state):
+            if not text:
+                return ('\t', None)[state]
+            else:
+                return rlcompleter.Completer.complete(self, text, state)
+    readline.set_completer(TabCompleter().complete)
+    if 'libedit' in readline.__doc__:
+        """Complete filename (tab key)
+        http://minix1.woodhull.com/manpages/man3/editline.3.html"""
+        readline.parse_and_bind('bind ^I rl_complete')
+    else:
+        readline.parse_and_bind('tab: complete')
+    histfile = os.path.expanduser('~/.pyhistory')
+    def savehist(histfile=histfile):
+        import readline
+        readline.write_history_file(histfile)
+    atexit.register(savehist)
+    if os.path.exists(histfile):
+        readline.read_history_file(histfile)
+    del readline, os, atexit, histfile, savehist
+```
+
 ## References
 
 * [Code Like a Pythonista: Idiomatic Python](http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html)
@@ -1237,3 +1309,4 @@ Standard commands:
 * [Documenting Your Project Using Sphinx](http://pythonhosted.org/an_example_pypi_project/sphinx.html)
 * [Writing the Setup Script](https://docs.python.org/2/distutils/setupscript.html)
 * [reStructuredText Primer](http://www.sphinx-doc.org/en/stable/rest.html)
+* [用Python做科学计算](http://old.sebug.net/paper/books/scipydoc/index.html)

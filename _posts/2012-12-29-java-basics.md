@@ -21,71 +21,90 @@ tags:
 * TOC
 {:toc}
 
+## Data Types
+
+* bool, byte, char, short, int, float, long, double
+* Boolean, Byte, Char, Short, Integer, Float, Long, Double
+
 ## 集合类
 
-1、集合，无序和互异，如果add两个一样的值，只有一个。
+1. 集合，无序和互异，如果add两个一样的值，只有一个。
 
-```java
-import java.util.*;
-Set s=new HashSet();
-s.add("One");
-```
+    * HashSet
+    * TreeSet
 
-2、列表：java为列表定义了一个接口List，常用的有ArrayList、Vector等。
+   ```java
+   import java.util.*;
+   Set s=new HashSet();
+   s.add("One");
+   ```
 
-```java
-import java.util.*;
-List s=new ArrayList(); //数组
-s.add("aaa"); // 添加元素
-s.remove(2); //删除，索引号从0开始。
-```
+2. 列表：java为列表定义了一个接口List，常用的有ArrayList、Vector等。
 
-3、Iterator接口：集合和列表都有个iterator()方法 ，可以列出各个元素。
+    * LinkedList
+    * ArrayList
+    * Vector (thread-safe)
 
-```java
-import java.util.*;
+   ```java
+   import java.util.*;
+   List s=new ArrayList(); //数组
+   s.add("aaa"); // 添加元素
+   s.remove(2); //删除，索引号从0开始。
+   ```
 
-public class Test {
-    public static void main(String[] args) {
-        List<String> s = new ArrayList<String>();
-        s.add("aaa");
-        s.add("ccc");
-        s.add("bbb");
-        Iterator it = s.iterator(); //iterator()返回类型为Iterator。
-        while (it.hasNext()) {
-            System.out.println(it.next()); //用next()方法遍历元素。
-        }
-    }
-}
-```
+3. Iterator接口：集合和列表都有个iterator()方法 ，可以列出各个元素。
 
-4、映射Map：Map也是一个接口，常用类是HashMap，通过put()方法将两个对象放进去。通过get()方法将映射关系取出。
+   ```java
+   import java.util.*;
+   
+   public class Test {
+       public static void main(String[] args) {
+           List<String> s = new ArrayList<String>();
+           s.add("aaa");
+           s.add("ccc");
+           s.add("bbb");
+           Iterator it = s.iterator(); //iterator()返回类型为Iterator。
+           while (it.hasNext()) {
+               System.out.println(it.next()); //用next()方法遍历元素。
+           }
+       }
+   }
+   ```
 
-```java
-import java.util.*;
+4. 映射Map
 
-public class Test {
-    public static void main(String[] args) {
-        Map<String, String> m = new HashMap<String, String>();
-        m.put("name", "oxnz");
-        m.put("loc", "Wuhan");
-        Object o = m.get("name"); //所有的类都是Object的子类。
-        System.out.println("name: " + o
-                + "nLocation: " + m.get("loc"));
-    }
-}
-// 运行结果：
-$ java Test
-name: oxnz
-Location: Wuhan
-```
+    Map也是一个接口，常用类是HashMap，通过put()方法将两个对象放进去。通过get()方法将映射关系取出。
 
-5、排序：最简单的方法使用Arrays类的静态方法sort。可以对各种数组进行排序。
+    * HashMap
+    * ConcurrentHashMap
+    * HashTable (thread-safe)
+    * LinkedHashMap
+    * TreeMap
 
-```java
-int[] a = {2, 9, 2, 4, 5, 8};
-Arrays.sort(a);
-```
+   ```java
+   import java.util.*;
+   
+   public class Test {
+       public static void main(String[] args) {
+           Map<String, String> m = new HashMap<String, String>();
+           m.put("name", "oxnz");
+           m.put("loc", "Wuhan");
+           Object o = m.get("name"); //所有的类都是Object的子类。
+           System.out.println("name: " + o
+                   + "nLocation: " + m.get("loc"));
+       }
+   }
+   ```
+
+5. 排序：最简单的方法使用Arrays类的静态方法sort。可以对各种数组进行排序。
+
+    * Arrays.sort()
+    * Collection.sort()
+
+   ```java
+   int[] a = {2, 9, 2, 4, 5, 8};
+   Arrays.sort(a);
+   ```
 
 ## 系统属性
 
@@ -209,20 +228,19 @@ public class Test {
 |_______Test.java
 ```
 
-## 比较操作
+## Comparison
 
-<ol>
-<li>简单类型
-java中的比较操作有两种：使用<code>==</code>运算符和使用<code>equals()</code>方法。简单类型不是对象，因而只能用<code>==</code>而不能用<code>equals()</code>进行比较。</li>
-<li>参考类型</li>
-<li>特殊类型</li>
-</ol>
+* 简单类型
+    * java中的比较操作有两种：使用 `==` 运算符和使用 `equals()` 方法。简单类型不是对象，因而只能用 `==` 而不能用 `equals()` 进行比较。
+* 参考类型
+* 特殊类型
 
-## 输入输出流
+## Input/Output
 
-<b>1</b><b>、键盘输入和屏幕输出</b>
+1. 键盘输入和屏幕输出
 
-<code>read()</code>,<code>write()</code>方法的使用参见API文档，一般常用<code>read(char[] cbuf, int offset, int length)</code>,表示读取<code>length</code>长度的字符存入<code>cbuf</code>的第<code>offset</code>个单元中。<code>write</code>对应相反。
+`read()`, `write()` 方法的使用参见API文档，一般常用 `read(char[] buf, int offset, int length)`, 表示读取<code>length</code>长度的字符存入<code>cbuf</code>的第<code>offset</code>个单元中。
+<code>write</code>对应相反。
 
 ```java
 byte buffer[] = new byte[255];

@@ -107,7 +107,13 @@ require 'mercenary'
    tags: [socket]
    ```
 
-## Depolyment
+### Code Highlight
+
+```shell
+rougify list
+```
+
+## Deployment
 
 ### Travis CI
 

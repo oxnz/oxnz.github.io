@@ -99,7 +99,7 @@ key_buffer_size
 * INNODB_CMPMEM
 * INNODB_CMPMEM_RESET
 
-* INNODB_TRXX
+* INNODB_TRX
 * INNODB_LOCKS
 * INNODB_LOCK_WAITS
 
@@ -393,8 +393,6 @@ SUM(Com_xxx) + QCache_hits == Questions + statements executed within stored prog
 Use `flush query_cache` to flush query cache between measurements.
 
 * Memory Utilization
-
-<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
 $$
 \frac{query\_cache\_size - Qcache\_free\_memory}{query\_cache\_size} \times 100\%
@@ -707,3 +705,5 @@ show profile for query 24;
 
 * [MathJax Quick Reference](http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference)
 * [How to identify and cure MySQL replication slave lag](https://www.percona.com/blog/2014/05/02/how-to-identify-and-cure-mysql-replication-slave-lag/)
+
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
