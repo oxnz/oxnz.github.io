@@ -34,15 +34,22 @@ List list = query.list(); //查询返回
 ### find部分查询
 
 ```java
-find(String str, Object value)  this.getHibernateTemplate().find(from Task where id=?", "valueId");
+find(String str, Object value)  
+this.getHibernateTemplate().find(from Task where id=?", "valueId");
+```
+```java
 find(String str , Object[] values) 
 hql = "from Task  where name=? and password=?";
 this.getHibernateTemplate().find(hql, new String[]{"nameValue", "passwordValue"});
+```
+```java
 findByNamedParam(String str, String paramName, Object value)
 str="select count(*) from Task where name =:Name"; 
 paramName=name;
 value="xxx"
 this .getHibernateTemplate().findByNamedParam(queryString, paramName, value); 
+```
+```java
 findByNamedQuery(String hqlName) 
 this.getHibernateTemplate().findByNamedQuery("queryAllTask");
  <hibernate-mapping>
@@ -53,6 +60,8 @@ this.getHibernateTemplate().findByNamedQuery("queryAllTask");
                         ]]>
                   </query>
              </hibernate-mapping>
+```
+```java
 findByNamedQuery(String hqlNameObject value)  
 this .getHibernateTemplate().findByNamedQuery("queryByName", "nameValue");
  <hibernate-mapping>
@@ -63,7 +72,8 @@ this .getHibernateTemplate().findByNamedQuery("queryByName", "nameValue");
                         ]]>
                   </query>
              </hibernate-mapping>
-             
+```
+```java
 findByNamedQuery(String hqlName , Object[] value)  
 String[] values= new String[]{"test", "123"};
 this .getHibernateTemplate().findByNamedQuery("queryByNameAndPassword " , values);
