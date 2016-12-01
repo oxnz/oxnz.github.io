@@ -49,7 +49,7 @@ wget https://download.elastic.co/kibana/kibana/kibana-4.6.1-linux-x86_64.tar.gz
 wget http://nginx.org/download/nginx-1.8.1.tar.gz
 ```
 
-### Elastic Search
+### Elasticsearch
 
 #### Configure
 
@@ -87,8 +87,7 @@ node.data: false
 #### Exec
 
 ```shell
-export ES_HEAP_SIZE=10g
-./elasticsearch-2.3.1/bin/elasticsearch --daemonize
+ES_HEAP_SIZE=10g ./elasticsearch-2.3.1/bin/elasticsearch --daemonize
 ```
 
 #### Operations
@@ -101,7 +100,7 @@ curl 'localhost:9200/_cat/count'
 curl 'localhost:9200/_cat/fielddata?v'
 curl "$(hostname):9200/_cat/indices/logstash-*?v"
 # verify cluster status
-curl $(hostname):8200/_cat/health?v
+curl "$(hostname):8200/_cat/health?v"
 curl 'localhost:9200/_cat/master?v'
 curl 'localhost:9200/_cat/nodeattrs'
 curl '0.0.0.0:9200/_cat/nodes?v'
@@ -114,9 +113,9 @@ curl 'localhost:9200/_cat/thread_pool?v'
 curl 'localhost:9200/_cat/shards'
 curl 'http://localhost:9200/_cat/segments?v'
 curl 'localhost:9200/_cat/snapshots/repo1?v'
-GET _cluster/health?level=indices
-GET _cluster/health?level=shards
-GET _cluster/health?wait_for_status=green
+GET '_cluster/health?level=indices'
+GET '_cluster/health?level=shards'
+GET '_cluster/health?wait_for_status=green'
 ```
 
 #### Status
@@ -188,6 +187,22 @@ This scheduler allocates time slices to each process, and then optimizes the del
 This is inefficient for SSD, however, since there are no spinning platters involved. Instead, deadline or noop should be used instead. The deadline scheduler optimizes based on how long writes have been pending, while noop is just a simple FIFO queue.
 
 This simple change can have dramatic impacts. We’ve seen a 500-fold improvement to write throughput just by using the correct scheduler.
+
+**Detect Harddisk Type**
+
+Linux automatically detects SSD, and since kernel version 2.6.29, you may verify sda with:
+
+```shell
+cat /sys/block/sda/queue/rotational
+```
+
+You should get 1 for hard disks and 0 for a SSD.
+
+**Ramdisk**
+
+```shell
+mount -t tmpfs -o size=512m tmpfs /mnt/ramdisk
+```
 
 #### RAID
 
@@ -553,3 +568,4 @@ rsyslog3(client) --->|
 * [USING RSYSLOG MODULES](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/s1-using_rsyslog_modules.html)
 * [Tag Archives: logstash](http://www.rsyslog.com/tag/logstash/)
 * [How To Centralize Logs with Rsyslog, Logstash, and Elasticsearch on Ubuntu 14.04](https://www.digitalocean.com/community/tutorials/how-to-centralize-logs-with-rsyslog-logstash-and-elasticsearch-on-ubuntu-14-04)
+* [http://unix.stackexchange.com/questions/65595/how-to-know-if-a-disk-is-an-ssd-or-an-hdd](http://unix.stackexchange.com/questions/65595/how-to-know-if-a-disk-is-an-ssd-or-an-hdd)
