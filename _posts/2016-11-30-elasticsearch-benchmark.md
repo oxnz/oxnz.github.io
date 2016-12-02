@@ -207,14 +207,16 @@ HEAP_SIZE | Concurrency | Throughput | Avg | Min | Max      | Err
 10G       | 48          | 830        | 57  | 6   | 200/600  | 5.6%
 12G       | 48          | 600        | 60  | 7   | 200/1000 | 5.8%
 
-## NO. of shard and replica
+## shard, replica and segment
+
+![Elasticsearch Benchmark](/assets/elasticsearch-benchmark.svg)
 
 node (core x 48) x 7
 
 300,000 docs (600M)
 
-nshard | nreplica | nsegment | concurrency | delay
-:---------:|:------------:|:-----------:|:------:
+nshard | nreplica | nsegment | concurrency | latency
+:-----:|:--------:|:--------:|:-----------:|:-------:
 1 | 0 | 17 | 180 | 350
 1 | 1 | 17 | 360 | 175
 1 | 2 | 17 | 540 | 117
