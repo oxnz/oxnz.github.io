@@ -255,6 +255,7 @@ See [Performance Tuning] for more details about system optimization.
 	* Query Rewrite
 	* Load Balance
 	* Read/Write Splitting
+* MySQL Router
 
 ![MySQL Proxy](/assets/mysql-proxy.jpg)
 

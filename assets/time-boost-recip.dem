@@ -1,0 +1,38 @@
+#!/usr/bin/env gnuplot
+set terminal svg size 640,400 dynamic enhanced
+set title "TF/IDF vs BM25\ntfNorm(k1, b, fieldLength, avgFieldLength, termFreq) =\ntermFreq * (k1 + 1)/(termFreq + k1 * (1 - b + b * fieldLength/avgFieldLength))"
+set grid
+set tics font ', 8'
+set dummy t, y
+k = 10
+#plot log(t), sqrt(t), sqrt(2*t), sqrt(t/2), t/(t+k)
+tf(freq) = freq/(freq+k)
+tfNorm(k1, b, fieldLength, avgFieldLength, termFreq) = termFreq * (k1 + 1)/(termFreq + k1 * (1 - b + b * fieldLength/avgFieldLength))
+set xrange [0 : 10] noreverse nowriteback
+idf(docFreq) = log(1 + (docCount - docFreq + 0.5)/(docFreq + 0.5))
+recip(m, a, b, x) = a/(m*x+b)
+set yrange [0:]
+set tics nomirror
+#plot k=1, tf(t), k=2, tf(t), k=3, tf(t), k=10, tf(t)
+#plot docCount=8000, idf(t), log(docCount/(t+1))
+#plot 1/sqrt(t)
+set key bottom
+plot tfNorm(1.2, 0.75, 700, 1000, t) smooth acsplines, \
+tfNorm(1.0, 0.75, 700, 1000, t) smooth acsplines, \
+tfNorm(1.2, 0.50, 700, 1000, t) smooth acsplines
+#decay(x) = 0.367879 + 0.00282121 * (x < 86400 ? 99 : (x < 3*86400 ? 95 : (x < 7*86400 ? 85 : (x < 15*86400 ? 70 : (x < 30*86400 ? 50 : (x < 90*86400 ? 30 : (x < 180*86400 ? 20 : (x < 360*86400 ? 10 : (x < 24*30*86400 ? 5 : 0))))))))) + 0.0035 * (x < 864000 ? 100 : (x < 30*86400 ? 85 : (x < 45*86400 ? 75 : (x < 90*86400 ? 50 : 0))))
+ts=1483265199
+set xrange [0:86400*30*12*2]
+set x2range [0:86400*30*6]
+set xtics
+set ylabel 'boost' offset 2, 0
+set xlabel 'content length'
+#plot m=3.16*(10**-11), a=0.08, b=0.05, recip(t*1000)
+#plot decay(t), 100*86400/(100*86400+t), decay(t)*decay(t), sqrt(decay(t)), sqrt(100*86400/(100*86400+t)), m=3.16*(10**-11), a=0.08, b=0.05, recip(t*1000)
+#set yrange [:2]
+rnd(x) = (x*10 - floor(x*10)) > 5.0 ? ceil(x) : floor(x)
+#plot recip(1, 30*86400, 30*86400, t), recip(1, 100*86400, 100*86400, t), recip(1, 30*86400, 30*86400, t)**0.5, recip(1, 100*86400, 100*86400, t)**2.0, \
+#recip(1, 100*86400, 100*86400, exp(rnd(log(t)))), \
+#recip(1, 120*86400, 100*86400, t)
+#plot sample [0:10] '+' using (t):(sin(t)):xtic(sprintf("%d", t)) with lines
+

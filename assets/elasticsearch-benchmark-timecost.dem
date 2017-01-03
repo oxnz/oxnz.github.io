@@ -1,0 +1,14 @@
+#!/usr/bin/env gnuplot
+set terminal svg size 640,400 dynamic enhanced
+set title "Elasticsearch Benchmark\nTimecost with hits, score and collector"
+set xlabel "search hits"
+set ylabel "timecost"
+set ytics nomirror
+set xtics nomirror rotate by -90
+set tics font ", 8"
+set xtic offset -0.7, 0
+set key left
+set style data linespoints
+plot "< sort -n relation.dat" using 1:2:xtic(1) title columnheader(2), \
+for [i=3:4] '' using 1:i title columnheader(i)
+

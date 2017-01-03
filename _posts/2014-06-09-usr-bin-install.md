@@ -3,18 +3,21 @@ layout: post
 title: /usr/bin/install
 type: post
 categories: []
-tags: []
+tags: 'install'
 ---
 
-## 作用
+## Introduction
 
 install命令的作用是安装或升级软件或备份数据，它的使用权限是所有用户。
 
-## 格式
+## Syntax
 
-* install [选项]... 来源 目的地
-* install [选项]... 来源... 目录
-* install －d [选项]... 目录...
+```shell
+install [OPTION]... [-T] SOURCE DEST
+install [OPTION]... SOURCE... DIRECTORY
+install [OPTION]... -t DIRECTORY SOURCE...
+install [OPTION]... -d DIRECTORY...
+```
 
 在前两种格式中，会将复制至或将多个文件复制至已存在的，同时设定
 
@@ -22,7 +25,7 @@ install命令的作用是安装或升级软件或备份数据，它的使用权�
 
 <!--more-->
 
-## 主要参数
+## Options
 
 * --backup[=CONTROL]: 为每个已存在的目的地文件进行备份。
 * -b: 类似 －－backup，但不接受任何参数。
@@ -39,7 +42,7 @@ install命令的作用是安装或升级软件或备份数据，它的使用权�
 * --help: 显示此帮助信息并离开。
 * --version: 显示版本信息并离开。
 
-如:
+## Examples
 
 ```shell
 # 创建目录/root同时设定权限等

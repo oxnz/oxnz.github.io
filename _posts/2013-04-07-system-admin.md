@@ -589,6 +589,21 @@ $ nc localhost 80
 POST / HTTP/1.1
 ```
 
+## Session Management
+
+### kick user
+
+```shell
+# pause user
+pkill -STOP -u oxnz
+# resume user
+pkill -CONT -u oxnz
+# kick out
+pkill -KILL -u oxnz
+# kill all java processes owned by oxnz
+pkill -KILL -u oxnz java
+```
+
 ## References
 
 * [Red Hat Enterprise Linux 5.1 Deployment Guide](https://www.centos.org/docs/5/html/5.1/Deployment_Guide/index.html)

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Advanced Vim Tutor
+tags: vim
 ---
 
 ```

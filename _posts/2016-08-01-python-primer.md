@@ -721,6 +721,13 @@ console.setFormatter(formatter)
 logging.getLogger(__name__).addHandler(console)
 ```
 
+```python
+logger = logging.getLogger(__file__)
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+logging.addHandler(console)
+```
+
 #### syslog
 
 ```python
@@ -839,6 +846,10 @@ sys	0m0.012s
 ```
 
 #### cProfile
+
+```shell
+python -m cProfile -s cumtime script.py
+```
 
 ```shell
 python -m cProfile script.py

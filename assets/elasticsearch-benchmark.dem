@@ -1,0 +1,22 @@
+#!/usr/bin/env gnuplot
+set terminal svg size 640,400 dynamic enhanced
+set title "Elasticsearch Benchmark\nnode (core x 48 x 2.3G, mem x 30G), docs (301502, 607M)"
+set auto x
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid border -1
+set xtic rotate by -90 scale 0
+set xtic offset -0.7, 0
+set datafile separator '|'
+set tics font ", 8"
+set xlabel 'shared/replica/segment' offset 0, 2
+set ylabel 'concurrency' offset 2
+set ytics nomirror
+set y2tics
+set y2label 'latency' offset -2
+set autoscale y2
+set grid y
+fmt = "%d%d%d"
+plot 'immigration.dat' using 4 ti col, \
+'immigration.dat' using 5:xtic(sprintf("%d/%d/%d", $1, $2, $3)) ti col axes x1y2
+

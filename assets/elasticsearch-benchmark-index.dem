@@ -1,0 +1,15 @@
+#!/usr/bin/env gnuplot
+set terminal svg size 640,400 dynamic enhanced
+set title "Elasticsearch Benchmark\nIndex (5 nodes, 5 shards, 0 repliaca)"
+set key left
+set xlabel "time"
+set xtics format "%tM:%tS" time
+set ylabel "docs (count)"
+set y2label "size (gb)"
+set y2range [0:]
+set y2tics
+set tics nomirror font ",8"
+set grid
+plot "< grep -v health index.dat" using 0:7 title "docs" smooth acsplines, \
+'' using 0:9 title "store size" axes x1y2 smooth acsplines
+
