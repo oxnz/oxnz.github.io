@@ -1,8 +1,8 @@
-<header class="site-header">
+<header class="site-header" role="banner">
 
   <div class="wrapper">
 
-    <a class="site-title" href="{{ site.baseurl }}/">
+    <a class="site-title" href="{{ "/" | relative_url}}">
       <span class="tech">Tech</span><span class="stack">Stack</span>
     </a>
 
@@ -21,9 +21,9 @@
         {% unless p.lang %}
           {% if p.title %}
             {% if p.url == page.url %}
-              <span class="page-link">{{ p.title }}</span>
+              <span class="page-link">{{ p.title | escape }}</span>
             {% else %}
-              <a class="page-link" href="{{ p.url | prepend: site.baseurl }}">{{ p.title }}</a>
+              <a class="page-link" href="{{ p.url | relative_url }}">{{ p.title | escape }}</a>
             {% endif %}
           {% endif %}
         {% endunless %}

@@ -1,0 +1,30 @@
+---
+# theme: whisper extends minima
+---
+@import 'minima';
+
+// Our variables
+$base-font-family: 'Avenir Next', proxima-nova, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+$background-color-light: #ffffff;
+$background-color-dark: #f8f8f8;
+
+$border-color:	   #ededed;
+
+$red-color:		   #dd1144;
+$red-color-light:  lighten($red-color, 40%);
+$red-color-dark:   darken($red-color, 25%);
+
+$purple-color:     #45197b;
+$purple-color-light: lighten($purple-color, 40%);
+$purple-color-dark: darken($purple-color, 25%);
+
+// Import partials from `sass_dir` (defaults to `_sass`)
+@import
+    "base",
+    "layout",
+    "custom"
+;
+
+@import 'css/font-awesome.min.css';
+@import 'css/proxima-nova.css';
