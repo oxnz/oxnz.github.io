@@ -14,9 +14,9 @@ github_username:  oxnz
 # Build settings
 markdown: kramdown
 theme: minima
-#google_analytics: UA-36798974-2
-#disqus:
-#  shortname: oxnz
+google_analytics: UA-36798974-2
+disqus:
+  shortname: oxnz
 
 # Conversion
 timezone: Asia/Shanghai
