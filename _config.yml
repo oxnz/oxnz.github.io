@@ -44,8 +44,6 @@ defaults:
         login: oxnz
         email: yunxinyi@gmail.com
         display_name: oxnz
-      categories: [misc]
-      tags: [misc]
   -
     scope:
       path: ""

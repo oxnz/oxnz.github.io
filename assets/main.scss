@@ -1,29 +1,47 @@
 ---
 # theme: whisper extends minima
 ---
-@import 'minima';
 
 // Our variables
-$base-font-family: 'Avenir Next', proxima-nova, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$post-font-family: 'Avenir Next', proxima-nova, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$code-font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 
 $background-color-light: #ffffff;
 $background-color-dark: #f8f8f8;
+$brand-color: #2a7ae2;
 
 $border-color:	   #ededed;
 
-$red-color:		   #dd1144;
-$red-color-light:  lighten($red-color, 40%);
-$red-color-dark:   darken($red-color, 25%);
+$red-color-spring: #f60c3e;
+$red-color-autumn: #e71434;
+$red-color: #dd1144;
+$red-color-light: lighten($red-color, 40%);
+$red-color-dark: darken($red-color, 25%);
 
-$purple-color:     #45197b;
+$orange-color: #ea4335;
+
+$green-color: #008000;
+$green-color-light: #159957;
+$green-color-dark: #173f4f;
+$green-color-darker: darken($green-color-dark, 8%);
+
+$blue-color-light: lighten($blue-color, 8%);
+$blue-color: #005571;
+$blue-color-dark: darken($blue-color, 8%);
+
+$purple-color: #45197b;
 $purple-color-light: lighten($purple-color, 40%);
 $purple-color-dark: darken($purple-color, 25%);
 
+$black-color-light: #212a34;
+
+@import 'minima';
+
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import
-    "base",
-    "layout",
-    "custom"
+    'base',
+    'layout',
+    'custom'
 ;
 
 @import 'css/font-awesome.min.css';

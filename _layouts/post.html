@@ -5,7 +5,7 @@ layout: default
 
   <header class="post-header">
     <h1 class="post-title" itemprop="name headline">{{ page.title | escape }}</h1>
-    <h4 class="post-meta">
+    <div class="post-meta">
     <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%B %-d %Y" }}</time>
     {% if page.author %}
     by <a href="mailto:{{ post.author.email }}"><span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{% if page.author.display_name %}{{ page.author.display_name }}{% else %}{{ page.author }}{% endif %}</span></span></a>
@@ -18,7 +18,7 @@ layout: default
     tagged with
     <span class="tag">{{ page.tags | join: '</span>, <span class="tag">' }}</span>
     {% endif %}
-    </p>
+    </div>
   </header>
 
   <div class="post-content" itemprop="articleBody">
@@ -28,7 +28,7 @@ layout: default
 </article>
 
 <div class="comments">
-  {% if site.disqus.shortname %}
+  {% if jekyll.environment == 'production' and site.disqus.shortname %}
     {% include disqus_comments.html %}
   {% endif %}
 </div>
