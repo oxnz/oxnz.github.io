@@ -485,6 +485,26 @@ logical backup  | mysqldump
 0. chagne buffer merge
 0. perge
 
+### mysqlimport
+
+mysqlimport is a command-line interface to the LOAD DATA INFILE statement, for which you need the 'FILE' privilege (server level).
+
+Also, to use LOAD DATA INFILE on server files, you must have the FILE privilege.
+
+You can avoid the need for the extra privileges by using the --local parameter to mysqlimport:
+
+```
+--local, -L
+           Read input files locally from the client host.
+```
+
+```shell
+mysqlimport --default-character-set=utf8 \
+	--local --replace \
+	--fields-terminated-by=' ' --lines-terminated-by='\n' \
+	users user.txt
+```
+
 ## High Availability
 
 See [High Availability] for more details.

@@ -1080,7 +1080,10 @@ def post_process(response)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', threaded=True, processes=10)
 ```
+
+[flask.Flask.run](http://flask.pocoo.org/docs/0.12/api/#flask.Flask.run) accepts additional keyword arguments (`**options`) that it forwards to [werkzeug.serving.run_simple](http://werkzeug.pocoo.org/docs/serving/#werkzeug.serving.run_simple) - two of those arguments are threaded (which can set to True to enable threading) and processes (which can set to a number greater than one to have werkzeug spawn more than one process to handle requests).
 
 #### Django
 
@@ -1250,6 +1253,12 @@ Standard commands:
 * bdist_wininst     create an executable installer for MS Windows
 * upload            upload binary package to PyPI
 * check             perform some checks on the package
+
+### PIP
+
+```shell
+python -m pip download --dest=/path/to/dest elasticsearch
+```
 
 ## `pythonrc`
 

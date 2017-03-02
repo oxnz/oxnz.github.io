@@ -116,6 +116,17 @@ show status like 'Innodb_buffer%';
 show engine innodb status;
 ```
 
+```sql
+select
+  table_name as 'table',
+  round(data_length/1024.0/1024.0, 2) as 'data (MB)',
+  round(index_length/1024.0/1024.0, 2) as 'index (MB)'
+from
+  information_schema.TABLES
+where
+  table_schema = 'VIEWS';
+```
+
 can be used to get similar information
 
 ## Performance Schema
