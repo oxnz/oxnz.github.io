@@ -4,7 +4,6 @@ title: C/C++ Basics
 type: post
 categories:
 - C++
-tags: []
 ---
 
 ## Table of Contents
