@@ -296,7 +296,7 @@ Ensure that the min(Xms) and max(Xmx) sizes are the same to prevent the heap fro
 0. service unavailable
 
    ```shell
-   $ curl http://tc-ite-babel01.tc.baidu.com:9200/_cat/count?pretty=true
+   $ curl http://1.2.3.4:9200/_cat/count?pretty=true
    ```
 
    ```json
