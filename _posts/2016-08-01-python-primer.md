@@ -774,6 +774,17 @@ dis.dis(func)
 
 ## Concurrency
 
+### multiprocessing
+
+```python
+import contextlib
+import multiprocessing as mp
+
+nproc = 48
+with contextlib.closing(mp.Pool(nproc)) as pool:
+    rows = sum(pool.map(match, tables), ())
+```
+
 ### thread
 
 thread exception handling ?
@@ -1061,6 +1072,43 @@ class Task(object):
 ### HTTP Reqeusts
 
 [Requests HTTP library for Python](/2016/05/13/python-requests/)
+
+### MySQL
+
+```python
+import MySQLdb
+import contextlib
+import pandas as pd
+
+fields = ('email', 'create_time', 'update_time')
+with contextlib.closing(MySQLdb.connect(host='10.20.30.40', port=1234, user='root', pass='root', db='test')) as conn:
+    with conn as cursor:
+        cursor.execute('SELECT {} from test'.format(fields)
+    rows = cursor.fetchall()
+    df = pd.DataFrame(rows, columns=fields)
+    pd.set_option('display.expand_frame_repr', False)
+    print df[df.email != None]
+```
+
+### Kafka
+
+#### Consumer
+
+```python
+from kafka import KafkaConsumer
+
+topic = 'requests'
+brokers = '10.20.30.40:9092,11.22.33.44:9092'
+consumer = KafkaConsumer(topic, group_id='cg', bootstrap_servers=brokers, auto_offset_reset='earliest')
+for msg_raw in consumer:
+    print 'timestamp: {} partition: {} offset: {}'.format(time.strftime('%F %T', time.localtime(int(msg_raw.timestamp/1000.0))), msg_raw.partition, msg_raw.offset)
+    msg = Message()
+    if msg.ParseFromString(msg_raw.value): proc(msg)
+# batch mode
+batch = consumer.pool(10000, 10000)
+count = sum(map(len, batch.values()))
+if count != 0: proc(batch)
+```
 
 ### Web
 
