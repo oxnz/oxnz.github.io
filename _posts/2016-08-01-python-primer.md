@@ -874,6 +874,20 @@ ncalls  tottime  percall  cumtime  percall filename:lineno(function)
      1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
 ```
 
+Output to file
+
+```shell
+python -m cProfile -o perf.stat script.py
+```
+
+analysis
+
+```python
+import pstats
+p = pstats.Stat('perf.stat')
+p.sort_stats('cumulative').print_stats(20)
+```
+
 ## Design
 
 ### Object-oriented
@@ -895,6 +909,17 @@ Request <-----> Controller
 * Controller
 
 ### Package vs Module
+
+Modules are simple Python files with the `.py` extension, which implement a set of functions.
+
+>
+A module is a file containing Python definitions and statements. The filename is the module name.
+
+>
+Packages are a way of structuring Python's module namespace by using "dotted module names".
+
+Packages are namespaces which contain multiple packages and modules themselves. The are simply directories contain a file
+called `__init__.py`. The file indicate that the directory is a Python package.
 
 ### Design-Patterns
 
@@ -1080,6 +1105,53 @@ with contextlib.closing(MySQLdb.connect(host='10.20.30.40', port=1234, user='roo
     df = pd.DataFrame(rows, columns=fields)
     pd.set_option('display.expand_frame_repr', False)
     print df[df.email != None]
+```
+
+```python
+import traceback
+import contextlib
+import mysql.connector
+
+config = {
+        'database': {
+            'host': '127.0.0.1',
+            'port': 3306,
+            'user': 'test',
+            'password': '',
+            'database': 'test',
+            'raise_on_warnings': True,
+            }
+        }
+
+def insert():
+    query = 'INSERT INTO test (name, email) VALUES (%s, %s)'
+    with contextlib.closing(mysql.connector.connect(**config['database'])) as cnx:
+        with contextlib.closing(cnx.cursor(dictionary=True)) as cursor:
+            cursor.execute(query, ('y', 'y@z.com'))
+        cnx.commit()
+
+def select():
+    try:
+        with contextlib.closing(mysql.connector.connect(**config['database'])) as cnx:
+            with contextlib.closing(cnx.cursor()) as cursor:
+                query = 'SELECT name, email FROM test'
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                for (name, email) in rows:
+                    print('{}: {}'.format(name, email))
+    except mysql.connector.Error as e:
+        if e.errno == mysql.connector.errorcode.ER_ACCESS_DENIED_ERROR:
+            print(e)
+        traceback.print_exc()
+    except Exception as e:
+        traceback.print_exc()
+
+def main():
+    insert()
+    select()
+
+if __name__ == '__main__':
+    main()
 ```
 
 ### Kafka
@@ -1366,6 +1438,31 @@ else:
     if os.path.exists(histfile):
         readline.read_history_file(histfile)
     del readline, os, atexit, histfile, savehist
+```
+
+## import
+
+### sys.path
+
+```python
+import sys.path
+sys.path.insert(0, 'path/to/prepend')
+sys.path.append('/path/to/append')
+```
+
+### site
+
+```python
+import site
+site.addsitedir('/path/to/another/sitedir') # will append to sys.path
+```
+
+### multi-version
+
+```python
+import pkg_resources
+pkg_resources.require('protobuf=3.1.0')
+import google.protobuf
 ```
 
 ## References
