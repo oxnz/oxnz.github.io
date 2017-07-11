@@ -564,6 +564,14 @@ suit = itertools.product(['A', 'B'], (1, 2, 3))
 
 ### Generator Expressions
 
+```python
+it = iter(range(100))
+chunk_iter = (list(itertools.islice(it, 3)) for _ in itertools.repeat(0))
+[(_[0],[i for i in _[1]]) for _ in itertools.groupby(range(10), lambda x: x/3)]
+it = itertools.count()
+[(_[0],[i for i in _[1]]) for _ in itertools.groupby(range(10), lambda x: _it.next()/4)]
+```
+
 ### Sorting
 
 #### Soring with DSW
@@ -1350,7 +1358,9 @@ setup(name = 'platformz',
 )
 ```
 
+```sh
 python setup.py --help-commands
+```
 
 Standard commands:
 
@@ -1376,8 +1386,11 @@ Standard commands:
 
 ### PIP
 
+Wheel
+
 ```shell
 python -m pip download --dest=/path/to/dest elasticsearch
+pip --user install django
 ```
 
 ## `pythonrc`
@@ -1475,3 +1488,6 @@ import google.protobuf
 * [Writing the Setup Script](https://docs.python.org/2/distutils/setupscript.html)
 * [reStructuredText Primer](http://www.sphinx-doc.org/en/stable/rest.html)
 * [用Python做科学计算](http://old.sebug.net/paper/books/scipydoc/index.html)
+* [Sharing Your Labor of Love: PyPI Quick and Dirty](https://hynek.me/articles/sharing-your-labor-of-love-pypi-quick-and-dirty/)
+* [Python Packaging User Guide](https://python-packaging-user-guide.readthedocs.io)
+* [Python Packaging User Guide](https://packaging.python.org/distributing/)
