@@ -29,3 +29,17 @@ actions = ({
 } for msg in pbmsgs)
 elasticsearch.helpers.bulk(es, actions)
 ```
+
+## Cautious
+
+field type `long` is `signed long`, would overflow with MySQL bigint
+
+```sql
+select cast(id as CHAR(20)) from `table`
+```
+
+`CONVERT(expr, type)` ==(equivalent) `CAST(expr as type)`
+
+## References
+
+* [elasticsearch-py.readthedocs.io](http://elasticsearch-py.readthedocs.io/en/master/helpers.html)
