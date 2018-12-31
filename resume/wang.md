@@ -7,7 +7,7 @@ lang: zh_CN
 categories: []
 tags: []
 redirect_from:
-  - /cv/zh_CN/
+  - /cv/wang/
 ---
 
 <link href="/css/resume.css" rel="stylesheet" />
