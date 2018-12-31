@@ -35,6 +35,14 @@ body {
 	font-variant: small-caps;
 }
 
+/**
+ * body
+ */
+
+main.page-content p {
+	line-height: 1.75;
+}
+
 .post-title {
 	font-size: 40px;
 	color: $blue-color;
@@ -65,10 +73,6 @@ article.post h6 {
 .post-content h5,
 .post-content h6 {
 	color: $blue-color;
-}
-
-.post-content p {
-	line-height: 1.75;
 }
 
 /**
@@ -181,7 +185,7 @@ dt {
 }
 
 table {
-	border: 1px solid #eee;
+	border: none;
 	margin: $spacing-unit / 2 auto;
 }
 
@@ -197,6 +201,7 @@ td {
 
 th,
 td {
+	border: none;
 	padding: 8px;
 }
 
