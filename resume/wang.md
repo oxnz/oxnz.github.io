@@ -117,13 +117,13 @@ ul.proj-list > li > ul {
 
 ## 专业技能
 
-1、JAVA：熟练使用Java语言、具有良好的编码习惯和代码调试能力；
-2、前端：熟悉JavaScript、JQuery、Vue.js等；
-3、熟练使用Spring 、Spring MVC，SpringBoot、Hibernate、Mybatis等框架技术进行WEB程序开发；
-4、了解并能熟练使用Dubbo、zookeeper、Spring Cloud等框架进行分布式开发 
-5、数据库：熟悉Oracle、MySql、postgreSQL、Redis等主流数据库；
-6、熟悉Linux常用基本操作 熟悉基本；jenkins 、docker等安装使用 Nginx
-7、可编写简单Python脚本等。
+* JAVA：熟练使用Java语言、具有良好的编码习惯和代码调试能力；
+* 前端：熟悉JavaScript、JQuery、Vue.js等；
+* 熟练使用Spring 、Spring MVC，SpringBoot、Hibernate、Mybatis等框架技术进行WEB程序开发；
+* 了解并能熟练使用Dubbo、zookeeper、Spring Cloud等框架进行分布式开发 
+* 数据库：熟悉Oracle、MySql、postgreSQL、Redis等主流数据库；
+* 熟悉Linux常用基本操作 熟悉基本；jenkins 、docker等安装使用 Nginx
+* 可编写简单Python脚本等。
 
 
 ## 教育背景
