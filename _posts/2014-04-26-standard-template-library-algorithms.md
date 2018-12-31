@@ -29,15 +29,14 @@ A range is any sequence of objects that can be accessed through iterators or poi
 
 ## Non-modifying sequence operations
 
-C++STL的非变易算法（Non-mutating algorithms）是一组不破坏操作数据的模板函数，用来对序列数据进行逐个处理、元素查找、子序列搜索、统计和匹配。
+C++ STL Non-mutating algorithms 是一组不破坏操作数据的模板函数，用来对序列数据进行逐个处理、元素查找、子序列搜索、统计和匹配。
 
 ### all_of
 
 ```cpp
 template<class InputIterator, class UnaryPredicate>
-  bool all_of (InputIterator first, InputIterator last, UnaryPredicate pred) {
-	for (; first != last; ++first)
-		if (!pred(*first)) return false;
+bool all_of(InputIterator first, InputIterator last, UnaryPredicate pred) {
+	for (; first != last; ++first) if (!pred(*first)) return false;
 	return true;
 }
 ```
@@ -46,9 +45,8 @@ template<class InputIterator, class UnaryPredicate>
 
 ```cpp
 template<class InputIterator, class UnaryPredicate>
-  bool any_of (InputIterator first, InputIterator last, UnaryPredicate pred) {
-	for (; first != last; ++first)
-		if (pred(*first)) return true;
+bool any_of (InputIterator first, InputIterator last, UnaryPredicate pred) {
+	for (; first != last; ++first) if (pred(*first)) return true;
 	return false;
 }
 ```
@@ -58,8 +56,7 @@ template<class InputIterator, class UnaryPredicate>
 ```cpp
 template<class InputIterator, class UnaryPredicate>
   bool none_of (InputIterator first, InputIterator last, UnaryPredicate pred) {
-	for (; first != last; ++first)
-		if (pred(*first)) return false;
+	for (; first != last; ++first) if (pred(*first)) return false;
 	return true;
 }
 ```
@@ -68,9 +65,8 @@ template<class InputIterator, class UnaryPredicate>
 
 ```cpp
 template<class InputIterator, class Function>
-  Function for_each(InputIterator first, InputIterator last, Function fn) {
-	for (; first != last; ++first)
-		fn(*first);
+Function for_each(InputIterator first, InputIterator last, Function fn) {
+	for (; first != last; ++first) fn(*first);
 	return fn; // return std::move(fn); for C++11
 }
 ```
@@ -102,31 +98,41 @@ int main(int argc, char *argv[]) {
 
 #### functor
 
-仿函数,又或叫做函数对象，是STL（标准模板库）六大组件（容器、配置器、迭代器、算法、配接器、仿函数）之一；仿函数虽然小，但却极大的拓展了算法的功能，几乎所有的算法都有仿函数版本。例如，查找算法find_if就是对find算法的扩展，标准的查找是两个元素向等就找到了，但是什么是相等在不同情况下却需要不同的定义，如地址相等，地址和邮编都相等，虽然这些相等的定义在变，但算法本身却不需要改变，这都多亏了仿函数。 仿函数之所以叫做函数对象，是因为仿函数都是定义了()函数运算操作符的类。
+仿函数,又或叫做函数对象，是STL（标准模板库）六大组件（
+
+* 容器、
+* 配置器、
+* 迭代器、
+* 算法、
+* 配接器、
+* 仿函数）之一；
+
+仿函数虽然小，但却极大的拓展了算法的功能，几乎所有的算法都有仿函数版本。
+例如，查找算法`find_if`就是对`find`算法的扩展，标准的查找是两个元素相等就找到了，但是什么是相等在不同情况下却需要不同的定义，如地址相等，地址和邮编都相等，虽然这些相等的定义在变，但算法本身却不需要改变，这都多亏了仿函数。 仿函数之所以叫做函数对象，是因为仿函数都是定义了()函数运算操作符的类。
+
+另外 functor 比普通函数效率要高，因为默认內联。同样內联的还有lambda。`inline` 需要编译器支持才行。
 
 ### find
 
 
-find算法用于查找等于某值的元素。它在迭代器区间[first , last)上查找等于value值的元素，如果迭代器iter所指的元素满足 *iter == value ，则返回迭代器iter，未找则返回last。
+find算法用于查找等于某值的元素。它在迭代器区间[first , last)上查找等于value值的元素，如果迭代器iter所指的元素满足 `*iter == value` ，则返回迭代器iter，未找则返回last。
 
 ```cpp
 template<class InputIterator, class T>
-  InputIterator find(InputIterator first, InputIterator last, const T& val) {
-	for (; first != last; ++first)
-		if (*first == val) return first;
+InputIterator find(InputIterator first, InputIterator last, const T& val) {
+	for (; first != last; ++first) if (*first == val) return first;
 	return last;
 }
 ```
 
 ### find_if
 
-find_if算法 是find的一个谓词判断版本，它利用返回布尔值的谓词判断pred，检查迭代器区间[first, last)上的每一个元素，如果迭代器iter满足pred(*iter) == true，表示找到元素并返回迭代器值iter；未找到元素，则返回last。
+find_if算法 是find的一个谓词判断版本，它利用返回布尔值的谓词判断pred，检查迭代器区间[first, last)上的每一个元素，如果迭代器iter满足`pred(*iter) == true`，表示找到元素并返回迭代器值iter；未找到元素，则返回last。
 
 ```cpp
 template<class InputIterator, class UnaryPredicate>
-  InputIterator find_if(InputIterator first, InputIterator last, UnaryPredicate pred) {
-	for (; first != last; ++first)
-		if (pred(*first)) return first;
+InputIterator find_if(InputIterator first, InputIterator last, UnaryPredicate pred) {
+	for (; first != last; ++first) if (pred(*first)) return first;
 	return last;
 }
 ```
@@ -135,9 +141,8 @@ template<class InputIterator, class UnaryPredicate>
 
 ```cpp
 template<class InputIterator, class UnaryPredicate>
-  InputIterator find_if_not(InputIterator first, InputIterator last, UnaryPredicate pred) {
-	for (; first != last; ++first)
-		if (!pred(*first)) return first;
+InputIterator find_if_not(InputIterator first, InputIterator last, UnaryPredicate pred) {
+	for (; first != last; ++first) if (!pred(*first)) return first;
 	return last;
 }
 ```
@@ -148,7 +153,7 @@ find_end算法在一个序列中搜索出最后一个与另一序列匹配的子
 
 ```cpp
 template<class ForwardIterator1, class ForwardIterator2>
-  InputIterator1 find_end(InputIterator1 first1, ForwardIterator1 last1,
+InputIterator1 find_end(InputIterator1 first1, ForwardIterator1 last1,
 	InputIterator2 first2, InputIterator2 last2) {
 	if (first2 == last2) return last1;
 
@@ -170,11 +175,11 @@ template<class ForwardIterator1, class ForwardIterator2>
 
 ### find_first_of
 
-find_first_of算法用于查找位于某个范围之内的元素。它有两个使用原型，均在迭代器区间[first1, last1)上查找元素*i，使得迭代器区间[first2, last2)有某个元素*j，满足*i ==*j或满足二元谓词函数comp(*i, *j)==true的条件。元素找到则返回迭代器i，否则返回last1。
+find_first_of算法用于查找位于某个范围之内的元素。它有两个使用原型，均在迭代器区间[first1, last1)上查找元素*i，使得迭代器区间[first2, last2)有某个元素*j，满足`*i ==*j`或满足二元谓词函数`comp(*i, *j)==true`的条件。元素找到则返回迭代器i，否则返回last1。
 
 ```cpp
 template<class InputIterator, class ForwardIterator>
-  InputIterator find_first_of (InputIterator first1, InputIterator last1,
+InputIterator find_first_of (InputIterator first1, InputIterator last1,
 	ForwardIterator first2, ForwardIterator last2) {
 	for (; first1 != last1; ++first1)
 		for (ForwardIterator it = first2; it != last2; ++it)
@@ -185,11 +190,11 @@ template<class InputIterator, class ForwardIterator>
 
 ### adjacent_find
 
-adjacent_find算法用于查找相等或满足条件的邻近元素对。其有两种函数原型：一种在迭代器区间[first , last)上查找两个连续的元素相等时，返回元素对中第一个元素的迭代器位置。另一种是使用二元谓词判断binary_pred，查找迭代器区间[first , last)上满足binary_pred条件的邻近元素对，未找到则返回last。</p>
+adjacent_find算法用于查找相等或满足条件的邻近元素对。其有两种函数原型：一种在迭代器区间[first , last)上查找两个连续的元素相等时，返回元素对中第一个元素的迭代器位置。另一种是使用二元谓词判断binary_pred，查找迭代器区间[first , last)上满足binary_pred条件的邻近元素对，未找到则返回last。
 
 ```cpp
 template<class ForwardIterator>
-  ForwardIterator adjacent_find(ForwardIterator first, ForwardIterator last) {
+ForwardIterator adjacent_find(ForwardIterator first, ForwardIterator last) {
 	if (first != last) {
 		ForwardIterator next = first;
 		++next;
@@ -207,11 +212,10 @@ template<class ForwardIterator>
 
 ```cpp
 template<class InputIterator, class T>
-  typename iterator_traits<InputIterator>::difference_type
+typename iterator_traits<InputIterator>::difference_type
 	count(InputIterator first, InputIterator last, const T& val) {
 	typename iterator_traits<InputIterator>::difference_type cnt = 0;
-	for (; first != last; ++first)
-		if (*first == val) ++cnt;
+	for (; first != last; ++first) if (*first == val) ++cnt;
 	return cnt;
 }
 ```
@@ -220,9 +224,12 @@ template<class InputIterator, class T>
 
 ### mismatch
 
+>
+`first2`: Input iterator to the initial position of the second sequence. Up to as many elements as in the range [first1,last1) can be accessed by the function.
+
 ```cpp
 template<class InputIterator1, class InputIterator2>
-  pair<InputIterator1, InputIterator2>
+pair<InputIterator1, InputIterator2>
 	mismatch(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
 	while ((first1 != last1) && (*first1 == *first2)) { ++first1; ++first2; }
 	return std::make_pair(first1, first2);
@@ -235,7 +242,7 @@ equal算法类似于mismatch，equal算法也是逐一比较两个序列的元�
 
 ```cpp
 template<class InputIterator1, class InputIterator2>
-  bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
+bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
 	while (first1 != last1) {
 		if (!(*first1 == *first2)) return false;
 		++first1; ++first2;
@@ -248,7 +255,7 @@ template<class InputIterator1, class InputIterator2>
 
 ```cpp
 template<class InputIterator1, class InputIterator2>
-  bool is_permutation(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
+bool is_permutation(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
 	std::tie(first1, first2) = std::mismatch(first1, last1, first2);
 	if (first1 == last1) return true;
 	InputIterator2 last2 = first2;
@@ -273,15 +280,17 @@ search算法函数在一个序列中搜索与另一序列匹配的子序列。�
 
 ## Modifying sequence operations
 
-所谓变易算法(Mutating algorithms)就是一组能够修改容器元素数据的模板函数，可进行序列数据的复制，变换等。
+Mutating algorithms 就是一组能够修改容器元素数据的模板函数，可进行序列数据的复制，变换等。
 
 ### copy
 
+>
+The ranges shall not overlap in such a way that result points to an element in the range [first,last). For such cases, see `copy_backward`.
+
 ```cpp
 template<class InputIterator, class OutputIterator>
-  OutputIterator copy(InputIterator first, InputIterator last, OutputIterator dest) {
-	while (first != last)
-		*dest++ = *first++;
+OutputIterator copy(InputIterator first, InputIterator last, OutputIterator dest) {
+	while (first != last) *dest++ = *first++;
 	return oit;
 }
 ```
@@ -296,19 +305,14 @@ vector<int>::iterator it;
 v.resize(7);   // important!, otherwise the operation would fail
 
 // usage 1
-copy (arr, arr+7, v.begin());
+copy(arr, arr+7, v.begin());
 
 // usage 2: shift left one element
 copy(arr + 1, arr + 7, arr);
-```
 
-从上例中我们看出copy算法可以很简单地将一个容器里面的元素复制至另一个目标容器中，上例中代码特别要注意一点就是myvector.resize(7);这行代码，在这里一定要先为vector分配空间，否则程序会崩，这是初学者经常犯的一个错误。其实copy函数最大的威力是结合标准输入输出迭代器的时候，我们通过下面这个示例就可以看出它的威力了。
-
-```cpp
-vector<int> v;
-// usage 1: read array
+// usage 3: read array
 copy(istream_iterator<int>(cin), istream_iterator<int>(), back_inserter(v));
-// usage2: output elements, sep by space
+// usage 4: output elements, sep by space
 copy(v.begin(), v.end(), ostream_iterator<int>(cout, " "));
 ```
 
@@ -316,9 +320,8 @@ copy(v.begin(), v.end(), ostream_iterator<int>(cout, " "));
 
 ```cpp
 template<class InputIterator first, class Size, class OutputIterator>
-  OutputIterator copy_n (InputIterator first, Size n, OutputIterator dest) {
-	while (n-- > 0)
-		*dest++ = *first++;
+OutputIterator copy_n (InputIterator first, Size n, OutputIterator dest) {
+	while (n-- > 0) *dest++ = *first++;
 	return dest;
 }
 ```
@@ -327,10 +330,9 @@ template<class InputIterator first, class Size, class OutputIterator>
 
 ```cpp
 template<class InputIterator, class OutputIterator, class UnaryPredicate>
-  OutputIterator copy_if (InputIterator first, InputIterator last,
+OutputIterator copy_if (InputIterator first, InputIterator last,
 	OutputIterator dest, UnaryPredicate pred) {
-	for (; first != last; ++first)
-		if (pred(*first)) *dest++ = *first;
+	for (; first != last; ++first) if (pred(*first)) *dest++ = *first;
 	return dest;
 }
 ```
@@ -339,7 +341,7 @@ template<class InputIterator, class OutputIterator, class UnaryPredicate>
 
 ```cpp
 template<class BidirectionalIterator1, class BidirectionalIterator2>
-  BidirectionalIterator2 copy_backward(BidirectionalIterator1 first,
+BidirectionalIterator2 copy_backward(BidirectionalIterator1 first,
 	BidirectionalIterator1 last, BidirectionalIterator2 dest) {
 	while (last != first) *(--dest) = *(--last);
 	return dest;
@@ -362,10 +364,8 @@ Note: 泛型算法swap和容器中的swap成员函数是两个不同角度和概
 ```cpp
 template <class T>
 void swap(T& a, T& b) {
-	// C++98
-	T c(a); a=b; b=c;
-	// C++11
-	T c(std::move(a)); a = std::move(b); b = std::move(c);
+	T c(a); a=b; b=c; // C++98
+	T c(std::move(a)); a = std::move(b); b = std::move(c); // C++11
 }
 template <class T, size_t N>
 void swap(T (&a)[N], T (&b)[N]) {
@@ -397,20 +397,18 @@ template<class ForwardIterator1, class ForwardIterator2>
 
 ```cpp
 template <class InputIterator, class OutputIterator, class UnaryOperator>
-  OutputIterator transform ( InputIterator first1, InputIterator last1,
+OutputIterator transform ( InputIterator first1, InputIterator last1,
                              OutputIterator result, UnaryOperator op ) {
-	while (first1 != last1)
-		*result++ = op(*first1++);
+	while (first1 != last1) *result++ = op(*first1++);
 	return result;
 }
 
 template <class InputIterator1, class InputIterator2,
            class OutputIterator, class BinaryOperator>
-  OutputIterator transform ( InputIterator1 first1, InputIterator1 last1,
+OutputIterator transform ( InputIterator1 first1, InputIterator1 last1,
                              InputIterator2 first2, OutputIterator result,
                              BinaryOperator binary_op ) {
-	while (!first1 != last1)
-		*result++ = binary_op(*first1++, *first2++);
+	while (!first1 != last1) *result++ = binary_op(*first1++, *first2++);
 	return result;
 }
 ```
@@ -421,6 +419,11 @@ Applies an operation sequentially to the elements of one (1) or two (2) ranges a
 std::string s("hello world");
 std::transform(s.begin(), s.end(), [](unsigned char c) { return std::toupper(c); });
 std::cout << s << std::endl;
+std::vector<int> ips({132113135, 20111113, 91111117, 411122226});
+transform(ips.begin(), ips.end(), ostream_iterator<string>(cout, "\n"), [](uint32_t ip) {
+    return to_string((ip & 0xFF000000)>>24) + '.' + to_string((ip & 0x00FF0000)>>16) + '.'
+        + to_string((ip & 0x0000FF00)>>8) + '.'	+ to_string((ip & 0x000000FF)>>0);
+});
 ```
 
 ### replace
@@ -429,12 +432,9 @@ std::cout << s << std::endl;
 
 ```cpp
 template<class ForwardIterator, class T>
-  void replace(ForwardIterator first, ForwardIterator last,
+void replace(ForwardIterator first, ForwardIterator last,
     const T& old_value, const T& new_value) {
-	while (first != last) {
-		if (*first == *last) *first = new_value;
-		++first;
-	}
+	for (; first != last; ++first) if (*first == old_value) *first = new_value;
 }
 ```
 
@@ -446,10 +446,8 @@ Copies the elements in the range [first,last) to the range beginning at result, 
 template<class InputIterator, class OutputIterator, class T>
 replace_copy(InputIterator first, InputIterator last, OutputIterator result,
 	const T& old_value, const T& new_value) {
-	while (first != last) {
-		*result = (*first == old_value) ? new_value : *first;
-		++first; ++result;
-	}
+	for (; first != last; ++first)
+		*result++ = (*first == old_value) ? new_value : *first;
 	return result;
 }
 ```
@@ -471,10 +469,7 @@ Assigns val to the first n elements of the sequence pointed by first.
 
 ```cpp
 template<class ForwardIterator, class Size, class T>
-void fill_n(ForwardIterator first, Size n, const T& val) {
-	while (n-- > 0)
-		*first++ = val;
-}
+void fill_n(ForwardIterator first, Size n, const T& val) { while (n-- > 0) *first++ = val; }
 ```
 
 ### generate
@@ -482,8 +477,7 @@ void fill_n(ForwardIterator first, Size n, const T& val) {
 ```cpp
 template <class ForwardIterator, class Generator>
 void generate (ForwardIterator first, ForwardIterator last, Generator gen) {
-	while (first != last)
-		*first++ = gen();
+	while (first != last) *first++ = gen();
 }
 ```
 
@@ -491,14 +485,16 @@ Example
 
 ```cpp
 class RandomScoreGenerator {
+	std::mt19937 generator; // non-const(internal state changes)
+				// DO NOT use across threads
+	std::uniform_int_distribution<int> distribution;
 public:
-	RandomScoreGenerator() { std::srand(std::time(0)); }
-	int operator()() { return std:rand() % 100; }
+	RandomScoreGenerator() : distribution(0, 100) { }
+	int operator()() { return distribution(generator); }
 };
-
 void fill_with_random_score(std::vector<int>& scores, size_t n) {
 	scores.resize(n);
-	std::generate(v.begin(), v.end(), RandomScoreGenerator());
+	std::generate(scores.begin(), scores.end(), RandomScoreGenerator());
 }
 ```
 
@@ -507,8 +503,7 @@ void fill_with_random_score(std::vector<int>& scores, size_t n) {
 ```cpp
 template <class ForwardIterator, class Size, class Generator>
 void generate_n(ForwardIterator first, Size n, Generator gen) {
-	while (n-- > 0)
-		*first++ = gen();
+	while (n-- > 0) *first++ = gen();
 }
 ```
 
@@ -520,11 +515,7 @@ Transforms the range [first,last) into a range with all the elements that compar
 template <class ForwardIterator, class T>
 ForwardIterator remove(ForwardIterator first, ForwardIterator last, const T& val) {
 	ForwardIterator result = first;
-	while (first != last) {
-		if (!(*first == val))
-			*result++ = move(*first);
-		++first;
-	}
+	for (; first != last; ++first) if (!(*first == val)) *result++ = move(*first);
 	return result;
 }
 ```
@@ -537,8 +528,7 @@ Copies the elements in the range [first,last) to the range beginning at result, 
 template<class InputIterator, class OutputIterator, class T>
 OutputIterator remove_copy(InputIterator first, InputIterator last,
 	OutputIterator dest, const T& val) {
-	for (; first != last; ++first)
-		if (!(*first == val)) *dest++ = *first;
+	for (; first != last; ++first) if (!(*first == val)) *dest++ = *first;
 	return dest;
 }
 ```
@@ -616,6 +606,8 @@ void rotate(ForwardIterator first, ForwardIterator middle, ForwardIterator last)
 
 ### random_shuffle
 
+**considered harmful**
+
 ```cpp
 template <class RandomAccessIterator, class RandomNumberGenerator>
 void random_shuffle(RandomAccessIterator first, RandomAccessIterator last,
@@ -640,6 +632,9 @@ void shuffle(RandomAccessIterator first, RandomAccessIterator last, URNG& g) {
 	}
 }
 ```
+
+>
+The gist is, std::shuffle is an improvement over std::random_shuffle, and C++ programmers should prefer using the former.
 
 ## Partitions
 
@@ -880,7 +875,7 @@ A heap is a way to organize the elements of a range that allows for fast retriev
 
 Sorts the elements in the heap range [first,last) into ascending order.
 
-The elements are compared using operator< for the first version, and comp for the second, which shall be the same as used to construct the heap.
+The elements are compared using `operator<` for the first version, and `comp` for the second, which shall be the same as used to construct the heap.
 
 The range loses its properties as a heap.
 
@@ -910,18 +905,14 @@ RandomAccessIterator is_heap_until(RandomAccessIterator first, RandomAccessItera
 
 ```cpp
 template<class T>
-  const T& min(const T& a, const T& b) {
-	return !(b < a) ? a : b;
-}
+const T& min(const T& a, const T& b) { return !(b < a) ? a : b; }
 ```
 
 ### max
 
 ```cpp
 template<class T, class Compare>
-  const T& max(const T& a, const T& b, Compare comp) {
-	return comp(a, b) ? b : a;
-}
+const T& max(const T& a, const T& b, Compare comp) { return comp(a, b) ? b : a; }
 ```
 
 ### minmax
@@ -1004,3 +995,4 @@ bool prev_permutation(BidirectionalIterator first, BidirectionalIterator last) {
 ## References
 
 * [http://www.cplusplus.com/reference/algorithm/](http://www.cplusplus.com/reference/algorithm/)
+* [https://channel9.msdn.com/Events/GoingNative/2013/rand-Considered-Harmful](https://channel9.msdn.com/Events/GoingNative/2013/rand-Considered-Harmful)

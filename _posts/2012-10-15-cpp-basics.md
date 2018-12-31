@@ -158,13 +158,13 @@ C++ 的多态性具体体现在运行和编译两个方面：
 
 答案：当类中含有const、reference 成员变量；基类的构造函数都需要初始化表。</p>
 
-## C++ 是不是类型安全的？
+## C++ 不是类型安全的
 
-答案：不是。两个不同类型的指针之间可以强制转换（用reinterpret cast)。C#是类型安全的。</p>
+两个不同类型的指针之间可以强制转换（用reinterpret cast)。C#是类型安全的。
 
 ## main 函数执行以前，还会执行什么代码？
 
-答案：全局对象的构造函数会在main 函数之前执行。</p>
+答案：全局对象的构造函数会在main 函数之前执行
 
 ## 内存分配方式
 
@@ -172,8 +172,8 @@ C++ 的多态性具体体现在运行和编译两个方面：
 2. 在栈上创建。在执行函数时，函数内局部变量的存储单元都可以在栈上创建，函数执行结束时这些存储单元自动被释放。栈内存分配运算内置于处理器的指令集。
 3. 从堆上分配，亦称动态内存分配。程序在运行的时候用 malloc 或 new 申请任意多少的内存，程序员自己负责在何时用 free 或 delete 释放内存。动态内存的生存期由程序员决定，使用非常灵活，但问题也最多。
 
-<p>当一个类A 中没有任何成员变量与成员函数,这时sizeof(A)的值是多少？<br />
-答案：如果不是零，请解释一下编译器为什么没有让它为零。（Autodesk）肯定不是零。举个反例，如果是零的话，声明一个class A[10]对象数组，而每一个对象占用的空间是零，这时就没办法区分A[0],A[1]…了。</p>
+当一个类A 中没有任何成员变量与成员函数,这时sizeof(A)的值是多少？
+答案：如果不是零，请解释一下编译器为什么没有让它为零。（Autodesk）肯定不是零。举个反例，如果是零的话，声明一个class A[10]对象数组，而每一个对象占用的空间是零，这时就没办法区分A[0],A[1]…了。
 
 ## C++ 中的 4 种类型转换方式
 
@@ -259,20 +259,21 @@ cautious:
 
 下例中的 cout 具有 private 的拷贝构造函数，所以会导致编译错误：
 
-```
-#define bad_macro(param) ({cout << param << endl;})
+```cpp
+#define malformed_macro(param) ({cout << param << endl;})
+#define normal_macro(param) do {cout << param << endl;} while (false)
 
 int main(void) {
-    bad_macro("hello");
-    return 0;
+	normal_macro("hello");
+	malformed_macro("hello");
+	return 0;
 }
+```
 
-$ g++     test.cpp   -o test
-In file included from test.cpp:2:
-In file included from /Library/Developer/CommandLineTools/usr/bin/../lib/c++/v1/iostream:39:
-/Library/Developer/CommandLineTools/usr/bin/../lib/c++/v1/streambuf:559:48: error:
+```shell
+$ clang++     test.cpp   -o test
+Call to deleted constructor of 'std::__1::basic_ostream<char>'
       base class 'std::__1::ios_base' has private copy constructor
-...
 ```
 
 ## 用变量 a 给出下面的定义
@@ -317,10 +318,7 @@ h) int (*a[10])(int); // An array of 10 pointers to functions that take an integ
 
 ### const
 
-我只要一听到被面试者说："const意味着常数"，我就知道我正在和一个业余者打交道。
-去年 Dan Saks 已经在他的文章里完全概括了 const 的所有用法，因此 ESP (译者：Embedded Systems Programming)的每一位读者应该非常熟悉 const 能做什么和不能做什么。
-
-如果你从没有读到那篇文章，只要能说出 const 意味着"只读"就可以了。
+const 意味着"只读"
 尽管这个答案不是完全的答案，但我接受它作为一个正确的答案。（如果你想知道更详细的答案，仔细读一下 Saks 的文章吧。）
 如果应试者能正确回答这个问题，我将问他一个附加的问题：下面的声明都是什么意思？
 
@@ -346,6 +344,10 @@ int const * a const;
 3. 合理地使用关键字 const 可以使编译器很自然地保护那些不希望被改变的参数，防止其被无意的代码修改。简而言之，这样可以减少 bug 的出现。
 
 ### volatile
+
+The volatile keyword informs the compiler that a variable may change without the compiler knowing it. Variables that are declared as volatile will not be cached by the compiler, and will thus always be read from memory.
+
+The mutable keyword can be used for class member variables. Mutable variables are allowed to change from within const member functions of the class.
 
 一个定义为 volatile 的变量是说这变量可能会被意想不到地改变，这样，编译器就不会去假设这个变量的值了。
 精确地说就是，优化器在用到这个变量时必须每次都小心地重新读取这个变量的值，而不是使用保存在寄存器里的备份。
@@ -702,13 +704,11 @@ loop(0, 0, sizeof(a)/sizeof(a[0]);
 ## References
 
 * http://www.msra.cn/Articles/ArticleItem.aspx?Guid=8ae08db5-e059-44bf-9181-83d40a67dadb<br />
-* http://blog.sina.com.cn/s/blog_4caedc7a010094at.html<br />
-* http://msbop.openjudge.cn/bop2013/</p>
-* http://zhangzhibiao02005.blog.163.com/blog/#m=0&t=1&c=fks_087064084080086069093083094095087081082069083094084067<br />
+* http://blog.sina.com.cn/s/blog_4caedc7a010094at.html
+* http://msbop.openjudge.cn/bop2013/
 http://zhedahht.blog.163.com/blog/static/2541117420072114478828/</p>
-* C++ singleton: http://patmusing.blog.163.com/blog/static/135834960201002322226231/?fromdm&fr</p>
+* C++ singleton: http://patmusing.blog.163.com/blog/static/135834960201002322226231/?fromdm&fr
 * http://zhedahht.blog.163.com/blog/static/2541117420105146828433/
-* pthread:
 * http://zhangzhibiao02005.blog.163.com/blog/static/37367820201181134256898/
 * 换类成员方法指针到普通函数指针
 * http://www.cnblogs.com/xianyunhe/archive/2011/11/26/2264709.html

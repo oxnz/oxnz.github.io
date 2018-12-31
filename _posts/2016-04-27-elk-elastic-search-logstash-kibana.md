@@ -53,6 +53,36 @@ wget http://nginx.org/download/nginx-1.8.1.tar.gz
 
 ### Elasticsearch
 
+split-brain
+
+In an elasticsearch cluster, it’s the responsability of the master node to allocate the shards equally among the nodes.
+
+* `discovery.zen.minimum_master_nodes`
+	* This parameter determines how many nodes need to be in communication in order to elect a master
+	* The rule of thumb is that this should be set to `N/2 + 1`, where N is the number of nodes in the cluster.
+* `discovery.zen.ping.timeout`
+	* It’s default value is 3 seconds
+	* it determines how much time a node will wait for a response from other nodes in the cluster before assuming that the node has failed
+	* Slightly increasing the default value is definitely a good idea in the case of a slower network.
+* schedule a check for the response of the `/_nodes` endpoint for each node.
+	* This endpoint returns a short status report of all the nodes in the cluster. If two nodes are reporting a different composition of the cluster, it’s a telltale sign that a split-brain situation has occurred.
+
+#### Zen Discovery
+
+Zen discovery is the built-in, default, discovery module for Elasticsearch. It provides unicast and file-based discovery, and can be extended to support cloud environments and other forms of discovery via plugins.
+
+* Ping
+	* As part of the ping process a master of the cluster is either elected or joined to.
+	* This is the process where a node uses the discovery mechanisms to find other nodes.
+	* When the master node stops or has encountered a problem, the cluster nodes start pinging again and will elect a new master. This pinging round also serves as a protection against (partial) network failures where a node may unjustly think that the master has failed. In this case the node will simply hear from other nodes about the currently active master.
+* Unicast
+	* Unicast 是一个点对点的传播。在这里为了提高效率可以指定某些 host 作为 Gossip Router。也就是会采用 Gossip Protocol 的方式进行 unicast
+* Master Election
+	* Nodes can be excluded from becoming a master by setting node.master to false. Note, once a node is a client node (`node.client` set to true), it will not be allowed to become a master (`node.master` is automatically set to false).
+* Fault Detection
+* Cluster State Updates
+* No Master Block
+
 #### Configure
 
 `elasticsearch-2.3.1/config/elasticsearch.yml`
