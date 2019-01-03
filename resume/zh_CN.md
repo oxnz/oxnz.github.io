@@ -69,7 +69,7 @@ Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
 
 * #### [腾讯视频](https://v.qq.com/)搜索项目
 
-	为腾讯视频提供基于 Elasticisearch 的实时索引和在线检索服务。
+	为腾讯视频提供基于 Elasticsearch 的实时索引和在线检索服务。
 	主要负责引擎相关研发工作。
 
 	* 集群设计，压力测试，性能优化 (jmeter,Python,Shell)
@@ -128,12 +128,13 @@ Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
 语言: C\C++, Python, Shell, Java
 <br/>
 软件:
+Elasticsearch, Logstash, Kibana;
 MySQL,
-Elastic Search, Logstash, Kibana;
+Kafka,
 Git, Subversion
 Solr;
 <br/>
-系统: Linux (RHEL/Ubuntu) > Unix (FreeBSD, OS X) > Windows Server
+系统: Linux (RHEL/CentOS) > Unix (FreeBSD, Mac OS) > Windows Server
 <br/>
 英语: CET-6 536, 经常参与 stackoverflow 回答讨论问题, 并著有英文博客
 

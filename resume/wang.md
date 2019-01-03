@@ -10,7 +10,7 @@ redirect_from:
   - /cv/wang/
 ---
 
-<link href="/css/resume.css" rel="stylesheet" />
+<link href="/assets/css/resume.css" rel="stylesheet" />
 <style type="text/css">
 .post-content {
 	font-family: 'PingFang SC', 'Hiragino Sans GB',
