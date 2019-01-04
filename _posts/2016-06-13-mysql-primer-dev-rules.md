@@ -172,6 +172,9 @@ bigint    | 8     | -9223372036854775808/9223372036854775807/1844674407370955161
 
 ### INSERT
 
+>
+With ON DUPLICATE KEY UPDATE, the affected-rows value per row is 1 if the row is inserted as a new row, 2 if an existing row is updated, and 0 if an existing row is set to its current values. If you specify the CLIENT_FOUND_ROWS flag to mysql_real_connect() when connecting to mysqld, the affected-rows value is 1 (not 0) if an existing row is set to its current values.
+
 ```sql
 INSERT INTO table (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;
 ```

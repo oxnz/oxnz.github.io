@@ -546,9 +546,9 @@ for idx, elem in enumerate(arr, 0):
 
 ### String Formatting
 
-Prefer format than %
+Prefer `format` than `%`
 
-#### % String Formatting
+#### `%` String Formatting
 
 #### `format`
 
@@ -563,6 +563,14 @@ suit = itertools.product(['A', 'B'], (1, 2, 3))
 ```
 
 ### Generator Expressions
+
+```python
+it = iter(range(100))
+chunk_iter = (list(itertools.islice(it, 3)) for _ in itertools.repeat(0))
+[(_[0],[i for i in _[1]]) for _ in itertools.groupby(range(10), lambda x: x/3)]
+it = itertools.count()
+[(_[0],[i for i in _[1]]) for _ in itertools.groupby(range(10), lambda x: _it.next()/4)]
+```
 
 ### Sorting
 
@@ -721,6 +729,13 @@ console.setFormatter(formatter)
 logging.getLogger(__name__).addHandler(console)
 ```
 
+```python
+logger = logging.getLogger(__file__)
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+logging.addHandler(console)
+```
+
 #### syslog
 
 ```python
@@ -758,6 +773,17 @@ dis.dis(func)
 ```
 
 ## Concurrency
+
+### multiprocessing
+
+```python
+import contextlib
+import multiprocessing as mp
+
+nproc = 48
+with contextlib.closing(mp.Pool(nproc)) as pool:
+    rows = sum(pool.map(match, tables), ())
+```
 
 ### thread
 
@@ -841,6 +867,10 @@ sys	0m0.012s
 #### cProfile
 
 ```shell
+python -m cProfile -s cumtime script.py
+```
+
+```shell
 python -m cProfile script.py
 	 3 function calls in 0.000 seconds
 
@@ -850,6 +880,20 @@ ncalls  tottime  percall  cumtime  percall filename:lineno(function)
      1    0.000    0.000    0.000    0.000 api.py:27(<module>)
      1    0.000    0.000    0.000    0.000 api.py:27(test)
      1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+```
+
+Output to file
+
+```shell
+python -m cProfile -o perf.stat script.py
+```
+
+analysis
+
+```python
+import pstats
+p = pstats.Stat('perf.stat')
+p.sort_stats('cumulative').print_stats(20)
 ```
 
 ## Design
@@ -873,6 +917,17 @@ Request <-----> Controller
 * Controller
 
 ### Package vs Module
+
+Modules are simple Python files with the `.py` extension, which implement a set of functions.
+
+>
+A module is a file containing Python definitions and statements. The filename is the module name.
+
+>
+Packages are a way of structuring Python's module namespace by using "dotted module names".
+
+Packages are namespaces which contain multiple packages and modules themselves. The are simply directories contain a file
+called `__init__.py`. The file indicate that the directory is a Python package.
 
 ### Design-Patterns
 
@@ -1025,11 +1080,107 @@ class Task(object):
 
 ## Frameworks
 
+### Numerical
+
+* scipy and numpy
+* pandas
+* SymPy
+* matplotlib
+* Traits
+* Chaco
+* TVTK
+* VPython
+* OpenCV
+
 ### Http
 
 ### HTTP Reqeusts
 
 [Requests HTTP library for Python](/2016/05/13/python-requests/)
+
+### MySQL
+
+```python
+import MySQLdb
+import contextlib
+import pandas as pd
+
+fields = ('email', 'create_time', 'update_time')
+with contextlib.closing(MySQLdb.connect(host='10.20.30.40', port=1234, user='root', pass='root', db='test')) as conn:
+    with conn as cursor:
+        cursor.execute('SELECT {} from test'.format(fields)
+    rows = cursor.fetchall()
+    df = pd.DataFrame(rows, columns=fields)
+    pd.set_option('display.expand_frame_repr', False)
+    print df[df.email != None]
+```
+
+```python
+import traceback
+import contextlib
+import mysql.connector
+
+config = {
+        'database': {
+            'host': '127.0.0.1',
+            'port': 3306,
+            'user': 'test',
+            'password': '',
+            'database': 'test',
+            'raise_on_warnings': True,
+            }
+        }
+
+def insert():
+    query = 'INSERT INTO test (name, email) VALUES (%s, %s)'
+    with contextlib.closing(mysql.connector.connect(**config['database'])) as cnx:
+        with contextlib.closing(cnx.cursor(dictionary=True)) as cursor:
+            cursor.execute(query, ('y', 'y@z.com'))
+        cnx.commit()
+
+def select():
+    try:
+        with contextlib.closing(mysql.connector.connect(**config['database'])) as cnx:
+            with contextlib.closing(cnx.cursor()) as cursor:
+                query = 'SELECT name, email FROM test'
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                for (name, email) in rows:
+                    print('{}: {}'.format(name, email))
+    except mysql.connector.Error as e:
+        if e.errno == mysql.connector.errorcode.ER_ACCESS_DENIED_ERROR:
+            print(e)
+        traceback.print_exc()
+    except Exception as e:
+        traceback.print_exc()
+
+def main():
+    insert()
+    select()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Kafka
+
+#### Consumer
+
+```python
+from kafka import KafkaConsumer
+
+topic = 'requests'
+brokers = '10.20.30.40:9092,11.22.33.44:9092'
+consumer = KafkaConsumer(topic, group_id='cg', bootstrap_servers=brokers, auto_offset_reset='earliest')
+for msg_raw in consumer:
+    print 'timestamp: {} partition: {} offset: {}'.format(time.strftime('%F %T', time.localtime(int(msg_raw.timestamp/1000.0))), msg_raw.partition, msg_raw.offset)
+    msg = Message()
+    if msg.ParseFromString(msg_raw.value): proc(msg)
+# batch mode
+batch = consumer.pool(10000, 10000)
+count = sum(map(len, batch.values()))
+if count != 0: proc(batch)
+```
 
 ### Web
 
@@ -1057,7 +1208,10 @@ def post_process(response)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', threaded=True, processes=10)
 ```
+
+[flask.Flask.run](http://flask.pocoo.org/docs/0.12/api/#flask.Flask.run) accepts additional keyword arguments (`**options`) that it forwards to [werkzeug.serving.run_simple](http://werkzeug.pocoo.org/docs/serving/#werkzeug.serving.run_simple) - two of those arguments are threaded (which can set to True to enable threading) and processes (which can set to a number greater than one to have werkzeug spawn more than one process to handle requests).
 
 #### Django
 
@@ -1204,7 +1358,9 @@ setup(name = 'platformz',
 )
 ```
 
+```sh
 python setup.py --help-commands
+```
 
 Standard commands:
 
@@ -1228,6 +1384,100 @@ Standard commands:
 * upload            upload binary package to PyPI
 * check             perform some checks on the package
 
+### PIP
+
+Wheel
+
+```shell
+python -m pip download --dest=/path/to/dest elasticsearch
+pip --user install django
+```
+
+## `pythonrc`
+
+```python
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+#
+# Copyright (c) 2013-2015 Z
+# All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
+try:
+    import readline
+    import rlcompleter
+    import os
+    import atexit
+except ImportError as e:
+    print(e)
+else:
+    class TabCompleter(rlcompleter.Completer):
+        """Completer that support tab indenting"""
+        def complete(self, text, state):
+            if not text:
+                return ('\t', None)[state]
+            else:
+                return rlcompleter.Completer.complete(self, text, state)
+    readline.set_completer(TabCompleter().complete)
+    if 'libedit' in readline.__doc__:
+        """Complete filename (tab key)
+        http://minix1.woodhull.com/manpages/man3/editline.3.html"""
+        readline.parse_and_bind('bind ^I rl_complete')
+    else:
+        readline.parse_and_bind('tab: complete')
+    histfile = os.path.expanduser('~/.pyhistory')
+    def savehist(histfile=histfile):
+        import readline
+        readline.write_history_file(histfile)
+    atexit.register(savehist)
+    if os.path.exists(histfile):
+        readline.read_history_file(histfile)
+    del readline, os, atexit, histfile, savehist
+```
+
+## import
+
+### sys.path
+
+```python
+import sys.path
+sys.path.insert(0, 'path/to/prepend')
+sys.path.append('/path/to/append')
+```
+
+### site
+
+```python
+import site
+site.addsitedir('/path/to/another/sitedir') # will append to sys.path
+```
+
+### multi-version
+
+```python
+import pkg_resources
+pkg_resources.require('protobuf=3.1.0')
+import google.protobuf
+```
+
 ## References
 
 * [Code Like a Pythonista: Idiomatic Python](http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html)
@@ -1237,3 +1487,7 @@ Standard commands:
 * [Documenting Your Project Using Sphinx](http://pythonhosted.org/an_example_pypi_project/sphinx.html)
 * [Writing the Setup Script](https://docs.python.org/2/distutils/setupscript.html)
 * [reStructuredText Primer](http://www.sphinx-doc.org/en/stable/rest.html)
+* [用Python做科学计算](http://old.sebug.net/paper/books/scipydoc/index.html)
+* [Sharing Your Labor of Love: PyPI Quick and Dirty](https://hynek.me/articles/sharing-your-labor-of-love-pypi-quick-and-dirty/)
+* [Python Packaging User Guide](https://python-packaging-user-guide.readthedocs.io)
+* [Python Packaging User Guide](https://packaging.python.org/distributing/)

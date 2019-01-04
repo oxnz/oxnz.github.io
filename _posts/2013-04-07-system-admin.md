@@ -297,7 +297,7 @@ find $MYPLACE -type mosquito | xargs kill
 删除创建时间在 30 天之前的文件:
 
 ```shell
-find . -type f -ctime +30 -ctime -3600 -exec rm {} ;
+find . -type f -ctime +30 -ctime -3600 -exec rm {} \;
 ```
 
 统计当前目录下所有 jpg 文件的尺寸:
@@ -522,13 +522,87 @@ ramdisk 作用可以将缓存放到其中，这样延长硬盘寿命，并且提
 
 	基本上只要打以下指令，就能将 /tmp 绑定到 /dev/shm
 
-       ```shell
-       mkdir /dev/shm/tmp
-       chmod 1777 /dev/shm/tmp
-       mount --bind /dev/shm/tmp /tmp
-       ```
+   ```shell
+   mkdir /dev/shm/tmp
+   chmod 1777 /dev/shm/tmp
+   mount --bind /dev/shm/tmp /tmp
+   ```
 
 	注: 为何是用 mount --bind 绑定，而不是 ln -s 软连结，原因是 /tmp 目录，系统不给删除。
+
+## Security
+
+### View History Commands
+
+```console
+[oxnz@rmbp:RTFSC:141]$ HISTTIMEFORMAT='%FT%T ' history|head
+1  2016-11-16T02:02:03 vi FastInt/FastInt.c 
+2  2016-11-16T02:02:03 make
+```
+
+### File/Directory Encription
+
+```shell
+tar czf - * | openssl enc -e -aes256 -out secured.tar.gz
+openssl enc -d -aes256 -in secured.tar.gz | tar zxf - -C dstdir
+```
+
+### Remote Shell
+
+#### Server
+
+```shell
+CMDPIPE="/tmp/cmdpipe"
+rm -f "$CMDPIPE"
+mkfifo "$CMDPIPE"
+cat "$CMDPIPE" | /bin/sh -i 2>&1 | nc -l 127.0.0.1 1234 > "$CMDPIPE"
+```
+
+#### Client
+
+```shell
+nc "$HOSTNAME" 1234
+```
+
+## Date Sync
+
+```shell
+sudo yum install chrony
+sudo systemctl enable chronyd
+sudo systemctl start chronyd
+```
+
+## Data Transmission
+
+```shell
+nc -l 1234 > file.out
+nc 192.168.249.174 1234 < filename.in
+```
+
+## nc http request
+
+```shell
+$ nc localhost 80
+GET / HTTP/1.1
+^D
+$ nc localhost 80
+POST / HTTP/1.1
+```
+
+## Session Management
+
+### kick user
+
+```shell
+# pause user
+pkill -STOP -u oxnz
+# resume user
+pkill -CONT -u oxnz
+# kick out
+pkill -KILL -u oxnz
+# kill all java processes owned by oxnz
+pkill -KILL -u oxnz java
+```
 
 ## References
 
@@ -536,6 +610,7 @@ ramdisk 作用可以将缓存放到其中，这样延长硬盘寿命，并且提
 * [Tuning and Optimizing Red Hat Enterprise Linux For Oracle 9i and 10g Databases](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/5/html/Tuning_and_Optimizing_Red_Hat_Enterprise_Linux_for_Oracle_9i_and_10g_Databases)
 * [kernel.txt](https://www.kernel.org/doc/Documentation/sysctl/kernel.txt)
 * [Linux kernel profiling with perf](https://perf.wiki.kernel.org/index.php/Tutorial)
+* [Linux and Unix nc command](http://www.computerhope.com/unix/nc.htm)
 
 *[RAID]: Redundant Array of Independent Disks
 *[iSCSI]: Internet Small Computer System Interface

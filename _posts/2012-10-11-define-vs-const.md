@@ -1,14 +1,10 @@
 ---
 layout: post
 title: define vs const
-date: 2012-10-11 12:22:20 +0800
 type: post
 categories:
 - C
 - C++
-tags: []
-meta:
-  _edit_last: '1'
 ---
 
 ## Introduction

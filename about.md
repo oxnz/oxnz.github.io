@@ -25,7 +25,7 @@ tags: []
 }
 </style>
 
-# Will Z
+<div class="LI-profile-badge"  data-version="v1" data-size="large" data-locale="en_US" data-type="vertical" data-theme="light" data-vanity="will-d-thomas"><a class="LI-simple-link" href='https://cn.linkedin.com/in/will-d-thomas?trk=profile-badge'>Pan Zhang</a></div>
 
 Server Side Software Engineer
 
@@ -34,3 +34,5 @@ Server Side Software Engineer
 #### Education
 
 [Wuhan University](http://www.whu.edu.cn/){:target='_blank'} &middot; Bachelor of Information Security &middot; 2011/09/01 - 2015/07/01
+
+<script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>

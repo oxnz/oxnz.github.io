@@ -107,7 +107,13 @@ require 'mercenary'
    tags: [socket]
    ```
 
-## Depolyment
+### Code Highlight
+
+```shell
+rougify list
+```
+
+## Deployment
 
 ### Travis CI
 
@@ -123,6 +129,27 @@ script: "bundle exec jekyll build"
 Then the Travis CI would automatically build after each `git push`.
 
 ## Adjust Styles
+
+### Theme
+
+edit `assets/main.scss`
+
+```css
+---
+# whisper extends minima
+---
+@import 'minima';
+```
+
+### Color
+
+```shell
+bundle exec sass -i
+>> lighten(#173f4f, 70%)
+#d8ecf4
+```
+
+### Customization
 
 add `_sass/_custom.scss`, edit `css/main.scss` to contains it:
 
@@ -156,24 +183,24 @@ First, export an xml file from wordpress use the Export submenu in Tools.
 
 Keep the default to export all and save the xml file locally.   You can then use jekyll import to retrieve all your posts. First you first need to install jekyll-import as it is not part of jekyll main gem:   
 
-{% highlight bash %}
+```shell
 gem install jekyll-import
-{% endhighlight %}
+```
 
 You can then use jekyll import. There are several options here. Here is the command that worked best for me:
 
-{% highlight shell %}
+```shell
 ruby -rubygems -e 'require "jekyll-import";
 JekyllImport::Importers::WordpressDotCom.run({
 	"source" => "wordpress.xml",
 	"no_fetch_images" => false,
 	"assets_folder" => "assets"
 })'
-{% endhighlight %}
+```
 
 After this, some there may be some drafts in the `_drafts` directory with encoded file names, so we need to rename them:
 
-{% highlight python %}
+```python
 import os
 import urllib
 
@@ -183,7 +210,7 @@ for subdir, dirs, files in os.walk('./_drafts'):
 		dst = './_drafts/{}'.format(urllib.unquote(f))
         print('{} -> {}'.format(src, dst)
         os.rename(src, dst)
-{% endhighlight %}
+```
 
 ## Edit posts
 
@@ -243,3 +270,4 @@ done
 * [Liquid for Designers](https://github.com/shopify/liquid/wiki/Liquid-for-Designers)
 * [Jekyll Cheatsheet](http://ricostacruz.com/cheatsheets/jekyll.html)
 * [kdramdown syntax](http://kramdown.gettalong.org/syntax.html)
+* [https://mmistakes.github.io/minimal-mistakes/docs/configuration/](https://mmistakes.github.io/minimal-mistakes/docs/configuration/)

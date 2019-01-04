@@ -12,6 +12,30 @@ tags: [stl]
 * TOC
 {:toc}
 
+## Iteartor Invalidation Rules
+
+Container/Operation | Insertion | Erasure | Resizing
+|--------------------|----------|---------
+**Sequence containers** ||
+vector | all iterators and references before the point of insertion are unaffected, unless the new container size is greater than the previous capacity (in which case all iterators and references are invalidated) | every iterator and reference at or after the point of erase is invalidated | as per insert/erase
+deque | all iterators and references are invalidated, unless the inserted member is at an end (front or back) of the deque (in which case all iterators are invalidated, but references to elements are unaffected) | erasing the last element invalidates only iterators and references to the erased elements and the past-the-end iterator; erasing the first element invalidates only iterators and references to the erased elements; erasing any other elements invalidates all iterators and references (including the past-the-end iterator) | as per insert/erase
+list| all iterators and references unaffected | only the iterators and references to the erased element is invalidated | as per insert/erase
+forward_list| all iterators and references unaffected (applies to insert_after) | only the iterators and references to the erased element is invalidated (applies to erase_after) | as per insert/erase
+array| (n/a) | (n/a) | (n/a)
+**Associative containers** ||
+[multi]{set,map}| all iterators and references unaffected | only iterators and references to the erased elements are invalidated
+**Unsorted associative containers** ||
+unordered_[multi]{set,map}|all iterators invalidated when rehashing occurs, but references unaffected [23.2.5/8]. Rehashing does not occur if the insertion does not cause the container's size to exceed z * B where z is the maximum load factor and B the current number of buckets. | only iterators and references to the erased elements are invalidated
+**Container adaptors** ||
+stack| inherited from underlying container| inherited from underlying container
+queue| inherited from underlying container| inherited from underlying container
+priority_queue| inherited from underlying container| inherited from underlying container
+
+### Note
+
+1. Unless otherwise specified (either explicitly or by defining a function in terms of other functions), invoking a container member function or passing a container as an argument to a library function shall not invalidate iterators to, or change the values of, objects within that container.
+2. no `swap()` function invalidates any references, pointers, or iterators referring to the elements of the containers being swapped. (Note: The `end()` iterator does not refer to any element, so it may be invalidated. —end note)
+
 ## 反向迭代器 (Reverse Iterator)
 
 定义
@@ -152,3 +176,7 @@ int main() {
     return 0;
 }
 ```
+
+## References
+
+* [https://stackoverflow.com/questions/6438086/iterator-invalidation-rules](https://stackoverflow.com/questions/6438086/iterator-invalidation-rules)

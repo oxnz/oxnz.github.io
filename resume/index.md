@@ -11,7 +11,7 @@ redirect_from:
   - /about-me/
 ---
 
-<link href="/css/resume.css" rel="stylesheet" />
+<link href="/assets/css/resume.css" rel="stylesheet" />
 
 [<i class="fa fa-language"></i>](/resume/zh_CN '简体中文')
 [<i class="fa fa-print"></i>](# 'Print Resume'){:onclick='window.print()'}

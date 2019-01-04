@@ -141,10 +141,26 @@ Insertion sort's advantage is that it only scans as many elements as needed to d
 Implementation
 
 ```c
-void insert_sort(int a[], int n) {
+void insertion_sort(int a[], int n) {
     for (int i = 1; i < n; ++i)
         for (int j = i; j > 0 && a[j] < a[j-1]; --j)
             swap(a[j-1], a[j]);
+}
+```
+
+```cpp
+template<typename RandomAccessIterator, typename Compare>
+void insertion_sort(RandomAccessIterator first, RandomAccessIterator last, Compare cmp) {
+	if (first == last) return;
+	for (RandomAccessIterator i = first+1; i != last; ++i)
+		for (RandomAccessIterator j = i; j != first and cmp(*j, *(j-1)); --j)
+			iter_swap(j, j-1);
+}
+
+template<typename RandomAccessIterator>
+void insertion_sort(RandomAccessIterator first, RandomAccessIterator last) {
+	typedef typename iterator_traits<RandomAccessIterator>::value_type T;
+	insertion_sort(first, last, less<T>());
 }
 ```
 
@@ -153,20 +169,24 @@ void insert_sort(int a[], int n) {
 * standard selection sort
 * tree (NlgN) (tournament sort)
 
+```cpp
+template<typename ForwardIterator>
+void selection_sort(ForwardIterator first, ForwardIterator last) {
+	if (first == last) return;
+	for (ForwardIterator i = first; i != last; ++i)
+		iter_swap(i, min_element(i, last));
+}
+```
+
 ```c
 void selection_sort(int *a, int len) {
     register int i, j, min, t;
     for(i = 0; i < len - 1; i ++) {
         min = i;
         //查找最小值
-        for(j = i + 1; j < len; j ++)
-            if(a[min] > a[j]) min = j;
+        for(j = i + 1; j < len; j ++) if(a[min] > a[j]) min = j;
         //交换
-        if(min != i) {
-            t = a[min];
-            a[min] = a[i];
-            a[i] = t;
-        }
+        if(min != i) swap(a[min], a[i]);
     }
 }
 ```
@@ -180,41 +200,65 @@ void selection_sort(int *a, int len) {
 
 ```cpp
 void shell_sort(int* a, int n) {
-    for (int gap = n; gap > 0; gap >>= 1) {
-        for (int i = gap; i < n; ++i) {             int tmp = a[i];             int j;             for (j = i - gap; j >= 0 &amp;&amp; a[j] > tmp; j -= gap) {
-                a[j+gap] = a[j];
-            }
-            a[j+gap] = tmp;
-        }
-    }
+	for (int gap = n; gap > 0; gap >>= 1) {
+		for (int i = gap; i < n; ++i) {
+			int tmp = a[i];
+			int j;
+			for (j = i - gap; j >= 0 and tmp < a[j]; j -= gap)
+				a[j+gap] = a[j];
+			a[j+gap] = tmp;
+		}
+	}
 }
 ```
 
 ### 快速排序 (quicksort)
 
-快速排序是由东尼·霍尔所发展的一种排序算法。在平均状况下，排序 n 个项目要Ο(n log n)次比较。在最坏状况下则需要Ο(n2)次比较，但这种状况并不常见。事实上，快速排序通常明显比其他Ο(n log n) 算法更快，因为它的内部循环（inner loop）可以在大部分的架构上很有效率地被实现出来。
+Ο(n log n) on average.
+O(n2) on worst case(rare occasion).
+事实上，快速排序通常明显比其他Ο(n log n) 算法更快，因为它的内部循环（inner loop）可以在大部分的架构上很有效率地被实现出来。
+
+dual-pivot quicksort offers O(n log(n)) performance on many data sets that cause other quicksorts to degrade to quadratic performance, and is typically faster than traditional (one-pivot) Quicksort implementations.
+
 
 ```cpp
-template
-void quicksort(T array[], Index left, Index right) {
-    if (left < right) {
-        Index l = left;
-        Index r = right;
-        T m = array[l];
-        while (l < r) {
-            while (l < r &amp;&amp; array[r] >= m)
-                --r;
-            if (l < r)
-                array[l++] = array[r];
-            while (l < r &amp;&amp; array[l] < m)
-                ++l;
-            if (l < r)
-                array[r--] = array[l];
-        }
-        array[l] = m;
-        quicksort(array, left, l-1);
-        quicksort(array, l+1, right);
-    }
+template<typename RandomAccessIterator>
+void quick_sort(RandomAccessIterator first, RandomAccessIterator last) {
+	typedef typename iterator_traits<RandomAccessIterator>::value_type T;
+	if (distance(first, last) < 2) return;
+	auto it = partition(first+1, last, [&first](const T& v){return less<T>()(v, *first);});
+	if (it == first+1) quick_sort(first+1, last);
+	else {
+		iter_swap(first, it-1);
+		quick_sort(first, it-1);
+		if (it != last) quick_sort(it, last);
+	}
+}
+```
+
+#### Introsort
+
+```cpp
+template<typename RandomAccessIterator>
+void introsort(RandomAccessIterator first, RandomAccessIterator last, size_t maxdepth) {
+	if (0 == maxdepth) {
+		make_heap(first, last);
+		sort_heap(first, last);
+	} else {
+		--maxdepth;
+		auto it = partition(first+1, last, bind(less, *first));
+		if (it == first+1) introsort(first+1, last, maxdepth);
+		else {
+			iter_swap(first, it-1);
+			introsort(first, it-1, maxdepth);
+			if (it != last) introsort(it, last, maxdepth);
+		}
+	}
+}
+
+template<typename RandomAccessIterator>
+void introsort(RandomAccessIterator first, RandomAccessIterator last) {
+	introsort(first, last, static_cast<size_t>(log2(distance(first, last))));
 }
 ```
 
@@ -345,3 +389,28 @@ void merge_array(int *list1, int list1_size, int *list2, int list2_size) {
 基数排序的方式可以采用LSD（Least significant digital）或MSD（Most significant digital），LSD的排序方式由键值的最右边开始，而MSD则相反，由键值的最左边开始。
 
 ### bucket sort
+
+## Adaptive sort
+
+利用输入里的有序
+
+基于比较的排序最优时间复杂度O(nlogn)
+
+现实世界中的排序输入或多或少都是一定程度上有序的。有序程度越高，排序越快。
+
+mergesort 可以判断前一个序列的末尾元素是否小于或者等于右边序列的第一个元素，在是的情况下，就变成了简单的concatenation。(简单的更改就可以让mergesort变成一个适应性算法）
+
+### Timsort
+
+> hybrid stable sorting algorithm.
+derived from merge sort and insertion sort, designed to perform well on many kinds of real-world data.
+
+Timsort iterates over the data looking for natural runs of at least two elements that are either non-descending (each element is greater than or equal to its predecessor) or strictly descending (each element is less than its predecessor). Since descending runs are later blindly reversed, excluding equal elements maintains the algorithm's stability; i.e., equal elements won't be reversed. Note that any two elements are guaranteed to be either descending or non-descending.
+
+A reference to each run is then pushed onto a stack.
+
+Timsort is an adaptive sort, using insertion sort to combine runs smaller than the minimum run size (minrun), and merge sort otherwise.
+
+## ref
+
+[https://en.wikipedia.org/wiki/Adaptive_sort](https://en.wikipedia.org/wiki/Adaptive_sort)

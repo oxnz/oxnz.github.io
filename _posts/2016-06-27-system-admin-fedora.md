@@ -2,6 +2,10 @@
 title: System Administration - Fedora
 ---
 
+![Fedora 24](/assets/fedora-24.jpg)
+
+<!--more-->
+
 ## Table of Contents
 
 * TOC
@@ -44,8 +48,6 @@ title: System Administration - Fedora
    ```shell
    sudo systemctl enable sshd.service
    ```
-
-<!--more-->
 
 ## Software Management
 

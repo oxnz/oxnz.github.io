@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 Will Z, All Rights Reserved.
+ * Copyright (C) 2016-2017 oxnz, All Rights Reserved.
  */
 
 body {
@@ -8,8 +8,8 @@ body {
 }
 
 .site-header {
-	border-top-color: #19082c;
-	background-color: #45197b;
+	border-top-color: $blue-color-dark;
+	background-color: $blue-color;
 }
 
 .site-header .site-title {
@@ -29,32 +29,41 @@ body {
 	text-decoration:none;
 }
 
-.site-nav .page-link {
-	color: #29B6F6;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+.site-header .site-nav .page-link {
+	color: #ffffff;
 	font-size: 18px;
 	font-variant: small-caps;
 }
 
-.site-nav span.page-link {
-	font-weight: 600;
+/**
+ * body
+ */
+
+main.page-content p {
+	line-height: 1.75;
 }
 
 .post-title {
-	letter-spacing: normal;
 	font-size: 40px;
-	line-height: 1.2;
-	color: #2d2d2d;
-	font-weight: 300;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: $blue-color;
 }
 
-.post-link {
-	display: initial;
+a.post-link {
+	font-size: 26px;
 }
 
-.post-link:hover {
-	color: #DD4D31;
+a.post-link:hover {
+	color: $orange-color;
+	text-decoration: none;
+}
+
+article.post h1,
+article.post h2,
+article.post h3,
+article.post h4,
+article.post h5,
+article.post h6 {
+	font-family: $title-font-family;
 }
 
 .post-content h1,
@@ -63,11 +72,7 @@ body {
 .post-content h4,
 .post-content h5,
 .post-content h6 {
-	color: #2d2d2d;
-}
-
-.post-content p {
-	line-height: 1.75;
+	color: $blue-color;
 }
 
 /**
@@ -98,15 +103,29 @@ body {
 /**
  * post meta
  */
+
 .post-meta time,
 .cat,
 .tag {
-	color: #2a7ae2;
+	color: $brand-color;
+}
+
+.site-footer {
+	border-top: 5px solid $blue-color;
+	color: #444;
+	background-color: lighten($blue-color, 75%);
+}
+
+.site-footer a {
+	color: $blue-color;
+}
+
+.site-footer .footer-col-wrapper {
+	color: #444;
 }
 
 .site-footer .site-info {
 	font-size: 14px;
-	color: #828282;
 }
 
 /**
@@ -141,7 +160,7 @@ kbd {
 
 pre,
 code {
-	font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+	font-family: $mono-font-family;
 	font-size: 13px;
 }
 
@@ -162,26 +181,53 @@ blockquote {
 }
 
 dt {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 table {
-	border-collapse: separate;
-	border-spacing: 1px;
-	background-color: rgba(42, 171, 237, 0.25);
+	border: none;
 	margin: $spacing-unit / 2 auto;
 }
 
 th {
 	font-weight: 600;
-	background-color: #F8F9FC;
+	color: #fdfefb;
+	background-color: $blue-color;
 }
 
 td {
-	background-color: #fff;
+	background-color: #f4f4f4;
 }
 
 th,
 td {
-	padding: 4px;
+	border: none;
+	padding: 8px;
 }
+
+/**
+ * code lino
+ */
+
+figure > pre > code > table {
+	margin: 0;
+	border: none;
+}
+
+figure > pre > code > table td {
+	padding: 0;
+}
+
+figure > pre > code > table td > pre {
+	margin: 0;
+	border: none;
+}
+
+figure > pre > code > table td > pre.lineno {
+	border-radius: 0;
+	border-right: 1px solid #e8e8e8;
+}
+
+/**
+ * general
+ */

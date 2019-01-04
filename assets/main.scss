@@ -1,0 +1,51 @@
+---
+# theme: whisper extends minima
+---
+
+// Our variables
+$base-font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", sans-serif !default;
+$title-font-family: "Avenir Next", proxima-nova, $base-font-family;
+$mono-font-family: Menlo, Monaco, Consolas, "Courier New", "Microsoft YaHei", monospace, "Noto Sans Mono CJK SC", "WenQuanYi Micro Hei Mono";
+
+$text-color: #3e3e3e;
+$background-color-light: #ffffff;
+$background-color-dark: #f8f8f8;
+$brand-color: #2a7ae2;
+
+$border-color:	   #ededed;
+
+$red-color-spring: #f60c3e;
+$red-color-autumn: #e71434;
+$red-color: #dd1144;
+$red-color-light: lighten($red-color, 40%);
+$red-color-dark: darken($red-color, 25%);
+
+$orange-color: #ea4335;
+//$orange-color: #ff6f61;
+
+$green-color: #008000;
+$green-color-light: #159957;
+$green-color-dark: #173f4f;
+$green-color-darker: darken($green-color-dark, 8%);
+
+$blue-color: #12809b;
+$blue-color-light: lighten($blue-color, 8%);
+$blue-color-dark: darken($blue-color, 8%);
+
+$purple-color: #45197b;
+$purple-color-light: lighten($purple-color, 40%);
+$purple-color-dark: darken($purple-color, 25%);
+
+$black-color-light: #212a34;
+
+@import 'minima';
+
+// Import partials from `sass_dir` (defaults to `_sass`)
+@import
+    'base',
+    'layout',
+    'custom'
+;
+
+@import 'css/font-awesome.min.css';
+@import 'css/proxima-nova.css';

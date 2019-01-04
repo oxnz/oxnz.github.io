@@ -255,6 +255,7 @@ See [Performance Tuning] for more details about system optimization.
 	* Query Rewrite
 	* Load Balance
 	* Read/Write Splitting
+* MySQL Router
 
 ![MySQL Proxy](/assets/mysql-proxy.jpg)
 
@@ -492,12 +493,44 @@ There are several types of index in MySQL:
 
 * Tree Index
 	* B-Trees
-		* FULLTEXT index (based on words instead of whole columns)
+    * FULLTEXT index (based on words instead of whole columns)
+        * FULLTEXT index implementation is storage engine dependent.
 	* B+ Trees (InnoDB)
 	* T-Trees (NDB)
 	* Red-black trees (MEMORY)
 	* R-Trees (MyISAM, spatial index)
+        * R-trees are tree data structures used for spatial access methods, i.e., for indexing multi-dimensional information such as geographical coordinates, rectangles or polygons.
+        * the "R" in R-tree is for rectangle.
+        * `GEOMETRY`, range search
+        * Spatial indexes are implemented as R-tree indexes.
+        * Two standard spatial data formats are used to represent geometry objects in queries:
+            * Well-Known Text (WKT) format
+            * Well-Known Binary (WKB) format
+        * Internally, MySQL stores geometry values in a format that is not identical to either WKT or WKB format.
 * Hash index (MEMORY and NDB)
+
+For MyISAM and (as of MySQL 5.7.5) InnoDB tables, search operations in columns containing spatial data can be optimized using SPATIAL indexes. The most typical operations are:
+
+* Point queries that search for all objects that contain a given point
+* Region queries that search for all objects that overlap a given region
+
+MySQL uses **R-Trees with quadratic splitting** for SPATIAL indexes on spatial columns. A SPATIAL index is built using the minimum bounding rectangle (MBR) of a geometry. For most geometries, the MBR is a minimum rectangle that surrounds the geometries. For a horizontal or a vertical linestring, the MBR is a rectangle degenerated into the linestring. For a point, the MBR is a rectangle degenerated into the point.
+
+```sql
+CREATE TABLE geom (g GEOMETRY NOT NULL, SPATIAL INDEX(g)) ENGINE=MyISAM;
+-- or
+ALTER TABLE geom ADD SPATIAL INDEX(g);
+-- or
+REATE SPATIAL INDEX sp_index ON geom (g);
+SET @poly =
+    -> 'Polygon((30000 15000,
+                 31000 15000,
+                 31000 16000,
+                 30000 16000,
+                 30000 15000))';
+SELECT fid,ST_AsText(g) FROM geom WHERE
+    MBRContains(ST_GeomFromText(@poly),g);
+```
 
 cardinality
 : a property which affects the ability to cluster, sort and search data. It is therefore an important measurement for the query planners in DBs, it is a heuristic which they can use to choose the best plans.
@@ -595,6 +628,8 @@ Source Code
 * [tunning primer](https://launchpadlibrarian.net/78745738/tuning-primer.sh)
 * [SQL Syntax for Prepared Statements](http://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepared-statements.html)
 * [Tuning InnoDB Concurrency Tickets](https://www.percona.com/blog/2010/05/24/tuning-innodb-concurrency-tickets/)
+* [Optimizing Spatial Analysis](http://dev.mysql.com/doc/refman/5.7/en/optimizing-spatial-analysis.html)
+* [https://en.wikipedia.org/wiki/R-tree](https://en.wikipedia.org/wiki/R-tree)
 
 [Compression]: https://dev.mysql.com/doc/internals/en/compression.html
 [Difference between TCP_CORK and TCP_NODELAY]: http://stackoverflow.com/questions/22124098/is-there-any-significant-difference-between-tcp-cork-and-tcp-nodelay-in-this-use

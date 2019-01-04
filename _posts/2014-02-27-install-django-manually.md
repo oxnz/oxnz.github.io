@@ -17,6 +17,8 @@ tags:
 * TOC
 {:toc}
 
+<!--more-->
+
 ## Install
 
 ### Install Manually

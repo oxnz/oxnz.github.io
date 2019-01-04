@@ -9,6 +9,7 @@ tags: []
 redirect_from:
   - /cv/wang/
 ---
+
 <link href="/assets/css/resume.css" rel="stylesheet" />
 <style type="text/css">
 .post-content {

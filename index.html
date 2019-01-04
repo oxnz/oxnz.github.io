@@ -11,11 +11,11 @@ layout: default
     <li>
       <h2>
         <a class="post-link"
-          href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          href="{{ post.url | relative_url }}">{{ post.title }}</a>
       </h2>
       <h4 class="post-meta">
         <time datetime="{{ post.date | date_to_xmlschema }}" itemprop="datePublished">{{ post.date | date: "%B %-d %Y" }}</time>
-        by <a href="mailto:{{ post.author.email }}">{{ post.author.display_name }} </a>
+        by <a href="mailto:{{ post.author.email }}">{% if post.author.display_name %}{{ post.author.display_name }}{% else %}{{ post.author }}{% endif %}</a>
       </h4>
       {{ post.excerpt }}
     </li>
@@ -25,7 +25,7 @@ layout: default
   {% if paginator.total_pages > 1 %}
   <nav class="pagination">
     {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">Previous</a>
+    <a href="{{ paginator.previous_page_path | relative_url }}">Previous</a>
     {% else %}
     <span>Previous</span>
     {% endif %}
@@ -34,14 +34,14 @@ layout: default
     {% if page == paginator.page %}
     <span>{{ page }}/{{ paginator.total_pages }}</span>
     {% elsif page == 1 %}
-    <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">{{ page }}</a>
+    <a href="{{ "/index.html" | relative_url }}">{{ page }}</a>
     {% else %}
-    <a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a>
+    <a href="{{ site.paginate_path | relative_url | replace: ':num', page }}">{{ page }}</a>
     {% endif %}
     {% endfor %}
 
     {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Next</a>
+    <a href="{{ paginator.next_page_path | relative_url }}">Next</a>
     {% else %}
     <span>Next</span>
     {% endif %}
