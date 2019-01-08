@@ -21,8 +21,13 @@ C++ concurrency
 #include <thread>
 
 int main() {
-	std::thread t(greet);
+	auto taskp = make_shared<packaged_task<string()>>([] { return "hello"; });
+	auto s = taskp->get_future();
+	thread t([&taskp] { (*taskp)(); });
+	// or : thread t([&taskp] { taskp->operator()(); });
 	t.join();
+	cout << s.get() << "\n";
+	return 0;
 }
 ```
 
@@ -53,7 +58,7 @@ public:
 
 ### Background Running
 
-detach()ed threads truly run in the background.
+`detach()`ed threads truly run in the background.
 
 ownership and control are passed over to the C++ Runtime Library, which ensures that the resources associated with the thread are correctly reclaimed when the thread exists.
 
@@ -79,7 +84,7 @@ std::thread t(func, std::move(p));
 
 ### Transferring ownership of a thread
 
-Many resource-owning types in the C++ Standard Library such as st::ifstream and std::unique_ptr are movable but not copyable. and std::thread is one of them.
+Many resource-owning types in the C++ Standard Library such as `std::ifstream` and `std::unique_ptr` are movable but not copyable. and `std::thread` is one of them.
 
 This means that the ownership of a particular thread of execution can be moved between std::thread instances.
 
@@ -104,11 +109,11 @@ void proc(int ntask) {
 
 ### Concurrency Limits
 
-std::thread::hardware_concurrency()
+`std::thread::hardware_concurrency()`
 
 ### Identifier
 
-std::thread::id tid = std::this_thread::get_id()
+`std::thread::id tid = std::this_thread::get_id()`
 
 ## Sharing Data
 
@@ -125,8 +130,9 @@ lock() and unlock()
 std::lock_guard (RAII)
 
 ```cpp
-std::mutex mutex;
+mutable std::mutex mutex;
 
+size_type size() const { return m_tasks.size(); }
 void modify() {
 	std::lock_guard<std::mutex> guard(mutex);
 	do_modify();
@@ -142,30 +148,31 @@ Don't pass pointers and references to protected data ourside the scope of the lo
 
 ### Deadlock
 
-solution:
-lock the two mutexes in the same order
+solution
+: lock the two mutexes in the same order
 
-std::lock provides all-or-nothing semantics with regard to locking the supplied mutexes.
+`std::lock` provides **all-or-nothing semantics** with regard to locking the supplied mutexes.
 
 ```cpp
-class X {
+class T {
 private:
-	void *data;
-	std::mutex m;
+	void *m_data;
+	std::mutex m_mutax;
 public:
-friend void swap(X& lhs, X& rhs) {
-	if (&lhs == &rhs) return;
-	std::lock(lhs.m, rhs.m);
-	std::lock_guard<std::mutex> lock_a(lhs.m, std::adopt_lock);
-	std::lock_guard<std::mutex> lock_b(rhs.m, std::adopt_lock);
-	swap(lhs.data, rhs.data);
+	friend void swap(T& lhs, T& rhs) {
+		if (&lhs == &rhs) return;
+		std::lock(lhs.m_mutex, rhs.m_mutex);
+		std::lock_guard<std::mutex> lock_lhs(lhs.m_mutex, std::adopt_lock);
+		std::lock_guard<std::mutex> lock_rhs(rhs.m_mutex, std::adopt_lock);
+		swap(lhs.m_data, rhs.m_data);
 	}
 };
 ```
 
 ### Avoiding Deadlock
 
-deadlock doesn't just occur with locks: two threads by having each thread call joi() on the std::thread object for the other.
+deadlock doesn't just occur with locks
+: two threads by having each thread call `join()` on the `std::thread` object for the other.
 
 * Avoid nested locks
 	* Don't acquire a lock if you already hold one
@@ -186,7 +193,7 @@ the flexibility of `std::unique_lock` also allows instances to relinquish thier 
 
 ### Transferring mutex ownership between scopes
 
-std::unique_lock instances don't have to own their associated mutexes, the ownership of a mutex can be transferred between instances by moving the instances around.
+`std::unique_lock` instances don't have to own their associated mutexes, the ownership of a mutex can be transferred between instances by moving the instances around.
 
 * some case such transfer is automatic
 	* returning an instance from a function
@@ -383,7 +390,7 @@ std::future<void> post_task_for_gui_thread(func f) {
 
 * making promises
 
-`std::promise<T> provides a means of setting a value (of type T), which can later be read through an associated `std::future<T>` object.
+`std::promise<T>` provides a means of setting a value (of type T), which can later be read through an associated `std::future<T>` object.
 
 A `std::promise`/`std::future` pair would provide one possible mechanism for this facility; the waiting thread could block on the future, while the thread providing the data could use the promise half of the pairing to set the associated value and make the future ready.
 
@@ -691,8 +698,110 @@ Without any additional synchronization, the modification order of each variable 
 `std::memory_order` specifies how regular, non-atomic memory accesses are to be ordered around an atomic operation.
 
 
+## Thread Pool
 
+```cpp
+namespace mp {
+class thread_pool {
+	using size_type = std::vector<std::thread>::size_type;
+	using lock_type = std::unique_lock<std::mutex>;
+public:
+	thread_pool(size_type nworker = std::thread::hardware_concurrency())
+	: m_workers(), m_tasks(), m_mutex(), m_cmd(command::run), m_cond_v() {
+		if (0 == nworker) nworker = std::thread::hardware_concurrency();
+		m_workers.reserve(nworker);
+		try {
+			for (size_type i = 0; i < nworker; ++i)
+				m_workers.emplace_back(&thread_pool::_exec, this);
+		} catch (...) { join(); throw; }
+	}
+	thread_pool(const thread_pool&) = delete;
+	thread_pool(thread_pool&&) = delete;
+	thread_pool& operator=(const thread_pool&) = delete;
+	thread_pool& operator=(thread_pool&&) = delete;
+	~thread_pool() { join(); }
+	
+	size_type size() const { return m_workers.size(); }
+	size_type capacity() const { return m_workers.capacity(); }
+
+	void pause() {
+		{ lock_type lock(m_mutex); m_cmd = command::pause; }
+		m_cond_v.notify_all();
+	}
+	void resume() {
+		{ lock_type lock(m_mutex); m_cmd = command::run; }
+		m_cond_v.notify_all();
+	}
+	void stop() {
+		{ lock_type lock(m_mutex); m_cmd = command::stop; }
+		m_cond_v.notify_all();
+	}
+	void abort() {
+		{ lock_type lock(m_mutex); m_cmd = command::abort; }
+		m_cond_v.notify_all();
+	}
+	void join() {
+		stop();
+		std::for_each(m_workers.begin(), m_workers.end(),
+					  std::mem_fn(&std::thread::join));
+		{
+			lock_type lock(m_mutex);
+			m_workers.clear();
+		}
+	}
+	
+	template <typename Fn, typename ...Args>
+	auto emplace(Fn&& f, Args&& ...args) -> std::future<std::result_of_t<Fn(Args...)>> {
+		using result_type = std::result_of_t<Fn(Args...)>;
+		auto taskp = std::make_shared<std::packaged_task<result_type()>>
+		(std::bind(std::forward<Fn>(f), std::forward<Args>(args)...));
+		std::future<result_type> future = taskp->get_future();
+		{
+			lock_type lock(m_mutex);
+			if (m_cmd != command::run) {
+				throw std::runtime_error("submit on a not running thread pool");
+			}
+			m_tasks.emplace([taskp] { (*taskp)(); });
+		}
+		m_cond_v.notify_one();
+		return future;
+	}
+
+private:
+	void _exec() {
+		for (;;) {
+			std::function<void()> task;
+			{
+				std::unique_lock<std::mutex> lock(m_mutex);
+				m_cond_v.wait(lock, [this]() -> bool {
+					return m_cmd != command::run || !m_tasks.empty();
+				});
+				switch (m_cmd) {
+					case command::pause: continue;
+					case command::stop:
+						if (m_tasks.empty()) return;
+						break;
+					case command::abort: return;
+					default:
+						break;
+				}
+				if (m_cmd != command::run && m_tasks.empty()) return;
+				task = std::move(m_tasks.front());
+				m_tasks.pop();
+			}
+			task();
+		}
+	}
+private:
+	std::queue<std::function<void()>> m_tasks;
+	std::mutex m_mutex;
+	std::condition_variable m_cond_v;
+	std::vector<std::thread> m_workers;
+	enum class command { run, pause, stop, abort } m_cmd;
+};
+}
+```
+
+## References
 
 [http://en.cppreference.com/w/cpp/atomic/memory_order](http://en.cppreference.com/w/cpp/atomic/memory_order)
-
-rule of three

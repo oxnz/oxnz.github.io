@@ -11,6 +11,27 @@ categories:
 * TOC
 {:toc}
 
+## Rules
+
+Regular Types
+: Implement **Complete and Efficient Types**
+
+Algorithm
+: No Raw Loops
+
+Data Structure
+: No incidental Data Structure
+
+An incidental data structure is a data structure that occurs within a system when there is no object representing the structure as a whole
+
+structures formed in the absence of a whole/part relationship.
+
+Runtime Polymorphism
+: No Raw Pointers
+
+Concurrency
+: No Raw Synchronization Primitives
+
 ## 面向对象
 
 ### 面向对象的三个基本特征

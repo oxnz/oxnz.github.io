@@ -250,6 +250,10 @@ process life cycle
    ------------------          -----------------         ------------------
 ```
 
+>
+orphan process
+: a process that is still executing, but whose parent has died. These do not remain as zombie processes; instead, (like all orphaned processes) they are adopted by init (process ID 1), which waits on its children. The result is that a process that is both a zombie and an orphan will be reaped automatically.
+
 process priority
 
 * static
