@@ -52,13 +52,13 @@ ul.proj-list > li > ul {
 
 ## UI设计师
 
-* 3 年的UI设计经验,视觉传达设计专业，有良好的美术基础及优秀的手绘能力。
+* 3 年UI设计经验,视觉传达设计专业，有良好的美术基础及优秀的手绘能力。
 * 熟练Photoshop，illustrator，sketch ，Coreldraw等图文处理、排版软件。
 * Axure等原型绘制工具，熟练premiere视频剪辑软件， AE实现交互动效。 
 * C4D场景渲染，立体建模。
 ## 工作经历
 
-### UI设计师 杭州心猫网络科技有限公司 @[心猫心理](https://www.120xinmao.com){:target='_blank'} &middot; 2016/06 - 至今
+### UI设计师 @[心猫心理](https://www.120xinmao.com){:target='_blank'} &middot; 2016/06 - 至今
 * #### 心猫心理App 项目
 
 	心理疾病测试，提供线上线下问诊心理咨询师服务。
@@ -86,10 +86,10 @@ ul.proj-list > li > ul {
 
 ## 专业技能
 
-1.视觉传达设计专业，有良好的美术基础及优秀的手绘能力。
-2.熟练Photoshop，illustrator，sketch ，Coreldraw等图文处理、排版软件。
-3.Axure等原型绘制工具，熟练premiere视频剪辑软件， AE实现交互动效。 
-4.C4D场景渲染，立体建模。
+1. 视觉传达设计专业，有良好的美术基础及优秀的手绘能力。
+2. 熟练Photoshop，illustrator，sketch ，Coreldraw等图文处理、排版软件。
+3. Axure等原型绘制工具，熟练premiere视频剪辑软件， AE实现交互动效。 
+4. C4D场景渲染，立体建模。
 
 
 ## 教育背景
