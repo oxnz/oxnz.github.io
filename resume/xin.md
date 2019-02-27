@@ -54,7 +54,7 @@ ul.proj-list > li > ul {
 
 * 3 年UI设计经验，视觉传达设计专业，10年的美术基础，手绘能力强。
 * 熟练Photoshop，illustrator，sketch，Coreldraw等图文处理，排版软件
-* Axure等原型绘制工具，熟练premiere视频剪辑软件，AE实现交互动效
+* 墨刀，Axure原型绘制工具，熟练premiere视频剪辑软件，AE实现交互动效
 * C4D场景渲染，立体建模
 ## 工作经历
 
