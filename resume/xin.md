@@ -46,8 +46,10 @@ ul.proj-list > li > ul {
 {:class="name"}
 
 <i class="fa fa-fw fa-phone"></i> (+86) 151-2902-9156
-<i class="fa fa-fw fa-envelope-o"></i> [15129029156@163.com](mailto:m13120331539@163.com)
+<i class="fa fa-fw fa-envelope-o"></i> [15129029156@163.com](mailto:15129029156@163.com)
 <br/>
+<i class="fa fa-fw fa-globe"></i> 作品链接: [https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
+作品链接：[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
 {:class="contact"}
 
 ## UI设计师
@@ -88,7 +90,7 @@ ul.proj-list > li > ul {
 1. 视觉传达设计专业，10年的美术基础，手绘能力强
 2. 熟练Photoshop，illustrator，sketch ，Coreldraw等图文处理排版软件；
 3. 熟练使用墨刀， Axure等原型绘制工具；
-4.了解premiere视频剪辑软件， AE实现交互动效，C4D场景渲染，立体建模等
+4. 熟练premiere视频剪辑软件， AE实现交互动效，C4D场景渲染，立体建模等
 5. 良好的摄影功底以及图像后期处理能力
 
 
