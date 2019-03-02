@@ -48,9 +48,9 @@ ul.proj-list > li > ul {
 <i class="fa fa-fw fa-phone"></i> (+86) 151-2902-9156
 <i class="fa fa-fw fa-envelope-o"></i> [15129029156@163.com](mailto:15129029156@163.com)
 <br/>
-<i class="fa fa-fw fa-globe"></i> 作品链接1: [https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
+<i class="fa fa-fw fa-globe"></i> 作品链接1:[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
 <br/>
-<i class="fa fa-fw fa-globe"></i>作品链接2：[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
+<i class="fa fa-fw fa-globe"></i>作品链接2:[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
 <br/>
 {:class="contact"}
 
