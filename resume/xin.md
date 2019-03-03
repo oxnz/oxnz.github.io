@@ -7,10 +7,10 @@ lang: zh_CN
 categories: []
 tags: []
 redirect_from:
-  - /cv/zh_CN/
+  - /cv/xin/
 ---
 
-<link href="/css/resume.css" rel="stylesheet" />
+<link href="/assets/css/resume.css" rel="stylesheet" />
 <style type="text/css">
 .post-content {
 	font-family: 'PingFang SC', 'Hiragino Sans GB',
@@ -48,8 +48,10 @@ ul.proj-list > li > ul {
 <i class="fa fa-fw fa-phone"></i> (+86) 151-2902-9156
 <i class="fa fa-fw fa-envelope-o"></i> [15129029156@163.com](mailto:15129029156@163.com)
 <br/>
-<i class="fa fa-fw fa-globe"></i> 作品链接: [https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
-作品链接：[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
+<i class="fa fa-fw fa-globe"></i> 作品链接1:[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
+<br/>
+<i class="fa fa-fw fa-globe"></i>作品链接2:[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
+<br/>
 {:class="contact"}
 
 ## UI设计师
