@@ -50,14 +50,13 @@ ul.proj-list > li > ul {
 <br/>
 <i class="fa fa-fw fa-globe"></i> 作品链接1:[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
 <br/>
-<i class="fa fa-fw fa-globe"></i>作品链接2:[https://www.ui.cn/detail/428835.html](https://www.ui.cn/detail/428835.html '作品链接')
-<br/>
+
 {:class="contact"}
 
 ## UI设计师
 
-* 2年UI设计经验，视觉传达设计专业，扎实的美术基础，优秀的手绘能力
-* 能够独立完成产品界面相关设计，善于分析和解决问题
+* 2年UI设计经验，美术基础扎实，手绘能力强
+* 能够独立完成产品界面相关设计
 * 善于学习，勤于实践，具有较强的学习能力和组织沟通能力
 
 ## 工作经历
@@ -72,7 +71,7 @@ ul.proj-list > li > ul {
   * 参与设计评审，根据内部调研以及用户反馈，对界面进行持续的设计优化
   * 配合产品和开发人员，完成产品界面优化，提高美观性和用户体验
 
-* #### 心猫心理网页设计 项目(https://www.120xinmao.com)
+* #### 心猫心理网页设计 项目
 
   * 负责网站设计，把控整体视觉风格
   * 负责网站页面的设计，banner活动页新闻页的更新
@@ -89,11 +88,11 @@ ul.proj-list > li > ul {
 
 ## 专业技能
 
-1. 视觉传达设计专业，10年的美术基础，手绘能力强
-2. 熟练Photoshop，illustrator，sketch ，Coreldraw等图文处理排版软件；
-3. 熟练使用墨刀， Axure等原型绘制工具；
-4. 熟练premiere视频剪辑软件， AE实现交互动效，C4D场景渲染，立体建模等
-5. 良好的摄影功底以及图像后期处理能力
+ * 视觉传达设计专业，10年的美术基础，手绘能力强
+ * 熟练Photoshop，illustrator，sketch ，Coreldraw等图文处理排版软件；
+ * 熟练使用墨刀， Axure等原型绘制工具；
+ * 熟练Pr视频剪辑软件， AE实现交互动效，C4D场景渲染，立体建模等
+ * 良好的摄影功底以及图像后期处理能力
 
 
 ## 教育背景
