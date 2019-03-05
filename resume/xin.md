@@ -50,7 +50,7 @@ ul.proj-list > li > ul {
 <br/>
 <i class="fa fa-fw fa-globe"></i> 作品链接1:[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
 <br/>
-<i class="fa fa-fw fa-globe"></i>作品链接2:[https://www.ui.cn/detail/432784.html](https://www.ui.cn/detail/432784.html '作品链接')
+<i class="fa fa-fw fa-globe"></i>作品链接2:[https://www.ui.cn/detail/428835.html](https://www.ui.cn/detail/428835.html '作品链接')
 <br/>
 {:class="contact"}
 
