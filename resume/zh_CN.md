@@ -59,27 +59,27 @@ Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
 
 ## 后台开发工程师
 
-* 3.5 年大型企业搜索服务系统开发经验, 熟悉大型项目和服务的开发与部署;
-* 具有多种语言编程经验, 熟悉 **Linux** 环境开发;
-* 善于分析和解决问题;
+* 3.5 年大型在线搜索服务系统开发经验, 熟悉分布式项目的架构设计和服务研发；
+* 基础功底扎实，具有多种语言编程经验, 对常用开源系统和中间件有一定了解;
+* 对技术有热情，动手能力强，善于分析和解决问题;
 
 ## 工作经历
 
-### 搜索开发工程师@[腾讯](https://www.tencent.com/){:target='_blank'} &middot; 2016/11 - 至今
+### 搜索开发工程师@[腾讯](https://www.tencent.com/){:target='_blank'} &middot; 2016/11 - 2018/05
 
 * #### [腾讯视频](https://v.qq.com/)搜索项目
 
 	为腾讯视频提供基于 Elasticsearch 的实时索引和在线检索服务。
-	主要负责引擎相关研发工作。
+	前期主要负责引擎研发工作和系统调优，后期负责数据流改造。
 
-	* 集群设计，压力测试，性能优化 (jmeter,Python,Shell)
+	* 集群设计，压力测试，性能优化 (jmeter/Python/Shell)
 	**分享性能优化经验**
-	* Elasticsearch 中文分词插件开发(基于已有中文分词算法，添加项目相关策略)
+	* 平台化改造，规范化第三方介入流程。**为微信视频/企鹅直播等平台提供索引搜索服务**
+	* 设计并实现基于Kafka的数据同步流程，**索引流程自动化** (C++/Python)
+	* Elasticsearch 自然语言处理插件开发(基于已有NLP库，添加项目相关策略)
 	(C++/Java)
-	* 第三方接入规范化，平台化改造，**为微信视频/企鹅直播等平台提供索引搜索服务**
-	* 查询模版编写，排序模型，查询路由中间件开发 **新接入系统配置即可，不需要发布**
-	* ELK 监控系统，logstash 插件开发
-	* 数据同步，索引流程自动化 (C++/Python)
+	* 查询模版编写，排序模型，查询路由中间件开发 **新接入系统免发布**
+	* 搭建 ELK 日志集群，进行数据同步问题定位和统计数据分析，logstash 插件开发，微服务改造
 
 ### 后台开发工程师@[百度](https://www.baidu.com){:target='_blank'} &middot; 2014/07 - 2016/10
 
@@ -119,7 +119,6 @@ Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
 	* 参与多个**开源项目**（包括 bash-completion, homebrew, Elasticsearch-mustache 等);
 	* 工作中工具编写 （文件传输，系统部署，迁移等）
 	* 著有 [Moxile](https://oxnz.github.io/moxile/) 编辑器, 被国内外多个软件分发网站编辑推荐
-	* Stackoverflow profile: [stackoverflow.com/users/2273296/oxnz](https://stackoverflow.com/users/2273296/oxnz)
 
 {:class="proj-list"}
 
@@ -128,15 +127,18 @@ Github: [https://github.com/oxnz](https://github.com/oxnz 'Github')
 语言: C\C++, Python, Shell, Java
 <br/>
 软件:
-Elasticsearch, Logstash, Kibana;
+Elasticsearch,
 MySQL,
 Kafka,
-Git, Subversion
-Solr;
+Redis,
+Solr,
+Logstash, Kibana;
 <br/>
 系统: Linux (RHEL/CentOS) > Unix (FreeBSD, Mac OS) > Windows Server
 <br/>
-英语: CET-6 536, 经常参与 stackoverflow 回答讨论问题, 并著有英文博客
+英语: CET-6 536, 经常参与 
+stackoverflow.com[/users/2273296/oxnz](https://stackoverflow.com/users/2273296/oxnz)
+ 回答讨论问题, 并著有英文博客
 
 ## 教育背景
 
