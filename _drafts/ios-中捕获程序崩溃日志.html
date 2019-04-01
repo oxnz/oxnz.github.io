@@ -1,0 +1,54 @@
+---
+layout: post
+title: iOS 中捕获程序崩溃日志
+date: 
+type: post
+published: false
+status: private
+categories:
+- Blog
+- cocoa
+- Debug
+- Development
+- Objective-CC++
+- OSX
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: oxnz
+  email: yunxinyi@gmail.com
+  display_name: Will Z
+  first_name: Will
+  last_name: Z
+---
+<p>iOS开发中遇到程序崩溃是很正常的事情，如何在程序崩溃时捕获到异常信息并通知开发者，是大多数软件都选择的方法。下面就介绍如何在iOS中实现：</p>
+<p>1. 在程序启动时加上一个异常捕获监听，用来处理程序崩溃时的回调动作<br />
+<code>NSSetUncaughtExceptionHandler (&UncaughtExceptionHandler);</code><br />
+  官方文档介绍：Sets the top-level error-handling function where you can perform last-minute logging before the program terminates.<br />
+  UncaughtExceptionHandler是一个函数指针，该函数需要我们实现，可以取自己想要的名字。当程序发生异常崩溃时，该函数会得到调用，这跟C，C++中的回调函数的概念是一样的。</p>
+<p><!--more--></p>
+<p>2. 实现自己的处理函数</p>
+<pre>
+void UncaughtExceptionHandler(NSException *exception) {
+    NSArray *arr = [exception callStackSymbols];//得到当前调用栈信息
+    NSString *reason = [exception reason];//非常重要，就是崩溃的原因
+    NSString *name = [exception name];//异常类型
+
+    NSLog(@"exception type : %@ n crash reason : %@ n call stack info : %@", name, reason, arr);
+}
+</pre>
+<p>以上代码很简单，但是带来的作用是非常大的。</p>
+<p>获取到了崩溃的日子，如何发送给开发者呢，目前一般有以下两种方式：<br />
+1. 将崩溃信息持久化在本地，下次程序启动时，将崩溃信息作为日志发送给开发者。</p>
+<p>2. 通过邮件发送给开发者。 不过此种方式需要得到用户的许可，因为iOS不能后台发送短信或者邮件，会弹出发送邮件的界面，只有用户点击了发送才可发送。 不过，此种方式最符合苹果的以用户至上的原则。<br />
+发送邮件代码也很简单：</p>
+<pre>
+ NSString *crashLog = [NSString
+    stringWithFormat:@"exception name: %@nreason:%@ncall stack info:%@",
+    exception.name, exception.reason, exception.callStackSymbols];
+NSString *url = [NSString stringWithFormat:@"mailto://yunxinyi@gmail.com?subject=crash-report&body=Thank you!ncrash detail:%@", crashLog];
+NSURL *url = [NSURL URLWithString:[url stringByAppendingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+[[UIApplication sharedApplication] openURL:url];
+</pre>
+<p>以上就是iOS中捕获异常常用的方法，大家可以不妨一试！</p>

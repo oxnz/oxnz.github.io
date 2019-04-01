@@ -1,0 +1,769 @@
+---
+layout: post
+title: lcore.s
+date: 
+type: post
+published: false
+status: private
+categories:
+- Blog
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: oxnz
+  email: yunxinyi@gmail.com
+  display_name: Will Z
+  first_name: Will
+  last_name: Z
+---
+<p>kernel的入口地址是/sys/i386/i386/locore.s中定义的btext：<br />
+200  /**********************************************************************<br />
+201   *<br />
+202   * This is where the bootblocks start us, set the ball rolling...<br />
+203   *<br />
+204   */<br />
+205  NON_GPROF_ENTRY(btext)<br />
+从/boot/kernel/kernel中可以读出btext的链接地址：<br />
+# readelf -a /boot/kernel/kernel | grep btext<br />
+6870: c0458a30     0 FUNC    GLOBAL DEFAULT    5 btext<br />
+26381: c0458a30     0 FUNC    GLOBAL DEFAULT    5 btext<br />
+因此，在物理地址0x458a30处设置断点，单步跟踪locore.s中的初始化代码。程序运行至此<br />
+的cpu主要寄存器的内容如下：<br />
+rax: 0x00000000:00458a30 rcx: 0x00000000:a0200000<br />
+rdx: 0x00000000:000488a0 rbx: 0x00000000:00458a30<br />
+rsp: 0x00000000:0009e844 rbp: 0x00000000:00094884<br />
+rsi: 0x00000000:000610e4 rdi: 0x00000000:0005b9cc<br />
+r8 : 0x00000000:00000000 r9 : 0x00000000:00000000<br />
+r10: 0x00000000:00000000 r11: 0x00000000:00000000<br />
+r12: 0x00000000:00000000 r13: 0x00000000:00000000<br />
+r14: 0x00000000:00000000 r15: 0x00000000:00000000<br />
+rip: 0x00000000:00458a30<br />
+eflags 0x00000002<br />
+首先是向0x472写入0x1234，告知bios下次为热引导：<br />
+216  /* Tell the bios to warmboot next time */<br />
+217          movw    $0x1234,0x472<br />
+构建一个新的栈帧：<br />
+220  /* Set up a real frame in case the double return in newboot is executed. */<br />
+221          pushl   %ebp<br />
+222          movl    %esp, %ebp<br />
+此时cpu主要寄存器的内容如下：<br />
+rax: 0x00000000:00458a30 rcx: 0x00000000:a0200000<br />
+rdx: 0x00000000:000488a0 rbx: 0x00000000:00458a30<br />
+rsp: 0x00000000:0009e840 rbp: 0x00000000:0009e840<br />
+rsi: 0x00000000:000610e4 rdi: 0x00000000:0005b9cc<br />
+r8 : 0x00000000:00000000 r9 : 0x00000000:00000000<br />
+r10: 0x00000000:00000000 r11: 0x00000000:00000000<br />
+r12: 0x00000000:00000000 r13: 0x00000000:00000000<br />
+r14: 0x00000000:00000000 r15: 0x00000000:00000000<br />
+rip: 0x00000000:00458a3c<br />
+eflags 0x00000002<br />
+将PSL_KRENEL赋给eflags：<br />
+224  /* Don't trust what the BIOS gives for eflags. */<br />
+225          pushl   $PSL_KERNEL<br />
+226          popfl<br />
+PSL_KERNEL是在/sys/i386/include/psl.h中定义的：<br />
+60  /*<br />
+61   * The i486 manual says that we are not supposed to change reserved flags,<br />
+62   * but this is too much trouble since the reserved flags depend on the cpu<br />
+63   * and setting them to their historical values works in practice.<br />
+64   */<br />
+65  #define PSL_RESERVED_DEFAULT    0x00000002<br />
+66<br />
+67  /*<br />
+68   * Initial flags for kernel and user mode.  The kernel later inherits<br />
+69   * PSL_I and some other flags from user mode.<br />
+70   */<br />
+71  #define PSL_KERNEL      PSL_RESERVED_DEFAULT<br />
+72  #define PSL_USER        (PSL_RESERVED_DEFAULT | PSL_I)<br />
+将ds的内容赋给fs和gs：<br />
+228  /*<br />
+229   * Don't trust what the BIOS gives for %fs and %gs.  Trust the bootstrap<br />
+230   * to set %cs, %ds, %es and %ss.<br />
+231   */<br />
+232          mov     %ds, %ax<br />
+233          mov     %ax, %fs<br />
+234          mov     %ax, %gs<br />
+236  /*<br />
+237   * Clear the bss.  Not all boot programs do it, and it is our job anyway.<br />
+238   *<br />
+239   * XXX we don't check that there is memory for our bss and page tables<br />
+240   * before using it.<br />
+241   *<br />
+242   * Note: we must be careful to not overwrite an active gdt or idt.  They<br />
+243   * inactive from now until we switch to new ones, since we don't load any<br />
+244   * more segment registers or permit interrupts until after the switch.<br />
+245   */<br />
+246          movl    $R(end),%ecx<br />
+247          movl    $R(edata),%edi<br />
+248          subl    %edi,%ecx<br />
+249          xorl    %eax,%eax<br />
+250          cld<br />
+251          rep<br />
+252          stosb<br />
+根据readelf -a kernel的结果，end的地址是0xc0c06020，由于KERNBASE是<br />
+0xc0000000，此处赋给ecx的就是0xc06020。edata的地址是0xc0bab9a0，这实际上就是<br />
+.bss段的起始地址，此处赋给edi的就是0xbab9a0。ecx减去edi之后的内容是0x5a680，<br />
+这是从.bss段起始地址到end地址之间的字节数。随后将eax清0，作为后续清0操作的<br />
+写入值。cld保证edi递增变化。stosb将al的内容写入edi指向的位置。这段代码从<br />
+0xc0bab9a0开始连续写入0x5a680个字节的0，从而实现将.bss段清0的目的。<br />
+253<br />
+254          call    recover_bootinfo<br />
+255<br />
+调用recover_bootinfo获取由loader传入的引导信息。<br />
+487          movl    28(%ebp),%ebx           /* &amp;bootinfo.version */<br />
+488          movl    BI_VERSION(%ebx),%eax<br />
+489          cmpl    $1,%eax                 /* We only understand version 1 */<br />
+490          je      1f<br />
+491          movl    $1,%eax                 /* Return status */<br />
+492          leave<br />
+493          /*<br />
+494           * XXX this returns to our caller's caller (as is required) since<br />
+495           * we didn't set up a frame and our caller did.<br />
+496           */<br />
+497          ret<br />
+locore.s入口btext的调用格式为(*btext)(howto, bootdev, 0, 0, 0, &amp;bootinfo)，在bootinfo<br />
+之后压栈的有5个参数，占20个字节，在加上返回地址和在调用recover_bootinfo之前压栈的ebp，<br />
+一共有28个字节，因此从当前ebp位置上溯28个字节就是bootinfo结构体的起始地址。上述代码<br />
+从bootinfo结构体中取出bi_version字段的内容，判断其是否为1，仅当版本为1时才继续处理。<br />
+500          /*<br />
+501           * If we have a kernelname copy it in<br />
+502           */<br />
+503          movl    BI_KERNELNAME(%ebx),%esi<br />
+504          cmpl    $0,%esi<br />
+505          je      2f                      /* No kernelname */<br />
+506          movl    $MAXPATHLEN,%ecx        /* Brute force!!! */<br />
+507          movl    $R(kernelname),%edi<br />
+508          cmpb    $'/',(%esi)             /* Make sure it starts with a slash */<br />
+509          je      1f<br />
+510          movb    $'/',(%edi)<br />
+511          incl    %edi<br />
+512          decl    %ecx<br />
+从bootinfo结构体中取出bi_kernelname字段，写入esi。MAXPATHLEN是最大路径长度，定义为1024，<br />
+这是kernel中的kernelname数组的尺寸。将该数组相对于KERNBASE偏移地址写入edi，并判断由<br />
+bootinfo传入的bi_kernelname是否以"/"开始，若是，则将剩余部分拷入kernelname数组。<br />
+519          /*<br />
+520           * Determine the size of the boot loader's copy of the bootinfo<br />
+521           * struct.  This is impossible to do properly because old versions<br />
+522           * of the struct don't contain a size field and there are 2 old<br />
+523           * versions with the same version number.<br />
+524           */<br />
+525          movl    $BI_ENDCOMMON,%ecx      /* prepare for sizeless version */<br />
+526          testl   $RB_BOOTINFO,8(%ebp)    /* bi_size (and bootinfo) valid? */<br />
+527          je      got_bi_size             /* no, sizeless version */<br />
+528          movl    BI_SIZE(%ebx),%ecx<br />
+将bootinfo中肯定会存在的字段的结束位置取出，写入ecx，实际上就是前三个字段，12个字节。<br />
+RB_BOOTINFO在/sys/sys/reboot.h中定义为0x80000000，是一个表示是否传入了完整的bootinfo<br />
+结构体信息的标志。若传入了完整的bootinfo结构体信息，则将bi_size字段的内容赋给ecx。<br />
+531          /*<br />
+532           * Copy the common part of the bootinfo struct<br />
+533           */<br />
+534          movl    %ebx,%esi<br />
+535          movl    $R(bootinfo),%edi<br />
+536          cmpl    $BOOTINFO_SIZE,%ecx<br />
+537          jbe     got_common_bi_size<br />
+538          movl    $BOOTINFO_SIZE,%ecx<br />
+539  got_common_bi_size:<br />
+540          cld<br />
+541          rep<br />
+542          movsb<br />
+比较传入的bi_size字段的内容与bootinfo结构体的大小是否一致，若传入bi_size小于等于bootinfo<br />
+结构体的大小，则以bi_size为准，否则以bootinfo结构体的大小为准。将传入的bootinfo信息拷贝<br />
+到bootinfo结构体中。<br />
+562          /*<br />
+563           * The old style disk boot.<br />
+564           *      (*btext)(howto, bootdev, cyloffset, esym);<br />
+565           * Note that the newer boot code just falls into here to pick<br />
+566           * up howto and bootdev, cyloffset and esym are no longer used<br />
+567           */<br />
+568  olddiskboot:<br />
+569          movl    8(%ebp),%eax<br />
+570          movl    %eax,R(boothowto)<br />
+571          movl    12(%ebp),%eax<br />
+572          movl    %eax,R(bootdev)<br />
+573<br />
+574          ret<br />
+分别从入参中取出相关信息存入boothowto和bootdev变量。返回btext。<br />
+256  /* Get onto a stack that we can trust. */<br />
+257  /*<br />
+258   * XXX this step is delayed in case recover_bootinfo needs to return via<br />
+259   * the old stack, but it need not be, since recover_bootinfo actually<br />
+260   * returns via the old frame.<br />
+261   */<br />
+262          movl    $R(tmpstk),%esp<br />
+tmpstk是在本文件中定义的一块8192字节的连续空间，此处将esp指向这块空间。<br />
+实际上，这块空间就紧邻在bootinfo结构体的下面。<br />
+291          call    identify_cpu<br />
+获取cpu识别信息。<br />
+292          call    create_pagetables<br />
+创建第一个页面目录及其页表。<br />
+706  /**********************************************************************<br />
+707   *<br />
+708   * Create the first page directory and its page tables.<br />
+709   *<br />
+710   */<br />
+711<br />
+712  create_pagetables:<br />
+713<br />
+714  /* Find end of kernel image (rounded up to a page boundary). */<br />
+715          movl    $R(_end),%esi<br />
+将kernel的结束地址赋给esi，示例中为0xc06020。<br />
+717  /* Include symbols, if any. */<br />
+718          movl    R(bootinfo+BI_ESYMTAB),%edi<br />
+719          testl   %edi,%edi<br />
+720          je      over_symalloc<br />
+721          movl    %edi,%esi<br />
+722          movl    $KERNBASE,%edi<br />
+723          addl    %edi,R(bootinfo+BI_SYMTAB)<br />
+724          addl    %edi,R(bootinfo+BI_ESYMTAB)<br />
+先把bootinfo结构体中的bi_esymtab字段的内容赋给edi，并测试其是否为0，<br />
+如果为0，表示传入的bootinfo中没有这个字段。<br />
+若非0，则将此内容赋给esi，随后将KERNBASE赋给edi。bootinfo结构体的地址是<br />
+0xb00460，bi_symtab和bi_esymtab字段的地址分别是0xb004a0和0xb004a4，这部分结构体<br />
+的内容如下：<br />
+0xb00460 :    0x00000001      0x00065f24      0x00000000      0x00000000<br />
+0xb00470 :    0x0208fe3f      0x004f010f      0x004f010f      0x004f010f<br />
+0xb00480 :    0x004f010f      0x004f010f      0x004f010f      0x004f010f<br />
+0xb00490 :    0x00000054      0x00008001      0x0000027f      0x0003fbc0<br />
+0xb004a0 :    0x00c06020      0x00d06518<br />
+723行和724行就是把这两个地址中存放的物理地址加上KERNBASE，得到虚拟地址。<br />
+完成添加操作之后同一内存区域的内容如下：<br />
+0xb00460 :    0x00000001      0x00065f24      0x00000000      0x00000000<br />
+0xb00470 :    0x0208fe3f      0x004f010f      0x004f010f      0x004f010f<br />
+0xb00480 :    0x004f010f      0x004f010f      0x004f010f      0x004f010f<br />
+0xb00490 :    0x00000054      0x00008001      0x0000027f      0x0003fbc0<br />
+0xb004a0 :    0xc0c06020      0xc0d06518<br />
+727  /* If we are told where the end of the kernel space is, believe it. */<br />
+728          movl    R(bootinfo+BI_KERNEND),%edi<br />
+729          testl   %edi,%edi<br />
+730          je      no_kernend<br />
+731          movl    %edi,%esi<br />
+732  no_kernend:<br />
+733<br />
+734          addl    $PDRMASK,%esi           /* Play conservative for now, and */<br />
+735          andl    $~PDRMASK,%esi          /*   ... wrap to next 4M. */<br />
+736          movl    %esi,R(KERNend)         /* save end of kernel */<br />
+737          movl    %esi,R(physfree)        /* next free page is at end of kernel */<br />
+将bootinfo结构体中的bi_kernend字段的内容赋给edi，并测试其是否为0，<br />
+如果为0，表示传入的bootinfo中没有这个字段。<br />
+若非0，则将此内容赋给esi。示例中，bi_kernend字段的值是0xd74000。<br />
+PDRMASK的低22比特全1，734和735两行就是把esi中的值，也就是传入的bi_kernend<br />
+字段的值向上调整为4M的辈数。示例中即为0x01000000。随后将调整之后的内核结束位置<br />
+写入全局变量KERNend和physfree，而下一个空闲页面就是从physfree开始的。<br />
+739  /* Allocate Kernel Page Tables */<br />
+740          ALLOCPAGES(NKPT)<br />
+NKPT目前定义为30，此处即通过ALLOCPAGES分配30个页面。<br />
+158  #define ALLOCPAGES(foo)<br />
+159          movl    R(physfree), %esi ;<br />
+160          movl    $((foo)*PAGE_SIZE), %eax ;<br />
+161          addl    %esi, %eax ;<br />
+162          movl    %eax, R(physfree) ;<br />
+163          movl    %esi, %edi ;<br />
+164          movl    $((foo)*PAGE_SIZE),%ecx ;<br />
+165          xorl    %eax,%eax ;<br />
+166          cld ;<br />
+167          rep ;<br />
+168          stosb<br />
+首先将当前的空闲物理页面地址赋给esi，即0x01000000。PAGE_SIZE是4096，<br />
+入参foo是30，由此算出总字节数是122880，将其存入eax，在加上esi中的起始地址，<br />
+得到分配区域之后的地址，即0x0101e000，将其存为physfree变量的新值。<br />
+随后将edi指向新分配的30个页面空间的起始位置0x01000000。将新分配空间的字节数<br />
+0x1e000写入ecx作为计数，165行到168行将这段新分配的空间清0。<br />
+741          movl    %esi,R(KPTphys)<br />
+完成30个页面空间的分配之后，将这部分空间的起始位置，即0x01000000写入全局变量<br />
+KPTphys，表示内核页表的物理地址。<br />
+749          ALLOCPAGES(NPGPTD)<br />
+NPGPTD是页表目录所占用的页面数目，对于非PAE的情况，页表目录共需<br />
+4*(2^10)=4096字节，即1个页面。此处再通过ALLOCPAGES分配一个页面的空间，<br />
+分配完毕之后，physfree指向新的空闲页面起始地址0x0101f000，esi指向这个页面<br />
+的起始位置0x0101e000。<br />
+750          movl    %esi,R(IdlePTD)<br />
+将新分配的这个页面的起始地址0x0101e000写入全局变量IdlePTD，<br />
+表示内核页表目录的物理地址。<br />
+752  /* Allocate KSTACK */<br />
+753          ALLOCPAGES(KSTACK_PAGES)<br />
+754          movl    %esi,R(p0kpa)<br />
+755          addl    $KERNBASE, %esi<br />
+756          movl    %esi, R(proc0kstack)<br />
+757<br />
+758          ALLOCPAGES(1)                   /* vm86/bios stack */<br />
+759          movl    %esi,R(vm86phystk)<br />
+760<br />
+761          ALLOCPAGES(3)                   /* pgtable + ext + IOPAGES */<br />
+762          movl    %esi,R(vm86pa)<br />
+763          addl    $KERNBASE, %esi<br />
+764          movl    %esi, R(vm86paddr)<br />
+KSTACK_PAGES在/sys/i386/include/param.h中定义为2，此处即再分配2个页面的空间，<br />
+physfree指向0x01021000。<br />
+分配完成之后，将这段空间的起始地址0x0101f000赋给全局变量p0kpa，<br />
+表示proc0的栈的物理地址，另外将这个<br />
+起始地址对应的虚拟地址0xc101f000写入全局变量proc0kstack，表示proc0的kstack<br />
+空间的（虚拟）地址。<br />
+随后再分配一个页面的空间，physfree指向0x01022000。分配完成之后，将这段空间的<br />
+起始地址0x01021000赋给全局变量vm86phystk，表示vm86/bios栈的物理地址。<br />
+随后再分配三个页面的空间，physfree指向0x01025000。分配完成之后，将这段空间的<br />
+起始地址0x01022000赋给全局变量vm86pa，表示vm86区域的物理地址，同时将这个起始<br />
+地址对应的虚拟地址0xc1022000赋给全局变量vm86paddr，表示vm86区域的（虚拟）地址。<br />
+766  #ifdef SMP<br />
+767  /* Allocate cpu0's private data page */<br />
+768          ALLOCPAGES(1)<br />
+769          movl    %esi,R(cpu0pp)<br />
+770          addl    $KERNBASE, %esi<br />
+771          movl    %esi, R(cpu0prvpage)    /* relocated to KVM space */<br />
+772<br />
+773  /* Allocate SMP page table page */<br />
+774          ALLOCPAGES(1)<br />
+775          movl    %esi,R(SMPptpa)<br />
+776          addl    $KERNBASE, %esi<br />
+777          movl    %esi, R(SMPpt)          /* relocated to KVM space */<br />
+778  #endif  /* SMP */<br />
+对于smp的情况，再分配一个页面的空间给cpu0的私有数据页，physfree指向0x01026000。<br />
+分配完成之后，将这段空间的起始地址0x01025000赋给全局变量cpu0pp，同时将这个<br />
+起始地址对应的虚拟地址0xc1025000赋给全局变量cpu0prvpage。随后再分配一个页面的<br />
+空间给SMP页表页，physfree指向0x01027000。分配完成之后，将这段空间的起始地址<br />
+0x0x01026000赋给全局变量SMPptpa，同时将这个起始地址对应的虚拟地址0xc1026000<br />
+赋给全局变量SMPpt。<br />
+780  /*<br />
+781   * Enable PSE and PGE.<br />
+782   */<br />
+783  #ifndef DISABLE_PSE<br />
+784          testl   $CPUID_PSE, R(cpu_feature)<br />
+785          jz      1f<br />
+786          movl    $PG_PS, R(pseflag)<br />
+787          movl    %cr4, %eax<br />
+788          orl     $CR4_PSE, %eax<br />
+789          movl    %eax, %cr4<br />
+790  1:<br />
+791  #endif<br />
+CPUID_PSE在/sys/i386/include/specialreg.h中定义为0x00000008，这是PSE标志在<br />
+cpuid返回值中的位置。全局变量cpu_feature由之前调用的identify_cpu函数设置，<br />
+内容获取自cpuid指令。此处判断其PSE对应比特是否为1。PG_PS在/sys/i386/include/pmap.h<br />
+中定义为0x080，这是页表目录项和页表项中表示页面尺寸的比特位置。pseflag是在<br />
+/sys/i386/i386/pmap.c中定义的全局变量，用于表示是否开启了PSE功能。CR4_PSE在<br />
+/sys/i386/include/specialreg.h中定义为0x00000010，这是PSE在cr4寄存器中的比特位置。<br />
+上面这几行的意思就是如果cpuid指令的结果显示cpu支持PSE，则将全局变量pseflag设置为<br />
+0x80，并将cr4寄存器中PSE对应比特设置为1。<br />
+792  #ifndef DISABLE_PG_G<br />
+793          testl   $CPUID_PGE, R(cpu_feature)<br />
+794          jz      2f<br />
+795          movl    $PG_G, R(pgeflag)<br />
+796          movl    %cr4, %eax<br />
+797          orl     $CR4_PGE, %eax<br />
+798          movl    %eax, %cr4<br />
+799  2:<br />
+800  #endif<br />
+CPUID_PGE在/sys/i386/include/specialreg.h中定义为0x00002000，这是PGE标志在<br />
+cpuid返回值中的位置。PG_G在/sys/i386/include/pmap.h中定义为0x100，此处将其赋给<br />
+全局变量pgeflag，表示开启了全局页面支持。CR4_PGE在/sys/i386/include/specialreg.h<br />
+中定义为0x00000080，这是PGE在cr4寄存器中的比特位置。上面这几行的意思就是如果<br />
+cpuid指令的结果显示cpu支持PGE，则将全局变量pgeflag设置为0x100，并将cr4寄存器中<br />
+PGE对应比特设置为1。<br />
+814          xorl    %eax, %eax<br />
+815          movl    R(KERNend),%ecx<br />
+816          shrl    $PAGE_SHIFT,%ecx<br />
+817          fillkptphys($PG_RW)<br />
+清空eax。将KRENend的值0x1000000（16M）写入ecx，并右移12比特，得到页面数目<br />
+0x1000（4096）。我们先来看看fillkpt宏的代码：<br />
+170  /*<br />
+171   * fillkpt<br />
+172   *      eax = page frame address<br />
+173   *      ebx = index into page table<br />
+174   *      ecx = how many pages to map<br />
+175   *      base = base address of page dir/table<br />
+176   *      prot = protection bits<br />
+177   */<br />
+178  #define fillkpt(base, prot)               <br />
+179          shll    $PTESHIFT,%ebx          ;<br />
+180          addl    base,%ebx               ;<br />
+181          orl     $PG_V,%eax              ;<br />
+182          orl     prot,%eax               ;<br />
+183  1:      movl    %eax,(%ebx)             ;<br />
+184          addl    $PAGE_SIZE,%eax         ; /* increment physical address */<br />
+185          addl    $PTESIZE,%ebx           ; /* next pte */<br />
+186          loop    1b<br />
+187<br />
+入参ebx是页表内的索引，PTESHIFT在/sys/i386/include/pmap.h中定义为2（非PAE），<br />
+179行将ebx左移2位得到的就是页表内的偏移地址。加上base中存放的页表基址得到的<br />
+就是页表项的地址。PG_V在/sys/i386/include/pmap.h中定义为0x001，这是页表目录项<br />
+或页表项中表示对应的页面当前是否在物理内存中的标志比特。入参eax存放的页面的<br />
+基地址，因此低12比特均为0。181和182行将eax的第0比特和第1比特置1，表示对应页面<br />
+存在于内存中，属性为读写。183行将在eax中构建好的页表项写入ebx指向的页表项地址。<br />
+184行在eax中构造用于描述下一个页面的页表项，185行将ebx指向下一条页表项的地址，<br />
+186行循环写入新构建的页表项。<br />
+因此，fillkpt的功能就是，给定某个页表页面的基地址（base）、页面保护模式（prot）、<br />
+需要填充的第一页表项在页表页面内的索引（ebx）、页面的基地址（eax）、需要填充的<br />
+页表项的数目（ecx），填充从ebx开始的ecx个页表项，让其指向从eax开始的ecx个连续<br />
+页面，每个页表项的第0比特置1，表示页面存在于物理内存中，第1比特置1，表示属性为读写。<br />
+下面来看fillkptphys的代码：<br />
+188  /*<br />
+189   * fillkptphys(prot)<br />
+190   *      eax = physical address<br />
+191   *      ecx = how many pages to map<br />
+192   *      prot = protection bits<br />
+193   */<br />
+194  #define fillkptphys(prot)                 <br />
+195          movl    %eax, %ebx              ;<br />
+196          shrl    $PAGE_SHIFT, %ebx       ;<br />
+197          fillkpt(R(KPTphys), prot)<br />
+eax为页面物理地址，将其右移12比特之后得到页面在页表内的索引。fillkpt的第一<br />
+入参是页表页面的基地址，这里指定的是KPTphys，这是紧邻在KERNend之后的30个<br />
+页面空间的起始地址（0x1000000）。 回到814到817行，这几行的意思就是填充<br />
+KPTphys（0x1000000）之后的4096个4字节条目，每个条目指向一个页面，这4096个条目<br />
+指向的就是从0地址到0x1000000之间的16M空间，这是之前存放内核的地方。<br />
+这些页面显然已经存在于物理内存中，因此对应条目的第0比特为1，第1比特为1表示<br />
+这些条目的属性为读写。完成设置之后的这4096个页表项的内容如下：<br />
+0x1000000 :    0x00000003      0x00001003      0x00002003      0x00003003<br />
+0x1000010 :    0x00004003      0x00005003      0x00006003      0x00007003<br />
+......<br />
+0x1003fe0 :    0x00ff8003      0x00ff9003      0x00ffa003      0x00ffb003<br />
+0x1003ff0 :    0x00ffc003      0x00ffd003      0x00ffe003      0x00fff003<br />
+826          movl    R(IdlePTD), %eax<br />
+827          movl    $NPGPTD, %ecx<br />
+828          fillkptphys($PG_RW)<br />
+这几行是建立页表目录所在页面的映射，NPGPTD定义为1，表示页表目录所占页面为1，<br />
+IdlePTD是页表目录页面的基地址0x101e000，紧邻在KPTphys指向的30个页面空间的<br />
+后面。此处即在前面描述内核16M空间的4096个页表项的后面再用一个页表项来描述<br />
+页表目录页面，属性为读写。<br />
+0x1000000 :    0x00000003      0x00001003      0x00002003      0x00003003<br />
+0x1000010 :    0x00004003      0x00005003      0x00006003      0x00007003<br />
+......<br />
+0x1003fe0 :    0x00ff8003      0x00ff9003      0x00ffa003      0x00ffb003<br />
+0x1003ff0 :    0x00ffc003      0x00ffd003      0x00ffe003      0x00fff003<br />
+0x1004000 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004010 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004020 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004030 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004040 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004050 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004060 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004070 :    0x00000000      0x00000000      0x0101e003<br />
+中间空的30个条目就对应于KPTphys指向的30个页面。<br />
+830  /* Map proc0's KSTACK in the physical way ... */<br />
+831          movl    R(p0kpa), %eax<br />
+832          movl    $(KSTACK_PAGES), %ecx<br />
+833          fillkptphys($PG_RW)<br />
+p0kpa（0x101f000）是紧邻在IdelPTD之后的2个页面的空间，KSTACK_PAGES定义为2，<br />
+此处即再分配两个页表项来描述这两个页面，属性为读写。<br />
+0x1000000 :    0x00000003      0x00001003      0x00002003      0x00003003<br />
+0x1000010 :    0x00004003      0x00005003      0x00006003      0x00007003<br />
+......<br />
+0x1003fe0 :    0x00ff8003      0x00ff9003      0x00ffa003      0x00ffb003<br />
+0x1003ff0 :    0x00ffc003      0x00ffd003      0x00ffe003      0x00fff003<br />
+0x1004000 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004010 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004020 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004030 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004040 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004050 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004060 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004070 :    0x00000000      0x00000000      0x0101e003      0x0101f003<br />
+0x1004080 :    0x01020003<br />
+835  /* Map ISA hole */<br />
+836          movl    $ISA_HOLE_START, %eax<br />
+837          movl    $ISA_HOLE_LENGTH&gt;&gt;PAGE_SHIFT, %ecx<br />
+838          fillkptphys($PG_RW)<br />
+ISA_HOLE_START在/sys/i386/include/pmap.h中定义为0xa0000，ISA_HOLE_LENGTH<br />
+定义为0x100000-0xa0000，即393216字节，96个页面。此处即用96个页表条目来映射从<br />
+0xa0000开始的96个页面的空间。但这个空间是属于0-KERNend的，之前已经映射过了。<br />
+840  /* Map space for the vm86 region */<br />
+841          movl    R(vm86phystk), %eax<br />
+842          movl    $4, %ecx<br />
+843          fillkptphys($PG_RW)<br />
+再分配4个条目来映射vm86phystk（0x1021000）之后的4个页面的空间，属性为读写。<br />
+0x1000000 :    0x00000003      0x00001003      0x00002003      0x00003003<br />
+0x1000010 :    0x00004003      0x00005003      0x00006003      0x00007003<br />
+......<br />
+0x1003fe0 :    0x00ff8003      0x00ff9003      0x00ffa003      0x00ffb003<br />
+0x1003ff0 :    0x00ffc003      0x00ffd003      0x00ffe003      0x00fff003<br />
+0x1004000 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004010 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004020 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004030 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004040 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004050 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004060 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004070 :    0x00000000      0x00000000      0x0101e003      0x0101f003<br />
+0x1004080 :    0x01020003      0x01021003      0x01022003      0x01023003<br />
+0x1004090 :    0x01024003<br />
+845  /* Map page 0 into the vm86 page table */<br />
+846          movl    $0, %eax<br />
+847          movl    $0, %ebx<br />
+848          movl    $1, %ecx<br />
+849          fillkpt(R(vm86pa), $PG_RW|PG_U)<br />
+这几行将第0页映射到vm86pa指向的区域中，vm86pa指向的是0x1022000区域：<br />
+0x1022000 :    0x00000007      0x00000000      0x00000000      0x00000000<br />
+只映射了1页，属性为PG_V|PG_RS|PG_U，即0x7，表示当前存在于物理内存中、<br />
+可读写、特权级别为用户级。<br />
+851  /* ...likewise for the ISA hole */<br />
+852          movl    $ISA_HOLE_START, %eax<br />
+853          movl    $ISA_HOLE_START&gt;&gt;PAGE_SHIFT, %ebx<br />
+854          movl    $ISA_HOLE_LENGTH&gt;&gt;PAGE_SHIFT, %ecx<br />
+855          fillkpt(R(vm86pa), $PG_RW|PG_U)<br />
+在vm86pa区域中建立ISA hole的映射，共计96个页表条目：<br />
+0x1022000 :    0x00000007      0x00000000      0x00000000      0x00000000<br />
+0x1022010 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1022270 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+......<br />
+0x1022280 :    0x000a0007      0x000a1007      0x000a2007      0x000a3007<br />
+0x1022290 :    0x000a4007      0x000a5007      0x000a6007      0x000a7007<br />
+0x10222a0 :    0x000a8007      0x000a9007      0x000aa007      0x000ab007<br />
+0x10222b0 :    0x000ac007      0x000ad007      0x000ae007      0x000af007<br />
+0x10222c0 :    0x000b0007      0x000b1007      0x000b2007      0x000b3007<br />
+0x10222d0 :    0x000b4007      0x000b5007      0x000b6007      0x000b7007<br />
+0x10222e0 :    0x000b8007      0x000b9007      0x000ba007      0x000bb007<br />
+0x10222f0 :    0x000bc007      0x000bd007      0x000be007      0x000bf007<br />
+0x1022300 :    0x000c0007      0x000c1007      0x000c2007      0x000c3007<br />
+0x1022310 :    0x000c4007      0x000c5007      0x000c6007      0x000c7007<br />
+0x1022320 :    0x000c8007      0x000c9007      0x000ca007      0x000cb007<br />
+0x1022330 :    0x000cc007      0x000cd007      0x000ce007      0x000cf007<br />
+0x1022340 :    0x000d0007      0x000d1007      0x000d2007      0x000d3007<br />
+0x1022350 :    0x000d4007      0x000d5007      0x000d6007      0x000d7007<br />
+0x1022360 :    0x000d8007      0x000d9007      0x000da007      0x000db007<br />
+0x1022370 :    0x000dc007      0x000dd007      0x000de007      0x000df007<br />
+0x1022380 :    0x000e0007      0x000e1007      0x000e2007      0x000e3007<br />
+0x1022390 :    0x000e4007      0x000e5007      0x000e6007      0x000e7007<br />
+0x10223a0 :    0x000e8007      0x000e9007      0x000ea007      0x000eb007<br />
+0x10223b0 :    0x000ec007      0x000ed007      0x000ee007      0x000ef007<br />
+0x10223c0 :    0x000f0007      0x000f1007      0x000f2007      0x000f3007<br />
+0x10223d0 :    0x000f4007      0x000f5007      0x000f6007      0x000f7007<br />
+0x10223e0 :    0x000f8007      0x000f9007      0x000fa007      0x000fb007<br />
+0x10223f0 :    0x000fc007      0x000fd007      0x000fe007      0x000ff007<br />
+......<br />
+0x1025fe0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1025ff0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+858  /* Map cpu0's private page into global kmem (4K @ cpu0prvpage) */<br />
+859          movl    R(cpu0pp), %eax<br />
+860          movl    $1, %ecx<br />
+861          fillkptphys($PG_RW)<br />
+继续回到KPTphys（0x1000000）之后的页表区域。再分配一个页表条目给cpu0pp指向的<br />
+1个页面的区域（0x1025000），属性为读写。<br />
+0x1000000 :    0x00000003      0x00001003      0x00002003      0x00003003<br />
+0x1000010 :    0x00004003      0x00005003      0x00006003      0x00007003<br />
+......<br />
+0x1003fe0 :    0x00ff8003      0x00ff9003      0x00ffa003      0x00ffb003<br />
+0x1003ff0 :    0x00ffc003      0x00ffd003      0x00ffe003      0x00fff003<br />
+0x1004000 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004010 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004020 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004030 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004040 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004050 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004060 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004070 :    0x00000000      0x00000000      0x0101e003      0x0101f003<br />
+0x1004080 :    0x01020003      0x01021003      0x01022003      0x01023003<br />
+0x1004090 :    0x01024003      0x01025003<br />
+863  /* Map SMP page table page into global kmem FWIW */<br />
+864          movl    R(SMPptpa), %eax<br />
+865          movl    $1, %ecx<br />
+866          fillkptphys($PG_RW)<br />
+再分配一个页表条目给SMPptpa指向的1个页面的区域（0x1026000），属性为读写。<br />
+0x1000000 :    0x00000003      0x00001003      0x00002003      0x00003003<br />
+0x1000010 :    0x00004003      0x00005003      0x00006003      0x00007003<br />
+......<br />
+0x1003fe0 :    0x00ff8003      0x00ff9003      0x00ffa003      0x00ffb003<br />
+0x1003ff0 :    0x00ffc003      0x00ffd003      0x00ffe003      0x00fff003<br />
+0x1004000 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004010 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004020 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004030 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004040 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004050 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004060 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1004070 :    0x00000000      0x00000000      0x0101e003      0x0101f003<br />
+0x1004080 :    0x01020003      0x01021003      0x01022003      0x01023003<br />
+0x1004090 :    0x01024003      0x01025003      0x01026003<br />
+868  /* Map the private page into the SMP page table */<br />
+869          movl    R(cpu0pp), %eax<br />
+870          movl    $0, %ebx                /* pte offset = 0 */<br />
+871          movl    $1, %ecx                /* one private page coming right up */<br />
+872          fillkpt(R(SMPptpa), $PG_RW)<br />
+在SMPptpa（0x1026000）页面中分配一个页表条目来映射cpu0pp（0x1025000）指向的页面，<br />
+属性为读写。<br />
+0x1026000 :    0x01025003      0x00000000      0x00000000      0x00000000<br />
+874  /* ... and put the page table table in the pde. */<br />
+875          movl    R(SMPptpa), %eax<br />
+876          movl    $MPPTDI, %ebx<br />
+877          movl    $1, %ecx<br />
+878          fillkpt(R(IdlePTD), $PG_RW)<br />
+在IdlePTD指向的页表页面目录中创建一条页表目录项来指向SMPptpa指向的SMP页表页面。<br />
+MPPTDI定义为1023，表示最后一个页表目录项。属性为读写。我们可以看到，页表目录页面<br />
+的其它页表目录项的内容到此时仍然为空。<br />
+0x101e000 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x101e010 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+......<br />
+0x101efe0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x101eff0 :    0x00000000      0x00000000      0x00000000      0x01026003<br />
+880  /* Fakeup VA for the local apic to allow early traps. */<br />
+881          ALLOCPAGES(1)<br />
+882          movl    %esi, %eax<br />
+883          movl    $(NPTEPG-1), %ebx       /* pte offset = NTEPG-1 */<br />
+884          movl    $1, %ecx                /* one private pt coming right up */<br />
+885          fillkpt(R(SMPptpa), $PG_RW)<br />
+再分配一个页面，此时physfree指向0x1028000。将SMPptpa（0x1026000）页面中的最后<br />
+一个条目用来映射这个新分配的页面，属性为读写。<br />
+0x1026000 :    0x01025003      0x00000000      0x00000000      0x00000000<br />
+0x1026010 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+......<br />
+0x1026fe0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x1026ff0 :    0x00000000      0x00000000      0x00000000      0x01027003<br />
+888  /*<br />
+889   * Create an identity mapping for low physical memory, including the kernel.<br />
+890   * The part of this mapping that covers the first 1 MB of physical memory<br />
+891   * becomes a permanent part of the kernel's address space.  The rest of this<br />
+892   * mapping is destroyed in pmap_bootstrap().  Ordinarily, the same page table<br />
+893   * pages are shared by the identity mapping and the kernel's native mapping.<br />
+894   * However, the permanent identity mapping cannot contain PG_G mappings.<br />
+895   * Thus, if the kernel is loaded within the permanent identity mapping, that<br />
+896   * page table page must be duplicated and not shared.<br />
+897   *<br />
+898   * N.B. Due to errata concerning large pages and physical address zero,<br />
+899   * a PG_PS mapping is not used.<br />
+900   */<br />
+901          movl    R(KPTphys), %eax<br />
+902          xorl    %ebx, %ebx<br />
+903          movl    $NKPT, %ecx<br />
+904          fillkpt(R(IdlePTD), $PG_RW)<br />
+将IdlePTD（0x101e000）页面中的前NKPT（30）个条目用来映射KPTphys（0x1000000）<br />
+指向的30个页面的空间，属性为读写。<br />
+0x101e000 :    0x01000003      0x01001003      0x01002003      0x01003003<br />
+0x101e010 :    0x01004003      0x01005003      0x01006003      0x01007003<br />
+0x101e020 :    0x01008003      0x01009003      0x0100a003      0x0100b003<br />
+0x101e030 :    0x0100c003      0x0100d003      0x0100e003      0x0100f003<br />
+0x101e040 :    0x01010003      0x01011003      0x01012003      0x01013003<br />
+0x101e050 :    0x01014003      0x01015003      0x01016003      0x01017003<br />
+0x101e060 :    0x01018003      0x01019003      0x0101a003      0x0101b003<br />
+0x101e070 :    0x0101c003      0x0101d003      0x00000000      0x00000000<br />
+0x101e080 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+......<br />
+0x101efe0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x101eff0 :    0x00000000      0x00000000      0x00000000      0x01026003<br />
+920  /*<br />
+921   * For the non-PSE case, install PDEs for PTs covering the KVA.<br />
+922   * For the PSE case, do the same, but clobber the ones corresponding<br />
+923   * to the kernel (from btext to KERNend) with 4M (2M for PAE) ('PS')<br />
+924   * PDEs immediately after.<br />
+925   */<br />
+926          movl    R(KPTphys), %eax<br />
+927          movl    $KPTDI, %ebx<br />
+928          movl    $NKPT, %ecx<br />
+929          fillkpt(R(IdlePTD), $PG_RW)<br />
+930          cmpl    $0,R(pseflag)<br />
+931          je      done_pde<br />
+KPTDI定义为第一个内核页表目录的索引，即768。926到929行将IdlePTD（0x101e000）<br />
+页面中的第768项之后的30个页表目录项用来指向KPTphys（0x1000000）指向的30个<br />
+页面空间，属性为读写。<br />
+0x101e000 :    0x01000003      0x01001003      0x01002003      0x01003003<br />
+0x101e010 :    0x01004003      0x01005003      0x01006003      0x01007003<br />
+0x101e020 :    0x01008003      0x01009003      0x0100a003      0x0100b003<br />
+0x101e030 :    0x0100c003      0x0100d003      0x0100e003      0x0100f003<br />
+0x101e040 :    0x01010003      0x01011003      0x01012003      0x01013003<br />
+0x101e050 :    0x01014003      0x01015003      0x01016003      0x01017003<br />
+0x101e060 :    0x01018003      0x01019003      0x0101a003      0x0101b003<br />
+0x101e070 :    0x0101c003      0x0101d003      0x00000000      0x00000000<br />
+0x101e080 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+......<br />
+0x101ebf0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x101ec00 :    0x01000003      0x01001003      0x01002003      0x01003003<br />
+0x101ec10 :    0x01004003      0x01005003      0x01006003      0x01007003<br />
+0x101ec20 :    0x01008003      0x01009003      0x0100a003      0x0100b003<br />
+0x101ec30 :    0x0100c003      0x0100d003      0x0100e003      0x0100f003<br />
+0x101ec40 :    0x01010003      0x01011003      0x01012003      0x01013003<br />
+0x101ec50 :    0x01014003      0x01015003      0x01016003      0x01017003<br />
+0x101ec60 :    0x01018003      0x01019003      0x0101a003      0x0101b003<br />
+0x101ec70 :    0x0101c003      0x0101d003      0x00000000      0x00000000<br />
+0x101ec80 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+......<br />
+0x101efe0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x101eff0 :    0x00000000      0x00000000      0x00000000      0x01026003<br />
+930          cmpl    $0,R(pseflag)<br />
+931          je      done_pde<br />
+若全局变量pseflag为0，则跳转至done_pde，示例中此变量为1。<br />
+933          movl    R(KERNend), %ecx<br />
+934          movl    $KERNLOAD, %eax<br />
+935          subl    %eax, %ecx<br />
+936          shrl    $PDRSHIFT, %ecx<br />
+937          movl    $(KPTDI+(KERNLOAD/(1<br />
+933行将KERNend（0x1000000）写入ecx。934行将KERNLOAD（0x400000）写入eax。<br />
+935行从ecx中减去eax，得到0xc00000。936行将ecx右移22比特，得到3。<br />
+937行，(KERNLOAD/(1<br />
+946  done_pde:<br />
+947  /* install a pde recursively mapping page directory as a page table */<br />
+948          movl    R(IdlePTD), %eax<br />
+949          movl    $PTDPTDI, %ebx<br />
+950          movl    $NPGPTD,%ecx<br />
+951          fillkpt(R(IdlePTD), $PG_RW)<br />
+将IdlePTD（0x101e000）页面中的第PTDPTDI（767）个页表目录项指向IdelPTD页面，<br />
+属性为读写。<br />
+0x101e000 :    0x01000003      0x01001003      0x01002003      0x01003003<br />
+0x101e010 :    0x01004003      0x01005003      0x01006003      0x01007003<br />
+0x101e020 :    0x01008003      0x01009003      0x0100a003      0x0100b003<br />
+0x101e030 :    0x0100c003      0x0100d003      0x0100e003      0x0100f003<br />
+0x101e040 :    0x01010003      0x01011003      0x01012003      0x01013003<br />
+0x101e050 :    0x01014003      0x01015003      0x01016003      0x01017003<br />
+0x101e060 :    0x01018003      0x01019003      0x0101a003      0x0101b003<br />
+0x101e070 :    0x0101c003      0x0101d003      0x00000000      0x00000000<br />
+0x101e080 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+......<br />
+0x101ebe0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x101ebf0 :    0x00000000      0x00000000      0x00000000      0x0101e003<br />
+0x101ec00 :    0x01000003      0x00400083      0x00800083      0x00c00083<br />
+0x101ec10 :    0x01004003      0x01005003      0x01006003      0x01007003<br />
+0x101ec20 :    0x01008003      0x01009003      0x0100a003      0x0100b003<br />
+0x101ec30 :    0x0100c003      0x0100d003      0x0100e003      0x0100f003<br />
+0x101ec40 :    0x01010003      0x01011003      0x01012003      0x01013003<br />
+0x101ec50 :    0x01014003      0x01015003      0x01016003      0x01017003<br />
+0x101ec60 :    0x01018003      0x01019003      0x0101a003      0x0101b003<br />
+0x101ec70 :    0x0101c003      0x0101d003      0x00000000      0x00000000<br />
+0x101ec80 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+......<br />
+0x101efe0 :    0x00000000      0x00000000      0x00000000      0x00000000<br />
+0x101eff0 :    0x00000000      0x00000000      0x00000000      0x01026003<br />
+960          ret<br />
+返回到btex主流程中。<br />
+294  /*<br />
+295   * If the CPU has support for VME, turn it on.<br />
+296   */<br />
+297          testl   $CPUID_VME, R(cpu_feature)<br />
+298          jz      1f<br />
+299          movl    %cr4, %eax<br />
+300          orl     $CR4_VME, %eax<br />
+301          movl    %eax, %cr4<br />
+302  1:<br />
+如果cpu支持VME，则将cr4寄存器的CR4_VME（0）比特设置为1。<br />
+312          movl    R(IdlePTD), %eax<br />
+313          movl    %eax,%cr3               /* load ptd addr into mmu */<br />
+将IdlePTD（0x101e000）写入cr3寄存器。<br />
+315          movl    %cr0,%eax               /* get control word */<br />
+316          orl     $CR0_PE|CR0_PG,%eax     /* enable paging */<br />
+317          movl    %eax,%cr0               /* and let's page NOW! */<br />
+318<br />
+319          pushl   $begin                  /* jump to high virtualized address */<br />
+320          ret<br />
+设置cr0寄存器中的CR0_PE（打开保护模式）和CR0_PG（打开调页机制）标志，启动<br />
+调页机制。此后程序中使用的就是虚拟地址了。此处通过将begin符号所代表的虚拟<br />
+地址压栈再立即返回的形式跳转到虚拟地址begin处（0xc0458a99）。<br />
+322  /* now running relocated at KERNBASE where the system is linked to run */<br />
+323  begin:<br />
+324          /* set up bootstrap stack */<br />
+325          movl    proc0kstack,%eax        /* location of in-kernel stack */<br />
+326                          /* bootstrap stack end location */<br />
+327          leal    (KSTACK_PAGES*PAGE_SIZE-PCB_SIZE)(%eax),%esp<br />
+328<br />
+329          xorl    %ebp,%ebp               /* mark end of frames */<br />
+330<br />
+331  #ifdef PAE<br />
+332          movl    IdlePDPT,%esi<br />
+333  #else<br />
+334          movl    IdlePTD,%esi<br />
+335  #endif<br />
+336          movl    %esi,(KSTACK_PAGES*PAGE_SIZE-PCB_SIZE+PCB_CR3)(%eax)<br />
+337<br />
+338          pushl   physfree                /* value of first for init386(first) */<br />
+339          call    init386                 /* wire 386 chip for unix operation */<br />
+325行将内核栈起始地址proc0kstack（0xc101f000）写入eax，内核栈共有两个页面，<br />
+8192字节，pcb结构体的尺寸是624字节，从这两个页面的顶端去掉624字节之后，<br />
+将esp指向向下增长的起始位置（proc0kstack+(8192-624))，即0xc1020d90。<br />
+329行将ebp清0。334行将IdlePTD（0x101e000）写入esi。将esi的内容（IdlePTD所表示的<br />
+页表目录页面的物理地址）写入内核栈中的pcb结构体中的pcb_cr3字段。<br />
+physfree目前指向的是0x01028000，这是之前分配完SMPptpa之后的位置。此处将其压栈，<br />
+作为入参first调用init386函数。</p>

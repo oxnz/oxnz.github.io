@@ -1,0 +1,402 @@
+---
+layout: post
+title: OSX ML
+date: 
+type: post
+published: false
+status: private
+categories:
+- Blog
+- OSX
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: oxnz
+  email: yunxinyi@gmail.com
+  display_name: Will Z
+  first_name: Will
+  last_name: Z
+---
+<p><a href="http://xinyi.sourceforge.net/2010/12/15/com.microsoft.office.license.plist">com.microsoft.office.license.plist</a></p>
+<pre class="brush:bash">sudo mv Download/com.microsoft.office.license.plist Library/Preferences/</pre>
+<p>sftp =&gt; Transmit</p>
+<p>&nbsp;</p>
+<p>vmware</p>
+<p>&nbsp;</p>
+<p>关于反引号（即重音键）错码的修复，只需要替换ApplePS2Controller下的<a href="&quot;xinyi.sourceforge.net/2012/12/ApplePS2Keyboard.kext&lt;/a">ApplePS2Keyboard.kext</a>即可.<br />
+<!--more--><br />
+&nbsp;</p>
+<p>&nbsp;</p>
+<table cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td id="postmessage_28753332"><span style="font-size: 300%;"><span style="color: red;">mac os的kext详解</span></span></p>
+<p>Kext是Mac OS 的硬件驱动,它存放位置在系统中:<br />
+/System/Library/Extensions/ #系统核心级别存放位置,系统自有驱动位置…<br />
+/Library/Extensions/  #系统软件级别存放位置,例如安装VMware,VirtualBox这类带有内核扩展的程序,就会安装到此目录下.<br />
+<a href="http://bbs.pcbeta.com/" target="_blank">黑苹果</a>用于模拟Extensible Firmware Interface环境的开机引导程序(Boot Loader),也会有自己的驱动加载目录,传递给Mach核心.<br />
+例如Chameleon 变色龙引导程序在安装分区的根目录/Extra/Extensions中.</p>
+<p>删除精简不需要的kext.<br />
+有些bundle 和ppp之类的不清楚作用与kext一致否..</p>
+<p>警告:如果您当前的系统,完美稳定运行,那就将下面的内容当作是我灌水,无无视之…..删掉后出什么问题,不要怨我哦^_^,最好非常明白你没有相关硬件,以后也不打算用才能删…注意备份...<br />
+删除后不要以为能提升系统启动速度….</p>
+<p>删除驱动后重新启动前 请运行命令:<br />
+sudo diskutil repairpermissions /System/Library/Extensions/</p>
+<p>这条命令是自动修复驱动目录的文件权限,然后开机在Chameleon 或boot think的引导界面使用 "-f " 进入系统,这是刷新驱动缓存,不过自己觉得SL 改变了/System/Library/Extensions/ 下的内容,会自动更改缓存..</p>
+<p>有*符号 是通配符..此符号后面的都省略了...</p>
+<p>标记为褐色的,大部分人都没有此硬件..<br />
+标记为红色的,是需要注意,重要的驱动</p>
+<p>ATI*.kext<br />
+ATI显卡的相关驱动,不用ATI显卡的可以删除.</p>
+<p>ACard*.kext<br />
+Acard Technology公司,ATA,SCSI适配器系列驱动.</p>
+<p>ALF.kext<br />
+似乎是Algebraic Logic Functional程序语言相关??,不太清楚.</p>
+<p>ATTOCelerityFC.kext<br />
+ATTO公司的CelerityFC系列光纤控制器,适配卡驱动,一般人没有,可删除.</p>
+<p>ATTOCelerityFC8.kext<br />
+ATTO公司的CelerityFC 8系列光纤控制器,适配卡驱动,一般人没有,可删除.</p>
+<p>ATTOExpressPCI4.kext<br />
+ATTO公司的PCI Express 系列SCSI Host Bus Adapters适配器,扩展卡,一般人没有,删除</p>
+<p>ATTOExpressSASHBA.kext<br />
+ATTO公司的SAS-HBA 1系列适配卡驱动.</p>
+<p>ATTOExpressSASHBA2.kext<br />
+ATTO公司的SAS-HBA 2系列适配卡驱动.</p>
+<p>ATTOExpressSASRAID.kext<br />
+ATTO公司的PCI Express SAS RIAD卡驱动.</p>
+<p>Accusys6xxxx.kext<br />
+应该是Accusys公司的ACS-6xxx Raid卡驱动.</p>
+<p>Apple16X50Serial.kext<br />
+未知,似乎是老式苹果机才用得到,可以删除</p>
+<p>AppleACPIPlatform.kext<br />
+这是Advanced Configuration and Power Interface高级配置和电源管理接口驱动,进行电源管理,睡眠,Real-Time Clock控制等,其下还包含AppleACPIButtons.kext, AppleACPIIEC.kext, AppleACPIPCI.kext.</p>
+<p>AppleAHCIPort.kext<br />
+AHCI端口驱动,有些主板不打开AHCI功能会启动会卡在 Still Waiting for Root Device</p>
+<p>AppleAPIC.kext<br />
+Intel Advanced Programmable Interrupt Controller 驱动.</p>
+<p>AppleBMC.kext<br />
+Apple baseboard management controller 底板管理控制器,是一个专门的服务处理机，它利用传感器来监视一台计算机、网络服务器，或者是其他硬件驱动设备的状态,</p>
+<p>AppleBacklight.kext<br />
+笔记本和部分LCD显示器的背光管理控制,用于调整亮度等..</p>
+<p>AppleBluetoothMultitouch.kext<br />
+苹果新Magic Mouse Multi-Touch 鼠标的蓝牙适配器驱动.</p>
+<p>AppleEFIRuntime.kext<br />
+好像是EFI环境中显卡BIOS初始化的..</p>
+<p>AppleFSCompressionTypeZlib.kext<br />
+HFS文件系统压缩,使用zlib 算法压缩的驱动.</p>
+<p>AppleFWAudio.kext<br />
+FireWire,火线口 iEEE 1394接口的声卡驱动</p>
+<p>AppleFileSystemDriver.kext<br />
+HFS文件系统驱动</p>
+<p>AppleGraphicsControl.kext<br />
+显示卡GPU控制驱动,例如MBP有两个显卡,用作切换显卡</p>
+<p>AppleGraphicsPowerManagement.kext<br />
+显卡电源管理驱动,例如GPU风扇转速,动态关闭不需要的显卡核心.</p>
+<p>AppleHDA.kext<br />
+Intel High Definition Audio高保真声卡驱动..大部分人都是这种集成声卡,例如ALC889A声卡就可以直接用其驱动,其他声卡借助制作”仿冒驱动”也可以用其驱动,其下还包含AppleHDAController.kext .AppleMikeyDriver.kext,DspFuncLib.kext,AppleHDAHardwareConfigDriver.kext,IOHDAFamily.kext,AppleHDAPlatformDriver.kext</p>
+<p>AppleHIDKeyboard.kext<br />
+Human Interface Device  人性化输入设备驱动,这个是键盘的,例如USB键盘.</p>
+<p>AppleHIDMouse.kext<br />
+Human Interface Device  人性化输入设备驱动,这个是鼠标的,例如USB鼠标.</p>
+<p>AppleHPET.kext<br />
+High Precision Event Timer高精度事件计时器驱动.</p>
+<p>AppleHWSensor.kext<br />
+环境光控制控制的,Apple的本本会根据环境光强弱,调整显示器</p>
+<p>AppleIRController.kext<br />
+Apple Remote红外线遥控器驱动.</p>
+<p>AppleIntelCPUPowerManagement.kext<br />
+CPU的电源管理驱动,黑苹果可修改DSDT实现,用于降频,Intel EIST技术等,启用节能CPU后温度会正常.</p>
+<p>AppleIntelCPUPowerManagementClient.kext<br />
+不清楚,估计与上面提到的相辅相成</p>
+<p>AppleIntelHD*.kext<br />
+Intel HDXXX显卡驱动,似乎是10.6.4新加..</p>
+<p>AppleIntelGMA*.kext<br />
+Intel GMA 显卡系列驱动,不用者删</p>
+<p>AppleIntelGMX*.kext<br />
+intel GMA 系列显卡驱动,不用者删</p>
+<p>AppleIntelIntegratedFramebuffer.kext<br />
+这东西似乎只有intel GMA950 显卡用.</p>
+<p>AppleKeyswitch.kext<br />
+老G5服务器的安全锁驱动?,防止使用未经授权的设备…例如U盘?</p>
+<p>AppleLPC.kext<br />
+Low Pin Count，是连接南桥和super I/O（该IC连接一些低速外设，如mouse，KB，Printer）的一根BUS。LPC由Intel所提出. 是为了在PC上把ISA取消而制定的一个新规格. 其目的是把非常慢速的ISA总线取消. 而为了让一些原本在ISA上跑的硬件在没有ISA的机器上能够运作所以制定了此一规格， 例如一般 K/B , MOUSE , FDD, COM PORT, PRINTER PORT 等慢速外围即可用支持LPC的SUPER IO芯片控制，而且在软件上是完全兼容的,黑苹果无法加载会导致电源管理故障.</p>
+<p>AppleLSIFusionMPT.kext<br />
+SAS/SCSI/设备相关的,不太清楚</p>
+<p>AppleMCEDriver.kext<br />
+MacPro上的MCE内存驱动?? 不清楚..</p>
+<p>AppleMIDIFWDriver.plugin<br />
+好像是MIDI多媒体设备的驱动.</p>
+<p>AppleMIDIIACDriver.plugin<br />
+好像是MIDI多媒体设备的驱动.</p>
+<p>AppleMIDIRTPDriver.plugin<br />
+好像是MIDI多媒体设备的驱动.</p>
+<p>AppleMIDIUSBDriver.plugin<br />
+好像是MIDI多媒体设备的驱动.</p>
+<p>AppleMatch.kext<br />
+作用不明,自身info显示,Regular Expression Matching Engine 正规表达式匹配引擎? ,正规表达式在Unix系统下经常使用</p>
+<p>AppleMikeyHIDDriver.kext<br />
+这似乎是苹果自己的鼠标和驱动,还有游戏手柄的摇杆以及键盘鼠标击键产生的数据处理..</p>
+<p>AppleMobileDevice.kext<br />
+作用不明,移动设备驱动?</p>
+<p>AppleMultitouchDriver.kext<br />
+好像是多触屏驱动</p>
+<p>AppleOnboardDisplay.kext<br />
+板载?显示? 作用不明</p>
+<p>ApplePlatformEnabler.kext<br />
+不支持ACPI的情况下才有作用.</p>
+<p>AppleProfileFamily.kext<br />
+不清楚,似乎很重要,其下还有其他一些kext</p>
+<p>AppleRAID.kext<br />
+软件redundant array of independent disks磁盘阵列支持驱动(Fake RAID)</p>
+<p>AppleRAIDCard.kext<br />
+硬件redundant array of independent disks磁盘支持驱动.</p>
+<p>AppleRTC.kext<br />
+Real-Time Clock控制驱动</p>
+<p>AppleSEP.kext<br />
+这好像某种通信协议,像是用于调制解调器.</p>
+<p>AppleSMBIOS.kext<br />
+System Management Basic Input Output System,主板产商定义好一组标准硬件信息,提供给系统读取.OSX的硬件基准数据</p>
+<p>AppleSMBusController.kext<br />
+SMBus,是I2C协议的子集,管理监视系统的一些低宽带设备,例如电压控制监控器,风扇转速,温度传感器等设备.</p>
+<p>AppleSMBusPCI.kext<br />
+同上,这是专门负责一些PCI设备上的.</p>
+<p>AppleSMC.kext<br />
+System Manegement Controller 系统管理控制器,Apple Intel机器上的作用是:<br />
+•    响应电源按钮的按压<br />
+•    响应便携式 Mac 显示器屏幕盖的开合<br />
+•    电池管理<br />
+•    热能管理<br />
+•    SMS（Sudden Motion Sensor，紧急运动传感器）<br />
+•    环 境光度感应<br />
+•    键盘背光<br />
+•    状态指示灯（SIL）管理<br />
+•    电池状态指示灯<br />
+•    为有些 iMac 显示器选择外部（而非内部）视频来源<br />
+Mac OS必须的东西,黑苹果需要用FakeSMC.kext之类的第三方扩展模拟.</p>
+<p>AppleSMCLMU.kext<br />
+一些MacBook上才有的传感器驱动.</p>
+<p>AppleSmartBatteryManager.kext<br />
+一部分早期过时的Apple本本电池管理监视驱动,以后会用SMC代替.</p>
+<p>AppleStorageDrivers.kext<br />
+所有储存设备驱动集合,例如SD卡,U盘,硬盘…….其下包括<br />
+AppleATAPIStorage.kext, AppleHollywood.kext, AppleMemorexCDROMDriver.kext,<br />
+AppleUSBCardReader.kext, AppleUSBODD.kext, AppleXserveRAID.kext,<br />
+CanonEOS1D.kext, FWPreferredProtocolSpeed.kext,<br />
+FireWireStorageDeviceSpecifics.kext,<br />
+IOFireWireSerialBusProtocolSansPhysicalUnit.kext, LSI-FW-500.kext,<br />
+MKE-LF-D211A.kext, MKE-SR-8171.kext, MaxTranserSizeOverrideDriver.kext,<br />
+OxfordSemiconductor.kext, PioneerSuperDrive.kext, PlasmonUDO.kext,<br />
+PreventMediaMountDriver.kext, QPSQueFire.kext, SanyoIDShot.kext,<br />
+SonyXDCAMDriver.kext, StorageLynx.kext, UFIWriteProtectedMediaDriver.kext,<br />
+USBStorageDeviceSpecifics.kext, WriteProtectedMediaDriver.kext,<br />
+initioFWBridge.kext</p>
+<p>AppleTyMCEDriver.kext<br />
+似乎很重要,管理内存和ECC支持的.</p>
+<p>AppleUSBAudio.kext<br />
+USB声卡驱动.</p>
+<p>AppleUSBDisplays.kext<br />
+似乎是USB显示器驱动.</p>
+<p>AppleUSBEthernetHost.kext<br />
+USB网卡驱动.</p>
+<p>AppleUSBMultitouch.kext<br />
+USB触摸屏驱动.</p>
+<p>AppleUSBTopCase.kext<br />
+USB键盘,鼠标,触摸板基础相关驱动.</p>
+<p>AppleUpstreamUserClient.kext<br />
+作用不明.</p>
+<p>AppleVADriver.bundle<br />
+作用不明.</p>
+<p>AppleXsanFilter.kext<br />
+尚不明确,据查询,这很可能是苹果服务器用的Xsan网络文件系统审计驱动,Xsan类似Network File System是各种Unix Windows系统中,在网络上共享文件用的...可以做到像本地磁盘一样挂载</p>
+<p>Apple_iSight.kext<br />
+摄像头驱动,iSight是苹果的摄像头名称</p>
+<p>ArcMSR.kext<br />
+作用不明..</p>
+<p>AudioAUUC.kext<br />
+MacPro的音频相关,似乎是啥升级..</p>
+<p>AudioIPCDriver.kext<br />
+音频相关,作用不明</p>
+<p>BootCache.kext<br />
+其作用好像是用来生成驱动缓存的.加快启动速度.</p>
+<p>CHUDKernLib.kext<br />
+非常感谢Ray_SZ 童鞋补充,自己查了一下,这些是Xcode用于调试和核心驱动的一些驱动,安装xcode后才会出现,AMD CPU如果用破解核心,需要使其在Blacklist中,例如Chocolate破解核心,和新版Legacy AMD破解核心..或者AMD用户就直接删除把=.= 我想也用不到这种驱动做开发.</p>
+<p>CHUDProf.kext<br />
+非常感谢Ray_SZ 童鞋补充,自己查了一下,这些是Xcode用于调试和核心驱动的一些驱动,安装xcode后才会出现,AMD CPU如果用破解核心,需要使其在Blacklist中,例如Chocolate破解核心,和新版Legacy AMD破解核心..或者AMD用户就直接删除把=.= 我想也用不到这种驱动做开发.</p>
+<p>CHUDUtils.kext<br />
+非常感谢Ray_SZ 童鞋补充,自己查了一下,这些是Xcode用于调试和核心驱动的一些驱动,安装xcode后才会出现,AMD CPU如果用破解核心,需要使其在Blacklist中,例如Chocolate破解核心,和新版Legacy AMD破解核心..或者AMD用户就直接删除把=.= 我想也用不到这种驱动做开发.</p>
+<p>CalDigitHDProDrv.kext<br />
+MacPro 上的Caldigit VR Raid卡驱动</p>
+<p>CellPhoneHelper.kext<br />
+???……打电话助手….这啥咚咚?<br />
+我自己猜测是skype等软件使用的USB电话??</p>
+<p>DSACL.ppp<br />
+作用不明</p>
+<p>DSAuth.ppp<br />
+作用不明</p>
+<p>DVFamily.bundle<br />
+好像一些数码摄像机相关的..</p>
+<p>Dont Steal Mac OS X.kext<br />
+苹果系统于苹果机器EFI模块之间的通信加解密,FakeSMC.kext一部分作用就是仿造这个.</p>
+<p>EAP-KRB.ppp<br />
+Extensible Authentication Protocol扩展认证协议的Kerberos加密.</p>
+<p>EAP-RSA.ppp<br />
+Extensible Authentication Protocol扩展认证协议的RSA加密</p>
+<p>EAP-TLS.ppp<br />
+Extensible Authentication Protocol扩展认证协议的Transport Layer Security加密</p>
+<p>GeForce*.kext<br />
+nVidia GeForce系列显卡驱动,用于打开Core Image &amp; Quartz Extreme  不用N卡可删除</p>
+<p>HighPointIOP.kext<br />
+非常感谢jianyili童鞋补充,这是火箭RAID卡3xxx/4xxx系列的驱动.</p>
+<p>HighPointRR.kext<br />
+非常感谢jianyili童鞋补充,这是火箭RAID卡23xx/26xx系列的驱动。</p>
+<p>ICAFWKodakProDriver.kext<br />
+作用不明,这似乎是部分柯达专业相机的驱动</p>
+<p>IO80211Family.kext<br />
+802.11无线网卡的基础驱动,Contents/PlugIns下有支持的一些无线网卡驱动 …<br />
+irPortAtheros.kext, AirPortAtheros21.kext, AppleAirPortBrcm4311.kext,<br />
+AppleAirPortBrcm43224.kext, IO80211NetBooter.kext<br />
+没有无线网卡可以删除</p>
+<p>IOACPIFamily.kext<br />
+作用于支持ACPI电源管理标准的驱动,例如电源按钮,电池,PS/2,USB,HPET…………</p>
+<p>IOAHCIFamily.kext<br />
+作用于支持AHCI的设备…例如硬盘. 有些主板不打开AHCI功能会启动会卡在 Still Waiting for Root Device<br />
+其下包括: IOAHCIBlockStorage.kext, IOAHCISerialATAPI.kext<br />
+IOATAFamily.kext<br />
+ATA/SATA基础驱动…例如Intel ICHx Sata控制器<br />
+其下包括:AppleIntelPIIXATA.kext, IOATABlockStorage.kext, IOATAPIProtocolTransport.kext</p>
+<p>IOAudioFamily.kext<br />
+基本的声卡驱动构架…</p>
+<p>IOBDStorageFamily.kext<br />
+蓝光存储驱动.<br />
+不用者可删除..删除后日志里会多些错误,虽然系统不影响..</p>
+<p>IOBluetoothFamily.kext<br />
+基础的蓝牙设备驱动…例如蓝牙耳机,蓝牙适配器<br />
+其下包括:AppleUSBBluetoothHCIController.kext, BroadcomUSBBluetoothHCIController.kext,<br />
+CSRHIDTransitionDriver.kext, CSRUSBBluetoothHCIController.kext,<br />
+IOBluetoothA2DPAudioDriver.kext, IOBluetoothBNEPDriver.kext,<br />
+IOBluetoothSCOAudioDriver.kext, IOBluetoothSerialManager.kext<br />
+不用者可删除..</p>
+<p>IOBluetoothHIDDriver.kext<br />
+一些无线蓝牙输入设备,例如蓝牙无线鼠标<br />
+不用者可删除..</p>
+<p>IOCDStorageFamily.kext<br />
+CD存储驱动..</p>
+<p>IODVDStorageFamily.kext<br />
+DVD存储驱动..</p>
+<p>IOFireWire*.kext<br />
+iEEE 1394 FireWire 火线接口基础驱动.没有可删除</p>
+<p>IOGraphicsFamily.kext<br />
+最最基本的显卡驱动.例如启动时显示,和显卡找不到高级驱动时运行在VESA驱动下,苹果机器进入安全模式就用这个显示,黑苹果没有显卡驱动也会用这个.</p>
+<p>IOHDIXController.kext<br />
+创建磁盘镜像的,例如dmg</p>
+<p>IOHIDFamily.kext<br />
+很多种输出输入设备,例如游戏手柄也算..鼠标键盘也要依赖这个</p>
+<p>IONDRVSupport.kext<br />
+显卡工作在Vesa驱动模式下相关的,好像可以更改分辨率了…因为Vesa的标准分辨率是1024x768,Intel集成显卡和部分ATI支持,例如部分ATI强制更改分辨率,就与这个息息相关</p>
+<p>IONetworkingFamily.kext<br />
+这个么….基础的网卡驱动…例如8139网卡可以直接驱动…主板集成的类似R 8111C也可以直接驱动..大部分人都需要..除非你知道自己在干什么<br />
+其下有:AppleBCM5701Ethernet.kext, AppleIntel8254XEthernet.kext,<br />
+AppleRTL8139Ethernet.kext, AppleRTL8169Ethernet.kext, AppleUSBEthernet.kext,<br />
+AppleUSBGigEthernet.kext, AppleYukon2.kext, Intel82574L.kext, nvenet.kext</p>
+<p>IOPCIFamily.kext<br />
+PCI设备的基础驱动…例如PCI声卡..</p>
+<p>IOPlatformPluginFamily.kext<br />
+好像是ACPI和SMC的扩展...</p>
+<p>IOSCSIArchitectureModelFamily.kext<br />
+SCSI相关..作用不明….</p>
+<p>IOSCSIParallelFamily.kext<br />
+SCSI相关..作用不明….</p>
+<p>IOSMBusFamily.kext<br />
+支持的SMBus控制器驱动..</p>
+<p>IOSerialFamily.kext<br />
+串口驱动…</p>
+<p>IOStorageFamily.kext<br />
+储存设备的I/O控制</p>
+<p>IOStreamFamily.kext<br />
+I/O数据流驱动</p>
+<p>IOSurface.kext<br />
+作用不明,似乎是I/O设备的基础相关..</p>
+<p>IOUSBFamily.kext<br />
+基础的USB设备驱动..一切USB设备需要...</p>
+<p>IOUSBMassStorageClass.kext<br />
+USB储存设备相关驱动..U盘需要</p>
+<p>IOVideoFamily.kext<br />
+好像是视频卡驱动..不是显卡..而是用于采集视频.压缩的扩展卡</p>
+<p>ImmersionForceFeedback.kext<br />
+Immersion游戏手柄震动驱动…没有可以删除</p>
+<p>JMicronATA.kext<br />
+JMicron芯片的ATA控制器驱动..没有可以删除</p>
+<p>L2TP.ppp<br />
+Layer 2 Tunneling Protocol 第二层隧道协议,一种网络加密协议</p>
+<p>LogitechForceFeedback.kext<br />
+Logitech罗技游戏手柄的震动驱动..没有可以删除</p>
+<p>NVDANV40Hal.kext<br />
+nVidia 6xxx 7xxx显卡的硬件加速驱动.也是显卡实际驱动,没N卡可以删除</p>
+<p>NVDANV50Hal.kext<br />
+nVidia 8xxx 9xxx显卡的硬件加速驱动.也是显卡实际驱动,没N卡可以删除</p>
+<p>NVDAResman.kext<br />
+nVidia显卡的硬件加速驱动.也是显卡实际驱动,没N卡可以删除</p>
+<p>NVSMU.kext<br />
+可能是Nvida显卡系统管理单元,ROM控制器..不明</p>
+<p>OSvKernDSPLib.kext<br />
+内核的数字音频信号处理库??</p>
+<p>PPP.kext<br />
+ADSL用户必须,Point-to-Point Protocol协议驱动</p>
+<p>PPPSerial.ppp<br />
+串口Point-to-Point Protocol协议驱动</p>
+<p>PPPoE.ppp<br />
+ADSL用户最常见的Point-to-Point Protocol over Ethernet协议</p>
+<p>PPTP.ppp<br />
+Point-to-Point Tunneling Protocol点对点隧道协议</p>
+<p>Quarantine.kext<br />
+作用不明...</p>
+<p>Radius.ppp<br />
+Remote Authentication Dial In User Service协议</p>
+<p>SM56KUSBAudioFamily.kext<br />
+Apple SM56K USB 声卡驱动..</p>
+<p>SMARTLib.plugin<br />
+硬盘的S.M.A.R.T. 状态监视驱动..</p>
+<p>SMCMotionSensor.kext<br />
+就是MBP上的运动传感器驱动..</p>
+<p>Sandbox.kext<br />
+系统沙盒功能??? 不太清楚</p>
+<p>SoftRAID.kext<br />
+软件RAID支持..在磁盘管理工具中就可以搞的..</p>
+<p>System.kext<br />
+最基础的核心系统驱动,mach核心最先载入的驱动,负责于其他扩展通信,…系统必须<br />
+其下包括:AppleNMI.kext, ApplePlatformFamily.kext, BSDKernel.kext, BSDKernel6.0.kext,<br />
+IOKit.kext, IOKit6.0.kext, IONVRAMFamily.kext, IOSystemManagement.kext,<br />
+Libkern.kext, Libkern6.0.kext, MACFramework.kext, Mach.kext, Mach6.0.kext,<br />
+Private.kext, System6.0.kext, Unsupported.kext</p>
+<p>TMSafetyNet.kext<br />
+Time Machine备份驱动,有些主板需要改下DSDT才好用..</p>
+<p>autofs.kext<br />
+开机执行自动挂载的..</p>
+<p>cd9660.kext<br />
+多数光盘用标准ISO 9660文件系统驱动.</p>
+<p>cddafs.kext<br />
+Compact Disc Digital Audio filesystem 数字光盘文件系统驱动..</p>
+<p>iPodDriver.kext<br />
+囧,这个不用说了..是iPod驱动…</p>
+<p>iTunesPhoneDriver.kext<br />
+囧,iphone驱动…</p>
+<p>mcxalr.kext<br />
+解释不清…不明..</p>
+<p>msdosfs.kext<br />
+Dos windows Fat16 Fat32等文件系统驱动..</p>
+<p>ntfs.kext<br />
+WindowsNT NTFS驱动</p>
+<p>smbfs.kext<br />
+Server Message Block..就是用来跟windows 机器共享文件的</p>
+<p>udf.kext<br />
+UDF文件系统驱动</p>
+<p>ufs.kext<br />
+Unix标准文件系统Ufs驱动...</p>
+<p>webcontentfilter.kext<br />
+这个是防火墙的核心驱动??</p>
+<p>webdav_fs.kext<br />
+似乎是一个网络文件系统..</td>
+</tr>
+</tbody>
+</table>

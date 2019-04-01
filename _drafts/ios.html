@@ -1,0 +1,345 @@
+---
+layout: post
+title: iOS
+date: 
+type: post
+published: false
+status: private
+categories:
+- Blog
+- cocoa
+- Objective-CC++
+- OSX
+tags: []
+meta:
+  _edit_last: '1'
+  _wp_old_slug: ios-%e9%9d%a2%e8%af%95%e9%a2%98
+author:
+  login: oxnz
+  email: yunxinyi@gmail.com
+  display_name: Will Z
+  first_name: Will
+  last_name: Z
+---
+<p><a href="http://blog.csdn.net/xunyn/article/details/8302787">http://blog.csdn.net/xunyn/article/details/8302787</a></p>
+<p><a href="http://www.oschina.net/news/42288/10-objective-c-interview">http://www.oschina.net/news/42288/10-objective-c-interview</a></p>
+<p><a href="http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/">http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/</a></p>
+<p><!--more--></p>
+<p>一,retain, copy, assign区别</p>
+<p>1. 假设你用malloc分配了一块内存，并且把它的地址赋值给了指针a，后来你希望指针b也共享这块内存，于是你又把a赋值给（assign）了b。此时a 和b指向同一块内存，请问当a不再需要这块内存，能否直接释放它？答案是否定的，因为a并不知道b是否还在使用这块内存，如果a释放了，那么b在使用这块内存的时候会引起程序crash掉。</p>
+<p>2. 了解到1中assign的问题，那么如何解决？最简单的一个方法就是使用引用计数（reference counting），还是上面的那个例子，我们给那块内存设一个引用计数，当内存被分配并且赋值给a时，引用计数是1。当把a赋值给b时引用计数增加到 2。这时如果a不再使用这块内存，它只需要把引用计数减1，表明自己不再拥有这块内存。b不再使用这块内存时也把引用计数减1。当引用计数变为0的时候，代表该内存不再被任何指针所引用，系统可以把它直接释放掉。</p>
+<p>3. 上面两点其实就是assign和retain的区别，assign就是直接赋值，从而可能引起1中的问题，当数据为int, float等原生类型时，可以使用assign。retain就如2中所述，使用了引用计数，retain引起引用计数加1, release引起引用计数减1，当引用计数为0时，dealloc函数被调用，内存被回收。</p>
+<p>4. copy是在你不希望a和b共享一块内存时会使用到。a和b各自有自己的内存。</p>
+<p>5. atomic和nonatomic用来决定编译器生成的getter和setter是否为原子操作。在多线程环境下，原子操作是必要的，否则有可能引起错误的结果。加了atomic，setter函数会变成下面这样：</p>
+<p>if (property != newValue) {<br />
+    [property release];<br />
+    property = [newValue retain];<br />
+}</p>
+<p>二,深入理解一下(包括autorelease)</p>
+<p>1. retain之后count加一。alloc之后count就是1，release就会调用dealloc销毁这个对象。<br />
+如果 retain，需要release两次。通常在method中把参数赋给成员变量时需要retain。<br />
+例如：<br />
+ClassA有 setName这个方法：<br />
+-(void)setName:(ClassName *) inputName<br />
+{<br />
+   name = inputName;<br />
+   [name retain]; //此处retian，等同于[inputName retain],count等于2<br />
+}<br />
+调用时：<br />
+ClassName *myName = [[ClassName alloc] init];<br />
+[classA setName:myName]; //retain count == 2<br />
+[myName release]; //retain count==1，在ClassA的dealloc中release name才能真正释放内存。</p>
+<p>2. autorelease 更加tricky，而且很容易被它的名字迷惑。我在这里要强调一下：autorelease不是garbage collection，完全不同于Java或者.Net中的GC。<br />
+autorelease和作用域没有任何关系！<br />
+autorelease 原理：<br />
+a.先建立一个autorelease pool<br />
+b.对象从这个autorelease pool里面生成。<br />
+c.对象生成 之后调用autorelease函数，这个函数的作用仅仅是在autorelease pool中做个标记，让pool记得将来release一下这个对象。<br />
+d.程序结束时，pool本身也需要rerlease, 此时pool会把每一个标记为autorelease的对象release一次。如果某个对象此时retain count大于1，这个对象还是没有被销毁。<br />
+上面这个例子应该这样写：<br />
+ClassName *myName = [[[ClassName alloc] init] autorelease];//标记为autorelease<br />
+[classA setName:myName]; //retain count == 2<br />
+[myName release]; //retain count==1，注意，在ClassA的dealloc中不能release name，否则release pool时会release这个retain count为0的对象，这是不对的。</p>
+<p>记住一点：如果这个对象是你alloc或者new出来的，你就需要调用release。如果使用autorelease，那么仅在发生过retain的时候release一次（让retain count始终为1）。</p>
+<p>Alloc/init建立的对象，索引计数为1。无需将其再次retain。</p>
+<p>[NSArray array]和[NSDate date]等“方法”建立一个索引计数为1的对象，但是也是一个自动释放对象。所以是本地临时对象，那么无所谓了。如果是打算在全Class中使用的变量(iVar)，则必须retain它。</p>
+<p>缺省的类方法返回值都被执行了“自动释放”方法。(*如上中的NSArray)</p>
+<p>在类中的卸载方法“dealloc”中，release所有未被平衡的NS对象。(*所有未被autorelease，而retain值为1的)</p>
+<p>Objective-C中类别和类扩展的区别。</p>
+<p>答案：category和extensions的不同在于后者可以添加属性。另外后者添加的方法是必须要实现的。</p>
+<p>extensions可以认为是一个私有的Category。</p>
+<p>google了几个相关的话题，地址如下：<br />
+http://stackoverflow.com/questions/3499704/difference-between-category-and-class-extension<br />
+http://stackoverflow.com/questions/7136124/class-extension-vs-class-category</p>
+<p>1、extension更像是匿名的category（Class extensions are like anonymous categories）</p>
+<p>2、category更倾向于写在独立的文件中，之后这样命名“NSView+CustomAdditions.h”，在对应的.m文件中的block块中实现。所以，cagegory更倾向于用于对class进行功能的分离，用于组织类的功能模块。<br />
+extension更倾向于在同一个类的.m文件的最上方写，而其实现则放在该类的implementation block中。通过这句话，感觉实现Objc类的私有函数，采用的是class extension</p>
+<p>3、在category中不可以定义变量，extension可以定义变量和property<br />
+如下面的例子：</p>
+<pre class="lang:object-c">
+@interface MyClass : NSObject
+
+- (float)value;
+
+@end
+
+@interface MyClass () {
+    float value;
+}
+
+- (void)setValue:(float)newValue;
+
+@end
+
+@implementation MyClass
+
+- (float)value {
+    return value;
+}
+
+- (void)setValue:(float)newValue {
+    value = newValue;
+}
+@end
+</pre>
+<p>Objc中的public，private，protected和package:http://blog.csdn.net/liranke/article/details/9534075</p>
+<p>immutable的容器是线程安全的，而mutable容器则不是。例如NSArray和NSMutableArray。</p>
+<p>http://lianxu.me/2012/11/10-cocoa-objc-newbie-problems/</p>
+<p>在程序运行过程中，它会在你程序中每个类调用一次initialize。这个调用的时间发生在你的类接收到消息之前，但是在它的超类接收到initialize之后。看来如果一个子类没有实现initialize方法，那么超类会调用这个方法两次，一次为自己，而一次为子类</p>
+<p>（weak和strong）不同的是 当一个对象不再有strong类型的指针指向它的时候 它会被释放  ，即使还有weak型指针指向它。</p>
+<p>一旦最后一个strong型指针离去 ，这个对象将被释放，所有剩余的weak型指针都将被清除。</p>
+<p>可能有个例子形容是妥当的。</p>
+<p>想象我们的对象是一条狗，狗想要跑掉（被释放）。</p>
+<p>strong型指针就像是栓住的狗。只要你用牵绳挂住狗，狗就不会跑掉。如果有5个人牵着一条狗（5个strong型指针指向1个对象），除非5个牵绳都脱落 ，否着狗是不会跑掉的。</p>
+<p>weak型指针就像是一个小孩指着狗喊到：“看！一只狗在那” 只要狗一直被栓着，小孩就能看到狗，（weak指针）会一直指向它。只要狗的牵绳脱落，狗就会跑掉，不管有多少小孩在看着它。</p>
+<p>只要最后一个strong型指针不再指向对象，那么对象就会被释放，同时所有的weak型指针都将会被清除。</p>
+<p>strong就相当于retain属性，而weak相当于assign。只有一种情况你需要使用weak（默认是strong），就是为了避免retain cycles（就是父类中含有子类{父类retain了子类}，子类中又调用了父类{子类又retain了父类}，这样都无法release）</p>
+<p>为了将应用数据存储到硬盘中，IOS提供了：plist(属性列表)，数据库存储（SQLite），对象归档（NSCoding），Core Data，NSUserDefaults;</p>
+<p>1.plist属性列表操作用来存储一些固定的数据类型：nsarray nsstring nsdata nsnumber nsdictionary nsdata等简单对象，适合小数据的操作，速率很高。</p>
+<p>2.数据库（SQLite） 不解释</p>
+<p>3.对象归档：（nscoding）plist可以对固定类型的数据进行存储操作，但当面对复杂的数据或者自定义的数据类型时，plist不再适用，这时就可以适用对象归档（也称固化）。但其缺点是数据必须整存整取：要更新数据的任何改动，必须重写整个文件。</p>
+<p>4.nsuserdefaults:当面对轻量级数据（例如登录名和登录密码），此时使用plist显得麻烦，可以适用nsuserdefaults.其支持nsnumber nsstring nsdate nsarray nsdictionary bool等类型的数据，可以像读取字符串一样操作。其数据主要存储在应用程序内置的一个plist文件里（实际对应沙盒的/library/prefereces 中的plist文件里）。</p>
+<p>5.core data 见其他随笔</p>
+<p>ios 线程笔记（一）</p>
+<p>      每个程序都至少有个一主线程，在没有显示的创建另一个线程的情况下，主线程从主函数开始执行然后负责执行剩下的应用代码。你可以把线程想成指令按顺序执行的应用的一行代码的执行。创建另外一个线程时，实际上在应用中就会有两个并发运行的独立线程。在单核的极其上运行，线程看起来是并发运行，但实际上它们会得到CPU分配的不同时间片段。在多核机器上就有可能是同时执行的。</p>
+<p>     当两个线程并行执行时，有可能两个线程在同一时间访问试图访问相同的内存块，若这样便会导致程序出现错误，称作不安全的线程状态。所以必须防止一个线程在同一时间访问另一个线程正在访问的内存块，常用的方法是互斥锁（lock）和使用@synchronize关键字。</p>
+<p>（一）NSLOCK</p>
+<p>1.OC Foundation框架提供了两种主要的互斥锁。第一种是简单的NSLOCK类。NSLOCK表示一种可以实例化然后可以在写入特定变量或者内存位置时进行锁定的简单互斥体。锁定NSLOCK对象会阻塞线程直至解锁。这样锁定的NSLOCK对象就可以在第一个线程访问结束前阻止其他线程对数据的访问。</p>
+<p>2.第二种方法：-lockBeforeDate阻塞线程一段时间直至到指定时间。</p>
+<p>NSLOCK的最大问题就是如果错误的尝试锁一个已经被锁在线程锁住的锁，结果就会发生“死锁”。因为尝试锁定该锁会导致阻塞当前线程，你要等待前一个锁被解锁，但是前一个锁永远不可能被解锁，因为已被后一个锁住。可以用NSResursiveLock解决，其作用就是记录锁定他的线程，若线程再次尝试锁定，就会立刻返回。</p>
+<p>（二）@synchronize关键字</p>
+<p>@synchronized 该指令提供一个包括了特定作用域和变量参数的内置的底层互斥锁机制。意味着其可以为一个特定变量指定锁并让该锁在特定的代码域存在。</p>
+<p>-（void）setSomeVar:(id)inValue</p>
+<p>{</p>
+<p>    [inValue retain];</p>
+<p>    @synchronized(someVar)</p>
+<p>    {</p>
+<p>        id originalValue = someVar;</p>
+<p>        someVar = inValue;</p>
+<p>        [originalValue release];</p>
+<p>    }</p>
+<p>}</p>
+<p>通常@synchronized指令和self变量一起使用来指定整个对象都在@synchronized块的作用域中被锁定</p>
+<p>-（void）setSomeVar:(id)inValue</p>
+<p>{</p>
+<p>    [inValue retain];</p>
+<p>    @synchronized(self)</p>
+<p>    {</p>
+<p>        id originalValue = someVar;</p>
+<p>        someVar = inValue;</p>
+<p>        [originalValue release];</p>
+<p>    }</p>
+<p>}</p>
+<p>@synchronized的优点就是因为它指定了锁的作用域，如果发生异常情况导致其退出该作用域，锁就会释放。</p>
+<p>注：</p>
+<p>1.在使用线程的应用中要小心使用通知，因为通知可以发布在它们的线程上发送，这就意味着如果从后台线程发送通知来更新GUI组件，就有可能出现线程安全问题。</p>
+<p>2.不可变的Foudation类，如NSString,NSDictionary,NSSet等，由于创建后无法修改因此也自然被认定是线程安全的。但是存储它们的变量则不会，因此在修改过程中要通过锁保护。</p>
+<p>assign:</p>
+<p>直接赋值，索引计数不改变，适用于简单数据类型，例如：NSIngeter、CGFloat、int、char等。</p>
+<p>retain：</p>
+<p>指针的拷贝，使用的是原来的内存空间。<br />
+对象的索引计数加1。<br />
+此属性只能用于Objective-C对象类型，而不能用于Core Foundation对象。(原因很明显，retain会增加对象的引用计数，而基本数据类型或者Core Foundation对象都没有引用计数)。</p>
+<p>copy：</p>
+<p>对象的拷贝，新申请一块内存空间，并把原始内容复制到那片空间。<br />
+新对象的索引计数为1。<br />
+此属性只对那些实行了NSCopying协议的对象类型有效。</p>
+<p>很多Objective-C中的object最好使用用retain，一些特别的object（例如：string）使用copy。</p>
+<p>如果确实不需要用其他的init函数，比如initWithString, 只是使用 [Nsobject alloc] init] ,那用new的方法更加方便<br />
+ * new doesn't support custom initializers (like initWithString)<br />
+ * alloc-init is more explicit than new</p>
+<p>谈到线程同步，一般指如何对线程间共享数据的同步读写，如何避免混乱的读写结果。一个基本的解决办法就是使用锁（LOCK）。</p>
+<p>iOS提供多种同步锁的类和方法，这里介绍下基本用法。</p>
+<p>1. NSLock：最基本的同步锁，使用lock来获得锁，unlock释放锁。如果其它线程已经使用lock，这时lock方法会阻塞当前线程，直到其它线程调用unlock释放锁为止。NSLock锁一般用于简单的同步算法。比如生产者线程产生数据（produce），消费线程显示数据（consume），可以这样实现：</p>
+<p>- (void)produce<br />
+{<br />
+　　while (1)<br />
+　　{<br />
+　　　　[theLock lock];<br />
+　　　　// create data<br />
+　　　　[theLock unlock];<br />
+　　}<br />
+}</p>
+<p>- (void)consume<br />
+{<br />
+　　while (1)<br />
+　　{<br />
+　　　　if ([theLock tryLock])<br />
+　　　　{<br />
+　　　　　　// display data<br />
+　　　　　　[theLock unlock];<br />
+　　　　}<br />
+　　　　sleep(1.0); //sleep a while<br />
+　　}<br />
+}</p>
+<p>NSLock的tryLock方法可以避免阻塞当前线程，如果不能获得锁则返回NO。也可使用：</p>
+<p>- (BOOL)lockBeforeDate:(NSDate *)limit;</p>
+<p>设置超时返回时间。</p>
+<p>2. NSConditionLock，即条件锁，可以设置自定义的条件来获得锁。比如上面的例子可以这样改用条件锁实现：</p>
+<p>- (void)produce<br />
+{<br />
+　　while (1)<br />
+　　{<br />
+　　　　[theLock lockWhenCondition:NO_DATA];<br />
+　　　　// create data<br />
+　　　　[theLock unlockWithCondition:HAS_DATA];<br />
+　　}<br />
+}</p>
+<p>- (void)consume<br />
+{<br />
+　　while (1)<br />
+　　{<br />
+　　　　if ([theLock tryLockWhenCondition:HAS_DATA])<br />
+　　　　{<br />
+　　　　　　// display data<br />
+　　　　　　[theLock unlockWithCondition:NO_DATA];<br />
+　　　　}<br />
+　　　　sleep(1.0); //sleep a while<br />
+　　}<br />
+}</p>
+<p>3. NSCondition：条件（一种信号量），类似Java中的Condition，但有所不同的是NSCondition是锁和条件的组合实现。wait方法用于线程的等待（相当于Java Condition的await())，然后通过signal方法通知等待线程（相当于Java Condition的signal())，或者broadcast通知所有等待的线程相当于Java Condition的signalAll())。一个简单生产消费同步例子：</p>
+<p>- (void)produce<br />
+{<br />
+　　[theLock lock];<br />
+　　// create data<br />
+　　hasData = YES;<br />
+　　[theLock signal]; //这时通知调用wait的线程结束等待并返回<br />
+　　[theLock unlock];<br />
+}</p>
+<p>- (void)consume<br />
+{<br />
+　　[theLock lock];<br />
+　　while (!hasData)<br />
+　　　　[theLock wait]; //注意：这时其它线程的lock调用会成功返回<br />
+　　//display data<br />
+　　hasData = NO;<br />
+　　[theLock unlock];<br />
+}</p>
+<p>4. NSRecursiveLock：递归锁，顾名思义一般用于递归程序。它可以让同一线程多次获得锁，解锁次数也必须相同，然后锁才能被其它线程获得。看下官网文档中的简单例子就能明白：</p>
+<p>void MyRecursiveFunction(int value)<br />
+{<br />
+　　[theLock lock];<br />
+　　if (value != 0)<br />
+　　{<br />
+　　　　--value;<br />
+　　　　MyRecursiveFunction(value);<br />
+　　}<br />
+　　[theLock unlock];<br />
+}</p>
+<p>当然不只用于递归程序，类似Java中的ReentrantLock。</p>
+<p>5. @synchronized实现对象锁，类似Java中synchronized关键词。一般这样使用，但不多啰嗦了：</p>
+<p>@synchronized(anObj)<br />
+{<br />
+//......<br />
+}</p>
+<p>实际上，使用GCD途径有几个好处：</p>
+<p>平行计算: 注意在第二个版本的代码中， -setSomething:是怎么使用dispatch_async的。调用 -setSomething:会立即返回，然后这一大堆工作会在后台执行。如果updateSomethingCaches是一个很费时费力的任务，且调用者将要进行一项处理器高负荷任务，那么这样做会很棒。<br />
+安全: 使用GCD，我们就不可能意外写出具有不成对Lock的代码。在常规Lock代码中，我们很可能在解锁之前让代码返回了。使用GCD，队列通常持续运行，你必将归还控制权。<br />
+控制: 使用GCD我们可以挂起和恢复dispatch queue，而这是基于锁的方法所不能实现的。我们还可以将一个用户队列指向另一个dspatch queue，使得这个用户队列继承那个dispatch queue的属性。使用这种方法，队列的优先级可以被调整——通过将该队列指向一个不同的全局队列，若有必要的话，这个队列甚至可以被用来在主线程上执行 代码。<br />
+集成: GCD的事件系统与dispatch queue相集成。对象需要使用的任何事件或者计时器都可以从该对象的队列中指向，使得这些句柄可以自动在该队列上执行，从而使得句柄可以与对象自动同步。<br />
+总结</p>
+<p>现在你已经知道了GCD的基本概念、怎样创建dispatch queue、怎样提交Job至dispatch queue以及怎样将队列用作线程同步。接下来我会向你展示如何使用GCD来编写平行执行代码来充分利用多核系统的性能^ ^。我还会讨论GCD更深层的东西，包括事件系统和queue targeting。</p>
+<p>http://www.cnblogs.com/lovesmile/archive/2012/09/13/2683468.html</p>
+<p> 1： 类Class：<br />
+       typedef struct objc_class * Class;<br />
+     从Class的定义可以看出，它是一个 objc_class 结构类型的指针，objc_class又是什么呢？</p>
+<p>struct objc_class<br />
+{<br />
+    struct objc_class* isa;<br />
+    struct objc_class* super_class;  //root的为null<br />
+    const char* name;<br />
+    long version;<br />
+    long info;<br />
+    long instance_size;<br />
+    struct objc_ivar_list* ivars;<br />
+    struct objc_method_list** methodLists;  //方法列表<br />
+    struct objc_cache* cache;     //缓存最近使用的方法，以提高效率；<br />
+    struct objc_protocol_list* protocols;<br />
+};<br />
+      为什么Class的第一个成员也是Class呢，它的内存布局岂不是和底下的object一样了？其实这就是类对象（class object）与实例对象（instance object）的区别了。<br />
+     Object-C对类对象与实例对象中的 isa 所指向的类结构作了不同的命名：类对象中的 isa 指向类结构被称作 metaclass，metaclass 存储类的static类成员变量与static类成员方法（+开头的方法）；实例对象中的 isa 指向类结构称作 class（普通的），class 结构存储类的普通成员变量与普通成员方法（-开头的方法）.</p>
+<p>     2：对象id：<br />
+     typedef struct objc_object {<br />
+         Class isa;<br />
+     } *id;<br />
+     可以发现， id可以用来表示任意一个对象，它是一个 objc_object 结构类型的指针，其第一个成员是一个 objc_class 结构类型的指针。<br />
+    我们的根类NSObject也同样是只有一个Class成员：<br />
+   @interface NSObject <nsobject> {<br />
+       Class       isa;<br />
+    }<br />
+    这个isa到底是什么呢？官方介绍是这样的:<br />
+    Every object is connected to the run-time system through its isa instance variable, inherited from the NSObject class. isa identifies the object's class; it points to a structure that's compiled from the class definition. Through isa, an object can find whatever information it needs at run timesuch as its place in the inheritance hierarchy, the size and structure of its instance variables, and the location of the method implementations it can perform in response to messages.<br />
+    可见，一个对象（Object）的isa指向了这个对象的类（Class），而这个对象的类（Class）的isa指向了metaclass。这样我们就可以找到静态方法和变量了。</p>
+<p>       3： 运行时：<br />
+     Objective-C的运行时是动态的，它能让你在运行时为类添加方法或者去除方法以及使用反射。这在其它语言是不多见的。</p>
+<p>     类的实例对象的 isa 指向它的类；类的 isa 指向该类的 metaclass；<br />
+     类的 super_class 指向其父类，如果该类为根类则值为 NULL；<br />
+     metaclass 的 isa 指向根 metaclass，如果该 metaclass 是根 metaclass 则指向自身；<br />
+     metaclass 的 super_class 指向父 metaclass，如果该 metaclass 是根 metaclass 则指向该 metaclass 对应的类；<br />
+     Object-C 为每个类的定义生成两个 objc_class ，一个普通的 class，另一个即 metaclass。我们可以在运行期创建这两个 objc_class 数据结构，然后使用 objc_addClass将 class 注册到运行时系统中，以此实现动态地创建一个新的类。</p>
+<p>nil: A null pointer to an Objective-C object.<br />
+( #define nil ((id)0)  )</p>
+<p>Nil: A null pointer to an Objective-C class.</p>
+<p>NULL: A null pointer to anything else,  is for C-style memory pointers.<br />
+( #define NULL ((void *)0)  )</p>
+<p>NSNull: A class defines a singleton object used to represent null values in collection objects<br />
+ (which don't allow nil values).<br />
+[NSNull null]: The singleton instance of NSNull.</p>
+<p>Technically they're all the same,,, but in practice they give someone reading your code some hints about what's going on; just like naming classes with a capital letter and instances with lowercase is recommended, but not required.</p>
+<p>If someone sees you passing NULL, they know the receiver expects a C pointer. If they see nil, they know the receiver is expecting an object. If they see Nil, they know the receiver is expecting a class. Readability.</p>
+<p>if obj is nil , [obj message] will return NO, without NSException<br />
+if obj is NSNull , [obj message will throw a NSException</p>
+<p>Singleton模式经常来做应用程序级别的共享资源控制, 应该说这个模式的使用频率非常高, 现在来看看在Objective-C里面的实现方法.</p>
+<p>要实现一个Singleton Class, 至少需要做以下四个步骤:<br />
+1. 为Singleton Object实现一个静态实例, 初始化, 然后设置成nil.<br />
+2. 实现一个实例构造方法(通常命名为 sharedInstance 或者 sharedManager)检查上面声名的静态实例是否为nil, 如果是则新建并返回一个本类实例.<br />
+3. 重写 allocWithZone: 方法来保证当其他人直接使用 alloc 和 init 试图获得一个新实例的时候不会产生一个新的实例.<br />
+4. 适当的实现 copyWithZone:, release, retain, retainCount 和 autorelease.</p>
+<p>Core Foundation框架 (CoreFoundation.framework) 是一组C语言接口，它们为iOS应用程序提供基本数据管理和服务功能。下面列举该框架支持进行管理的数据以及可提供的服务：</p>
+<p>群体数据类型 (数组、集合等)</p>
+<p>程序包</p>
+<p>字符串管理</p>
+<p>日期和时间管理</p>
+<p>原始数据块管理</p>
+<p>偏好管理</p>
+<p>URL及数据流操作</p>
+<p>线程和RunLoop</p>
+<p>端口和soket通讯</p>
+<p>Core Foundation框架和Foundation框架紧密相关，它们为相同功能提供接口，但Foundation框架提供Objective-C接口。如果您将Foundation对象和Core Foundation类型掺杂使用，则可利用两个框架之间的 “toll-free bridging”。所谓的Toll-free bridging是说您可以在某个框架的方法或函数同时使用Core Foundatio和Foundation 框架中的某些类型。很多数据类型支持这一特性，其中包括群体和字符串数据类型。每个框架的类和类型描述都会对某个对象是否为 toll-free bridged，应和什么对象桥接进行说明。</p>
+<p>Objective-C指针与CoreFoundation指针之间的转换</p>
+<p>ARC仅管理Objective-C指针（retain、release、autorelease），不管理CoreFoundation指针，CF指针由人工管理，手动的CFRetain和CFRelease来管理，注，CF中没有autorelease。</p>
+<p>CocoaFoundation指针与CoreFoundation指针转换，需要考虑的是所指向对象所有权的归属。ARC提供了3个修饰符来管理。</p>
+<p>1. __bridge，什么也不做，仅仅是转换。此种情况下：</p>
+<p>i). 从Cocoa转换到Core，需要人工CFRetain，否则，Cocoa指针释放后， 传出去的指针则无效。</p>
+<p>ii). 从Core转换到Cocoa，需要人工CFRelease，否则，Cocoa指针释放后，对象引用计数仍为1，不会被销毁。</p>
+<p>2. __bridge_retained，转换后自动调用CFRetain，即帮助自动解决上述i的情形。</p>
+<p>3. __bridge_transfer，转换后自动调用CFRelease，即帮助自动解决上述ii的情形。</p>
+<p>由于ARC不能管理Core Foundation Object的生命周期，所以在Core Foundation和ARC之间，我们需要使用到__bridge,__bridge_retained和__bridge_transfer三个转换关键字。</p>
+<p>根据苹果官方的文档（https://developer.apple.com/library/i...）：</p>
+<p>__bridge只做类型转换，但是不修改对象（内存）管理权；</p>
+<p>__bridge_retained（也可以使用CFBridgingRetain）将Objective-C的对象转换为Core Foundation的对象，同时将对象（内存）的管理权交给我们，后续需要使用CFRelease或者相关方法来释放对象；</p>
+<p>__bridge_transfer（也可以使用CFBridgingRelease）将Core Foundation的对象转换为Objective-C的对象，同时将对象（内存）的管理权交给ARC。</p>
+<p>NSString是个class cluster，一个类簇。什么是一个类簇？简单的来说，NSString是个“工厂类”，然后它在外层提供了很多方法接口，但是这些方法的实现是由具体 的内部类来实现的。当使用NSString生成一个对象时，初始化方法会判断哪个“自己内部的类”最适合生成这个对象，然后这个“工厂”就会生成这个具体 的类对象返回给你。这种又外层类提供统一抽象的接口，然后具体实现让隐藏的，具体的内部类来实现，在设计模式中称为“抽象工厂”模式。<br />
+http://seanmurph.com/weblog/make-your-own-abstract-factory-class-cluster-in-objective-c/</p>
+<p>http://blog.csdn.net/weiwangchao_/article/details/7744972</p>
+<p></nsobject></p>

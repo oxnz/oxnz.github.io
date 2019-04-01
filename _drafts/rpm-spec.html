@@ -1,0 +1,106 @@
+---
+layout: post
+title: RPM spec
+date: 
+type: post
+published: false
+status: private
+categories:
+- Blog
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: oxnz
+  email: yunxinyi@gmail.com
+  display_name: Will Z
+  first_name: Will
+  last_name: Z
+---
+<p><code><br />
+%define debug_package %[nil]<br />
+Name : hello<br />
+Version : 0.0.2<br />
+Release : 22<br />
+Summary : Print hello<br />
+Group : Applications/File<br />
+License : GPL<br />
+URL : http://xinyi.sourceforge.net<br />
+Source0 : hello-0.2.0.tar.bz2<br />
+Source1 : logo.png<br />
+Source2 : icon.tgz<br />
+Source3 : hello.desktop<br />
+Patch : hello-0.2.0-fix-LF.patch<br />
+Patch1 : hello-0.2.0-fix-CR.patch<br />
+BuildRoot : /var/tmp/hello-root<br />
+%description :<br />
+Hello is a text-based greet program.<br />
+It prints a hello string to the standard<br />
+output.</code></p>
+<p>%prep<br />
+%setup -q<br />
+%patch -p1<br />
+%patch1 -p1<br />
+%Build<br />
+make -f admin/Makefile.common cvs<br />
+./configure --prefix=/usr<br />
+make<br />
+# for mo files<br />
+pushd po<br />
+rm *.gmo<br />
+make<br />
+popd<br />
+%install<br />
+mkdir -p $RPM_BUILD_ROOT<br />
+make install DESTDIR=$RPM_BUILD_ROOT<br />
+mkdir -p $RPM_BUILD_ROOT/usr/share/services<br />
+cp $RPM_BUILD_ROOT/usr/share/apps/hello/hello.protocol $RPM_BUILD_ROOT/usr/share/services<br />
+%clean<br />
+rm -rf $RPM_BUILD_ROOT<br />
+%post<br />
+ln -s /dev/cdrom /dev/dvd<br />
+ln -s /dev/cdrom /dev/rdvd<br />
+%files<br />
+%defattr(-.root.root)<br />
+/usr<br />
+%changelog<br />
+* Fri Jul 1 2012 Yun Xinyi -0.2.0<br />
+- modified the hello string<br />
+* Sat Oct 2 2012 Yun Xinyi -0.2.0<br />
+- Modified to use libc as library<br />
+Group: Amusements/Games<br />
+Amusements/Graphics<br />
+Applications/Archiving<br />
+Applications/Communications<br />
+Applications/Databases<br />
+Applications/Editors<br />
+Applications/Emulators<br />
+Applications/Engneering<br />
+Applications/File<br />
+Applications/Internet<br />
+Applications/Multimedia<br />
+Applications/Productivity<br />
+Applications/Publishing<br />
+Applications/System<br />
+Applications/Text<br />
+Development/Debuggers<br />
+Development/Languages<br />
+Development/Libraries<br />
+Development/System<br />
+Development/Tools<br />
+Documentation<br />
+System Environment/Base<br />
+System Environment/Daemons<br />
+System Environment/Kernel<br />
+System Environment/Libraries<br />
+System Environment/Shells<br />
+User Interface/Desktops<br />
+User Interface/X<br />
+User Interface/X Hardware Support<br />
+Source: hello-2.0.tar.gz<br />
+%description: print hello<br />
+%prep<br />
+%build<br />
+%install<br />
+%files<br />
+%changelog</p>

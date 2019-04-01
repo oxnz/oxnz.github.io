@@ -1,0 +1,185 @@
+---
+layout: post
+title: 中断INT13功能及用法分析
+date: 
+type: post
+published: false
+status: private
+categories:
+- Blog
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: oxnz
+  email: yunxinyi@gmail.com
+  display_name: Will Z
+  first_name: Will
+  last_name: Z
+---
+<p>中断INT13功能及用法分析</p>
+<p>INT 13H，AH=00H 软、硬盘控制器复位</p>
+<p>说明：<br />
+此功能复位磁盘（软盘和硬盘）控制器板和磁盘驱动器，</p>
+<ul>
+<li><wbr>它在磁盘控制器<br />
+芯片上完成复位操场作并在磁盘进行所需的操作之前做一系列用于磁<wbr>盘校准的<br />
+磁盘操作。<br />
+当磁盘I/O功能调用出现错误时，需要调用此功能，<wbr>此刻复位功能将使BIOS<br />
+象该磁盘重新插入一样检查驱动器中磁盘状态，<wbr>并将磁头校准使之在应该在的<br />
+位置上。<br />
+此功能调用不影响软盘或硬盘上的数据。<br />
+入口参数：<br />
+AH=00H 指明调用复位磁盘功能。<br />
+DL 需要复位的驱动器号。<br />
+返回参数：<br />
+若产生错误，进位标志CF=1，错误码在AH寄存器。<br />
+详情请见磁盘错误状态返回码一文。<br />
+示例：<br />
+C_SEG SEGMENT PUBLIC<br />
+ASSUME CS:C_SEG,DS:C_SEG<br />
+ORG 100H<br />
+START: MOV AH, 00H<br />
+MOV DL, 80H<br />
+INT 13H<br />
+;复位硬盘 C<br />
+JC ERROR<br />
+……<br />
+ERROR: ……<br />
+C_SEG ENDS<br />
+END START</p>
+<p>INT 13H，AH=02H 读扇区说明：<br />
+调用此功能将从磁盘上把一个或更多的扇区内容读进存贮器。<wbr>因为这是一个<br />
+低级功能，在一个操作中读取的全部扇区必须在同一条磁道上（<wbr>磁头号和磁道号<br />
+相同）。<wbr>BIOS不能自动地从一条磁道末尾切换到另一条磁道开始，<wbr>因此用户必须<br />
+把跨多条磁道的读操作分为若干条单磁道读操作。<br />
+入口参数：<br />
+AH=02H 指明调用读扇区功能。<br />
+AL 置要读的扇区数目，不允许使用读磁道末端以外的数值，也不允许<br />
+使该寄存器为0。<br />
+DL 需要进行读操作的驱动器号。<br />
+DH 所读磁盘的磁头号。<br />
+CH 磁道号的低8位数。<br />
+CL 低5位放入所读起始扇区号，位7-6表示磁道号的高2位。<br />
+ES:BX 读出数据的缓冲区地址。<br />
+返回参数：<br />
+如果CF=1，AX中存放出错状态。读出后的数据在ES:<wbr>BX区域依次排列。<br />
+详情请参见磁盘错误状态返回码一文。<br />
+示例：<br />
+C_SEG SEGMENT PUBLIC<br />
+ASSUME CS:C_SEG,DS:C_SEG<br />
+ORG 100H<br />
+START: JMP READ<br />
+BUFFER DB 512 DUP(0)<br />
+READ: PUSH CS<br />
+POP ES<br />
+MOV BX, OFFSET BUFFER<br />
+MOV AX, 0201H<br />
+MOV CX, 0001H<br />
+MOV DX, 0000H<br />
+INT 13H<br />
+;读软盘A, 0面0道1扇区<br />
+;读出后数据在BUFFER中<br />
+JC ERROR<br />
+……<br />
+ERROR: ……<br />
+C_SEG ENDS<br />
+END START</p>
+<p>INT 13H，AH=03H 写扇区</p>
+<p>说明：<br />
+调用此功能将从磁盘上把一个或更多的扇区内容写入驱动器。因为这<br />
+是一个低级功能，<wbr>在一个写入操作中的全部扇区必须在同一条磁道上（磁<br />
+头号和磁道号相同）。<wbr>BIOS不能自动地从一条磁道末尾切换到另一条磁道<br />
+开始，<wbr>因此用户必须把跨多条磁道的写操作分为若干条单磁道写操作。<br />
+入口参数：<br />
+AH=03H 指明调用写扇区功能。<br />
+AL 置要写的扇区数目，不允许使用超出磁道末端以外的数值，<br />
+也不允许使该寄存器为0。<br />
+DL 需要进行写操作的驱动器号。<br />
+DH 所写磁盘的磁头号。<br />
+CH 磁道号的低8位数。<br />
+CL 低5位放入所读起始扇区号，位7-6表示磁道号的高2位。<br />
+ES:BX 放置写入数据的存贮区地址。<br />
+返回参数：<br />
+如果CF=1，AX中存放出错状态。<br />
+详情请参见磁盘错误状态返回码一文。<br />
+示例：<br />
+C_SEG SEGMENT PUBLIC<br />
+ASSUME CS:C_SEG,DS:C_SEG<br />
+ORG 100H<br />
+START: JMP WRITE<br />
+BUFFER DB 512 DUP(0FFH)<br />
+WRITE: PUSH CS<br />
+POP ES<br />
+MOV BX, OFFSET BUFFER<br />
+MOV AX, 0301H<br />
+MOV CX, 0001H<br />
+MOV DX, 0000H<br />
+INT 13H<br />
+;写入软盘A, 0面0道1扇区<br />
+;把此扇区数据全部置为0FFH<br />
+JC ERROR<br />
+……<br />
+ERROR: ……<br />
+C_SEG ENDS<br />
+END START<br />
+INT 13H，AH=04H 检测扇区</p>
+<p>说明：<br />
+这个功能检测磁盘上1个或更多的扇区。<wbr>这个验证测试不是把磁盘上的<br />
+数据和内存中的数据进行比较，<wbr>而只是简单地确定读出的数据有无CRC错误。<br />
+这个功能可用来验证驱动器中的软盘版。如果盘片的格式正确，<wbr>CF=0。<br />
+入口参数：<br />
+AH=03H 指明调用检测扇区功能。<br />
+AL 置要检测的连续扇区数目，不允许使用超出磁道末端以外的<br />
+数值，也不允许使该寄存器为0。<br />
+DL 需要进行检测的驱动器号。<br />
+DH 磁盘的磁头号。<br />
+CH 磁道号的低8位数。<br />
+CL 低5位放入起始扇区号，位7-6表示磁道号的高2位。<br />
+返回参数：<br />
+如果CF=1，AX中存放出错状态。CF=0，检测正确。<br />
+详情请参见磁盘错误状态返回码一文。<br />
+示例：<br />
+C_SEG SEGMENT PUBLIC<br />
+ASSUME CS:C_SEG,DS:C_SEG<br />
+ORG 100H<br />
+START: MOV AX, 0401H<br />
+MOV CX, 0001H<br />
+MOV DX, 0000H<br />
+INT 13H<br />
+;检测软盘A, 0面0道1扇区<br />
+JC ERROR<br />
+……<br />
+ERROR: ……<br />
+C_SEG ENDS<br />
+END START</p>
+<p>磁盘错误状态返回码:</p>
+<p>磁盘错误状态</p>
+<p>AH=<br />
+00H 未出错<br />
+01H 非法功能调用命令区。<br />
+02H 地址标记损坏，扇区标识（ID）无效或未找到。<br />
+03H 企图对有写保护的软盘执行写操作。<br />
+04H 所寻找的扇区没找到。<br />
+05H 复位操作失败。<br />
+06H 无介质。<br />
+07H 初始化错误，数据未存在DMA的64K缓冲区内。<br />
+08H DMA故障<br />
+09H DMA边界错误，数据未存在DMA的64K缓冲区内。<br />
+0AH 检测出错误码率的扇区标志。<br />
+0BH 所寻找的磁道没找到。<br />
+0CH 介质类型没发现。<br />
+0DH 扇区号有问题。<br />
+0EH 发现控制数据地址标记。<br />
+0FH 超出DMA边界<br />
+10H 读磁盘时奇偶校验错，且纠错码（EDC）不能纠正。<br />
+11H 读磁盘时奇偶校验错，但纠错码（EDC）已纠正错误。<br />
+20H 控制器错。<br />
+40H 查找操作无效。<br />
+80H 超时错误，驱动器不响应。<br />
+AAH 驱动器未准备好。<br />
+BBH 不明错误。<br />
+CCH 被选驱动器出现写故障。<br />
+E0H 错误寄存器是零<br />
+FFH 非法操作。</wbr></wbr></wbr></wbr></wbr></wbr></wbr></wbr></wbr></wbr></wbr></wbr></wbr></wbr></wbr></li>
+</ul>

@@ -1,0 +1,320 @@
+---
+layout: post
+title: Backdoors
+date: 
+type: post
+published: false
+status: private
+categories:
+- Secure
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: oxnz
+  email: yunxinyi@gmail.com
+  display_name: Will Z
+  first_name: Will
+  last_name: Z
+---
+<p>Here's a paper I wrote on backdoors.  Feedback welcome.<br />
+这里是我写的一份关于后门的文章，欢迎反馈信息。</p>
+<p>Backdoors</p>
+<h1>后门</h1>
+<p>By Christopher Klaus 8/4/97</p>
+<p>前些天介绍了黑客入侵电脑，他们试图看法一种技术或者后门来允许他们再次回到系统。在这份<br />
+文章中，将聚焦于众多后门技术和一些检查他们的方法。大部分的焦点将集中在Unix后门和讨论<br />
+一些将来的Windows NT 后门。这将描述试图决定这些入侵者使用的基本方法和管理员如何理解<br />
+关于他们可能可以试图阻止入侵者这个主题的复杂性。当一个系统管理员理解一旦黑客入侵之后<br />
+阻止他们再次入侵有多困难，<br />
+<!--more--><br />
+the appreciation of being proactive to block the intruder from<br />
+ever getting in becomes better understood.  This is intended to cover many<br />
+of the popular commonly used backdoors by beginner and advanced intruders.<br />
+This is not intended to cover every possible way to create a backdoor as<br />
+the possibilities are limitless.</p>
+<p>The backdoor for most intruders provide two or three main functions:</p>
+<p>Be able to get back into a machine even if the administrator tries to<br />
+secure it, e.g., changing all the passwords.</p>
+<p>Be able to get back into the machine with the least amount of visibility.<br />
+Most backdoors provide a way to avoid being logged and many times the<br />
+machine can appear to have no one online even while an intruder is using<br />
+it.</p>
+<p>Be able to get back into the machine with the least amount of time.  Most<br />
+intruders want to easily get back into the machine without having to do all<br />
+the work of exploiting a hole to gain access.</p>
+<p>在一些情况下，如果入侵者猜测管理员可能会检测安装了的后门，<br />
+In some cases, if the intruder may think the administrator may detect any<br />
+installed backdoor, they will resort to using the vulnerability repeatedly<br />
+to get on a machine as the only backdoor.   Thus not touching anything that<br />
+may tip off the administrator.   Therefore in some cases, the<br />
+vulnerabilities on a machine remain the only unnoticed backdoor.</p>
+<h2>密码破解后门</h2>
+<p>Password Cracking Backdoor</p>
+<p>One of the first and oldest methods of intruders used to gain not only<br />
+access to a Unix machine but backdoors was to run a password cracker.  This<br />
+uncovers weak passworded accounts.  All these new accounts are now possible<br />
+backdoors into a machine even if the system administrator locks out the<br />
+intruder's current account.  Many times, the intruder will look for unused<br />
+accounts with easy passwords and change the password to something<br />
+difficult.  When the administrator looked for all the weak passworded<br />
+accounts, the accounts with modified passwords will not appear.  Thus the<br />
+administrator will not be able to easily determine which accounts to lock<br />
+out.</p>
+<h2>Rhosts + + Backdoor</h2>
+<p>On networked Unix machines, services like Rsh and Rlogin used a simple<br />
+authentication method based on hostnames that appear in rhosts.  A user<br />
+could easily configure which machines not to require a password to log<br />
+into.  An intruder that gained access to someone's rhosts file could put a<br />
+"+ +" in the file and that would allow anyone from anywhere to log into<br />
+that account without a password.  Many intruders use this method especially<br />
+when NFS is exporting home directories to the world.   These accounts<br />
+become backdoors for intruders to get back into the system.  Many intruders<br />
+prefer using Rsh over Rlogin because it is many times lacking any logging<br />
+capability.  Many administrators check for "+ +" therefore an intruder may<br />
+actually put in a hostname and username from another compromised account on<br />
+the network, making it less obvious to spot.</p>
+<h2>校验和与时间戳后门</h2>
+<p>Checksum and Timestamp Backdoors</p>
+<p>以前，很多入侵者使用自己的木马版的文件替换二进制文件。许多管理员依赖时间戳和系统校验和<br />
+程序，例如，Unix的sum程序，来试图判断一个二进制文件是否被篡改过。入侵者开发除了可以为<br />
+木马文件产生与原文件相同时间戳的技术。<br />
+This is<br />
+accomplished by setting the system clock time back to the original file's<br />
+time and then adjusting the trojan file's time to the system clock.  Once<br />
+the binary trojan file has the exact same time as the original, the system<br />
+clock is reset to the current time.  The sum program relies on a CRC<br />
+checksum and is easily spoofed.  Intruders have developed programs that<br />
+would modify the trojan binary to have the necessary original checksum,<br />
+thus fooling the administrators.  MD5 checksums is the recommended choice<br />
+to use today by most vendors.  MD5 is based on an algorithm that no one has<br />
+yet to date proven can be spoofed.</p>
+<h2>登录后门</h2>
+<p>Login Backdoor</p>
+<p>On Unix, the login program is the software that usually does the password<br />
+authentication when someone telnets to the machine.  Intruders grabbed the<br />
+source code to login.c and modified it that when login compared the user's<br />
+password with the stored password, it would first check for a backdoor<br />
+password. If the user typed in the backdoor password, it would allow you to<br />
+log in regardless of what the administrator sets the passwords to.  Thus<br />
+this allowed the intruder to log into any account, even root.   The<br />
+password backdoor would spawn access before the user actually logged in and<br />
+appeared in utmp and wtmp.  Therefore an intruder could be logged in and<br />
+have shell access without it appearing anyone is on that machine as that<br />
+account.  Administrators started noticing these backdoors especially if<br />
+they did a "strings" command to find what text was in the login program.<br />
+Many times the backdoor password would show up. The intruders then<br />
+encrypted or hid the backdoor password better so it would not appear by<br />
+just doing strings.  Many of the administrators can detect these backdoors<br />
+with MD5 checksums.</p>
+<h2>Telnetd Backdoor</h2>
+<p>When a user telnets to the machine, inetd service listens on the port and<br />
+receive the connection and then passes it to in.telnetd, that then runs<br />
+login.  Some intruders knew the administrator was checking the login<br />
+program for tampering, so they modified in.telnetd.  Within in.telnetd, it<br />
+does several checks from the user for things like what kind of terminal the<br />
+user was using.  Typically, the terminal setting might be Xterm or VT100.<br />
+An intruder could backdoor it so that when the terminal was set to<br />
+"letmein", it would spawn a shell without requiring any authentication.<br />
+Intruders have backdoored some services so that any connection from a<br />
+specific source port can spawn a shell.</p>
+<h2>服务后门</h2>
+<p>Services Backdoor</p>
+<p>Almost every network service has at one time been backdoored by an<br />
+intruder.  Backdoored versions of finger, rsh, rexec, rlogin, ftp, even<br />
+inetd, etc., have been floating around forever.  There are programs that<br />
+are nothing more than a shell connected to a TCP port with maybe a backdoor<br />
+password to gain access.  These programs sometimes replace a service like<br />
+uucp that never gets used or they get added to the inetd.conf file as a new<br />
+service.  Administrators should be very wary of what services are running<br />
+and analyze the original services by MD5 checksums.</p>
+<p>定时任务后门<br />
+Cronjob backdoor</p>
+<p>Cronjob on Unix schedules when certain programs should be run.  An intruder<br />
+could add a backdoor shell program to run between 1 AM and 2 AM.  So for 1<br />
+hour every night, the intruder could gain access.  Intruders have also<br />
+looked at legitimate programs that typically run in cronjob and built<br />
+backdoors into those programs as well.</p>
+<p>&lt;h2&gt;库后门&lt;/h2&gt;<br />
+Library backdoors</p>
+<p>Almost every UNIX system uses shared libraries.  The shared libraries are<br />
+intended to reuse many of the same routines thus cutting down on the size<br />
+of programs.  Some intruders have backdoored some of the routines like<br />
+crypt.c and _crypt.c.  Programs like login.c would use the crypt() routine<br />
+and if a backdoor password was used it would spawn a shell.  Therefore,<br />
+even if the administrator was checking the MD5 of the login program, it was<br />
+still spawning a backdoor routine and many administrators were not checking<br />
+the libraries as a possible source of backdoors.</p>
+<p>One problem for many intruders was that some administrators started MD5<br />
+checksums of almost everything.  One method intruders used to get around<br />
+that is to backdoor the open() and file access routines.  The backdoor<br />
+routines were configured to read the original files, but execute the trojan<br />
+backdoors.  Therefore, when the MD5 checksum program was reading these<br />
+files, the checksums always looked good.  But when the system ran the<br />
+program, it executed the trojan version.  Even the trojan library itself,<br />
+could be hidden from the MD5 checksums.   One way to an administrator could<br />
+get around this backdoor was to statically link the MD5 checksum checker<br />
+and run on the system.  The statically linked program does not use the<br />
+trojan shared libraries.</p>
+<p>内核后门<br />
+Kernel backdoors</p>
+<p>The kernel on Unix is the core of how Unix works.  The same method used for<br />
+libraries for bypassing MD5 checksum could be used at the kernel level,<br />
+except even a statically linked program could not tell the difference.  A<br />
+good backdoored kernel is probably one of the hardest to find by<br />
+administrators, fortunately kernel backdoor scripts have not yet been<br />
+widely made available and no one knows how wide spread they really are.</p>
+<p>文件系统后门<br />
+File system backdoors</p>
+<p>An intruder may want to store their loot or data on a server somewhere<br />
+without the administrator finding the files.  The intruder's files can<br />
+typically contain their toolbox of exploit scripts, backdoors, sniffer<br />
+logs, copied data like email messages, source code, etc.    To hide these<br />
+sometimes large files from an administrator, an intruder may patch the<br />
+files system commands like "ls", "du", and "fsck" to hide the existence of<br />
+certain directories or files.  At a very low level, one intruder's backdoor<br />
+created a section on the hard drive to have a proprietary format that was<br />
+designated as "bad" sectors on the hard drive.  Thus an intruder could<br />
+access those hidden files with only special tools, but to the regular<br />
+administrator, it is very difficult to determine that the marked "bad"<br />
+sectors were indeed storage area for the hidden file system.</p>
+<p>启动块后门<br />
+Bootblock backdoors</p>
+<p>In the PC world, many viruses have hid themselves within the bootblock<br />
+section and most antivirus software will check to see if the bootblock has<br />
+been altered.  On Unix, most administrators do not have any software that<br />
+checks the bootblock, therefore some intruders have hidden some backdoors<br />
+in the bootblock area.</p>
+<p>进程隐藏后门<br />
+Process hiding backdoors</p>
+<p>An intruder many times wants to hide the programs they are running.  The<br />
+programs they want to hide are commonly a password cracker or a sniffer.<br />
+There are quite a few methods and here are some of the more common:</p>
+<p>An intruder may write the program to modify its own argv[] to make it look<br />
+like another process name.</p>
+<p>An intruder could rename the sniffer program to a legitimate service like<br />
+in.syslog and run it.  Thus when an administrator does a "ps" or looks at<br />
+what is running, the standard service names appear.</p>
+<p>An intruder could modify the library routines so that "ps" does not show<br />
+all the processes.</p>
+<p>An intruder could patch a backdoor or program into an interrupt driven<br />
+routine so it does not appear in the process table.  An example backdoor<br />
+using this technique is amod.tar.gz available on<br />
+http://star.niimm.spb.su/~maillist/bugtraq.1/0777.html</p>
+<p>An intruder could modify the kernel to hide certain processes as well.</p>
+<p>Rootkit</p>
+<p>One of the most popular packages to install backdoors is rootkit.  It can<br />
+easily be located using Web search engines.  From the Rootkit README, here<br />
+are the typical files that get installed:</p>
+<p>z2 - removes entries from utmp, wtmp, and lastlog.<br />
+Es - rokstar's ethernet sniffer for sun4 based kernels.<br />
+Fix - try to fake checksums, install with same dates/perms/u/g.<br />
+Sl - become root via a magic password sent to login.<br />
+Ic - modified ifconfig to remove PROMISC flag from output.<br />
+ps: - hides the processes.<br />
+Ns - modified netstat to hide connections to certain machines.<br />
+Ls - hides certain directories and files from being listed.<br />
+du5 - hides how much space is being used on your hard drive.<br />
+ls5 -  hides certain files and directories from being listed.</p>
+<p>网络传输后门<br />
+Network traffic backdoors</p>
+<p>Not only do intruders want to hide their tracks on the machine, but also<br />
+they want to hide their network traffic as much as possible.  These network<br />
+traffic backdoors sometimes allow an intruder to gain access through a<br />
+firewall.  There are many network backdoor programs that allow an intruder<br />
+to set up on a certain port number on a machine that will allow access<br />
+without ever going through the normal services.  Because the traffic is<br />
+going to a non-standard network port, the administrator can overlook the<br />
+intruder's traffic.  These network traffic backdoors are typically using<br />
+TCP, UDP, and ICMP, but it could be many other kinds of packets.</p>
+<p>TCP shell 后门<br />
+TCP Shell Backdoors</p>
+<p>The intruder can set up these TCP Shell backdoors on some high port number<br />
+possibly where the firewall is not blocking that TCP port.  Many times,<br />
+they will be protected with a password just so that an administrator that<br />
+connects to it, will not immediately see shell access.  An administrator<br />
+can look for these connections with netstat to see what ports are listening<br />
+and where current connections are going to and from.  Many times, these<br />
+backdoors allow an intruder to get past TCP Wrapper technology.  These<br />
+backdoors could be run on the SMTP port, which many firewalls allow traffic<br />
+to pass for e-mail.</p>
+<p>UDP Shell Backdoors</p>
+<p>Administrator many times can spot a TCP connection and notice the odd<br />
+behavior, while UDP shell backdoors lack any connection so netstat would<br />
+not show an intruder accessing the Unix machine.  Many firewalls have been<br />
+configured to allow UDP packets for services like DNS through.  Many times,<br />
+intruders will place the UDP Shell backdoor on that port and it will be<br />
+allowed to by-pass the firewall.</p>
+<p>ICMP Shell Backdoors</p>
+<p>Ping is one of the most common ways to find out if a machine is alive by<br />
+sending and receiving ICMP packets.  Many firewalls allow outsiders to ping<br />
+internal machines.  An intruder can put data in the Ping ICMP packets and<br />
+tunnel a shell between the pinging machines.  An administrator may notice a<br />
+flurry of Ping packets, but unless the administrator looks at the data in<br />
+the packets, an intruder can be unnoticed.</p>
+<p>Encrypted Link</p>
+<p>An administrator can set up a sniffer trying to see data appears as someone<br />
+accessing a shell, but an intruder can add encryption to the Network<br />
+traffic backdoors and it becomes almost impossible to determine what is<br />
+actually being transmitted between two machines.</p>
+<p>Windows NT</p>
+<p>Because Windows NT does not easily allow multiple users on a single machine<br />
+and remote access similar as Unix, it becomes harder for the intruder to<br />
+break into Windows NT, install a backdoor, and launch an attack from it.<br />
+Thus you will find more frequently network attacks that are spring boarded<br />
+from a Unix box than Windows NT. As Windows NT advances in multi-user<br />
+technologies, this may give a higher frequency of intruders who use Windows<br />
+NT to their advantage.  And if this does happen, many of the concepts from<br />
+Unix backdoors can be ported to Windows NT and administrators can be ready<br />
+for the intruder.  Today, there are already telnet daemons available for<br />
+Windows NT.  With Network Traffic backdoors, they are very feasible for<br />
+intruders to install on Windows NT.</p>
+<p>解决方案<br />
+Solutions</p>
+<p>As backdoor technology advances, it becomes even harder for administrators<br />
+to determine if an intruder has gotten in or if they have been successfully<br />
+locked out.</p>
+<p>Assessment</p>
+<p>One of the first steps in being proactive is to assess how vulnerable your<br />
+network is, thus being able to figure out what holes exist that should be<br />
+fixed.  Many commercial tools exist to help scan and audit the network and<br />
+systems for vulnerabilities.  Many companies could dramatically improve<br />
+their security if they only installed the security patches made freely<br />
+available by their vendors.</p>
+<p>MD5 Baselines</p>
+<p>One necessary component of a system scanner is MD5 checksum baselines.<br />
+This MD5 baseline should be built up before a hacker attack with clean<br />
+systems.  Once a hacker is in and has installed backdoors, trying to create<br />
+a baseline after the fact could incorporate the backdoors into the<br />
+baseline.  Several companies had been hacked and had backdoors installed on<br />
+their systems for many months. Overtime, all the backups of the systems<br />
+contained the backdoors.   When some of these companies found out they had<br />
+a hacker, they restored a backup in hopes of removing any backdoors.  The<br />
+effort was futile since they were restoring all the files, even the<br />
+backdoored ones.  The binary baseline comparison needs to be done before an<br />
+attack happens.</p>
+<p>入侵检测<br />
+Intrusion detection</p>
+<p>Intrusion detection is becoming more important as organizations are hooking<br />
+up and allowing connections to some of their machines.  Most of the older<br />
+intrusion detection technology was log-based events.  The latest intrusion<br />
+detection system (IDS) technology is based on real-time sniffing and<br />
+network traffic security analysis.  Many of the network traffic backdoors<br />
+can now easily be detected.  The latest IDS technology can take a look at<br />
+the DNS UDP packets and determine if it matches the DNS protocol requests.<br />
+If the data on the DNS port does not match the DNS protocol, an alert flag<br />
+can be signaled and the data captured for further analysis.   The same<br />
+principle can be applied to the data in an ICMP packet to see if it is the<br />
+normal ping data or if it is carrying encrypted shell session.</p>
+<p>从CD-ROM启动<br />
+Boot from CD-ROM.</p>
+<p>Some administrators may want to consider booting from CD-ROM thus<br />
+eliminating the possibility of an intruder installing a backdoor on the<br />
+CD-ROM.  The problem with this method is the cost and time of implementing<br />
+this solution enterprise wide.</p>
+<p>Vigilant</p>
+<p>Because the security field is changing so fast, with new vulnerabilities<br />
+being announced daily and intruders are constantly designing new attack and<br />
+backdoor techniques, no security technology is effective without vigilance.</p>
+<p>Be aware that no defense is foolproof, and that there is no substitute for<br />
+diligent attention.</p>

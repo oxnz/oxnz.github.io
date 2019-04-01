@@ -1,0 +1,51 @@
+---
+layout: post
+title: rpmdev-newspec
+date: 
+type: post
+published: false
+status: private
+categories:
+- Blog
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: oxnz
+  email: yunxinyi@gmail.com
+  display_name: Will Z
+  first_name: Will
+  last_name: Z
+---
+<pre class="brush:shell">Name:        dcclient
+Version:        0.1.2
+Release:        1%{?dist}
+Summary:        a simple DigitalChina Broad NetLink client
+
+License:        GPL
+URL:            http://www.xinyi.sourceforge.net
+Source0:        %{name}-%{version}.tar.gz
+
+BuildRequires:  libpcap0.8
+Requires:       make,gcc
+
+%description
+A simple DigitalChina Broad NetLink client
+
+%prep
+%setup -q
+
+%build
+%configure
+make %{?_smp_mflags}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
+%make_install
+
+%files
+%defattr(-,root,root,-)
+%doc
+
+%changelog</pre>
