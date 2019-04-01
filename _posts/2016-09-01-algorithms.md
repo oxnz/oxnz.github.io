@@ -57,6 +57,32 @@ There are three different stages in understanding an algorithms:
 
 #### B+ Tree
 
+#### k-d Tree
+
+```python
+from collections import namedtuple
+from operator import itemgetter
+from pprint import pformat
+
+class Node(namedtuple('Node', 'coord left_child, right_child')):
+	def __repr__(self):
+		return pformat(tuple(self))
+
+def kdtree(points, depth=0):
+	try:
+		k = len(points[0])
+	except IndexError:
+		return None
+	axis = depth % k
+	points.sort(key=itemgetter(axis))
+	median = len(points)//2
+	return Node(
+		location=points[median],
+		left_child=kdtree(points[:median], depth+1),
+		right_child=kdtree(points[median+1:], depth+1)
+	)
+```
+
 ### Heap
 
 ### Union-Find Set
@@ -169,3 +195,7 @@ Complexity:
 ### edit distance
 
 ## Others
+
+## References
+
+* [Spatial Indexing](http://blog.notdot.net/2009/11/Damn-Cool-Algorithms-Spatial-indexing-with-Quadtrees-and-Hilbert-Curves)

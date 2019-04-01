@@ -798,6 +798,11 @@ GET /_nodes/stats/indices/fielddata?fields=*&human&pretty
 	* sync_interval
 	* flush_threshold_size
 
+## Dev
+
+* score script 可以更改es打分过程,直接使用java计算
+* 可以在es中访问redis，进行热度计算
+
 ## References
 
 * [https://github.com/elastic/rally](https://github.com/elastic/rally)

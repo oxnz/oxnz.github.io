@@ -16,6 +16,47 @@ title: Parallel Programming
 
 <!--more-->
 
+### Data-Sharing Rules
+
+**OpenMP does not put any restriction to prevent data races between shared variables. This is a responsibility of a programmer.**
+
+* shared
+: there exists one instance of this variable which is shared among all threads
+* private
+: each thread in a team of threads has its own local copy of the private variable
+
+* Implicit Rules
+	* The data-sharing attribute of variables, which are declared outside the parallel region, is usually shared
+	* The loop iteration variables, however, are private by default
+	* The variables which are declared locally within the parallel region are private
+* Explicit rules
+	* Shared
+		* The `shared(list)` clause declares that all the variables in `list` are shared
+		* Shared variables introduce an overhead, because one instance of a variable is shared between multiple threads. Therefore, it is often best to minimize the number of shared variables when a good performance is desired.
+	* Private
+		* The `private(list)` clause declares that all the variables in `list` are private
+		* When a variable is declared private, OpenMP replicates this variable and assigns its local copy to each thread
+		* The behavior of private variables is sometimes unintuitive. Let us assume that a private variable has a value before a parallel region. However, the value of the variable at the beginning of the parallel region is undefined. Additionally, the value of the variable is undefined also after the parallel region.
+	* Default
+		* `default(shared)`
+		* `default(none)`
+			* forces a programmer to explicitly specify the data-sharing attributes of all variables
+* Rule NO.1
+	* always write parallel regions with the `default(none)` clause
+	* declare private variables inside parallel regions whenever possible
+
+http://jakascorner.com/blog/2016/06/omp-data-sharing-attributes.html
+
+```c
+size_t count_mp(const vector<int>& v) {
+	size_t n = v.size(), cnt = 0;
+#pragma omp parallel for shared(n) reduction(+:cnt)
+	for (int i = 1; i < n; ++i) /* i is private by default */
+		cnt += count(v[i]);
+	return cnt;
+}
+```
+
 ## MPI (multi-process)
 
 * 进程级别

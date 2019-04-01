@@ -344,9 +344,16 @@ These are modeled after `std::unique_ptr` and `std::shared_ptr`.
 
 An instance of `std::future` is the one and only instance that refers to its associated event, whereas multiple instances of `std::shared_future` may refer to the same event. In the latter case, all the instances will become ready at the same time.
 
+`std::future<void>`
+`std::shared_future<void>` template specializations should be used where there's no associated data.
+
 #### Returning values from background tasks
 
 use `std::async` to start an *asynchronous task*, just as with `std::thread`, if the arguments are rvalues, the copies are created by `moving` the originals. This allows the use of move-only types as both the function object and the arguments.
+
+* `std::launch::defered`: func call defered until either `wait()` or `get()` called on the future
+* `std::launch::async`: must run on its own thread
+* `std::launch::defered | std::launch::async`: (default) implmenetation may choose
 
 ```cpp
 void proc() {
@@ -424,6 +431,11 @@ try {
 ```
 
 only one thread can wait for the `std::future`, if you need to wait for the same event from more than one thread, you need to use `std::shared_future` instead.
+
+>
+If the function call invoked as part of `std::async` throws an exception, that exception is stored in the future in place of a stored value, the future becomes ready, and a call to `get()` rethrows that stored exception.
+>
+(Note: the standard leaves it unspecified whether it is the original exception object that’s rethrown or a copy; different compilers and libraries make different choices on this mat- ter.) The same happens if you wrap the function in a std::packaged_task—when the task is invoked, if the wrapped function throws an exception, that exception is stored in the future in place of the result, ready to be thrown on a call to get().
 
 ### Waiting with a time limit
 
@@ -697,8 +709,49 @@ Without any additional synchronization, the modification order of each variable 
 >
 `std::memory_order` specifies how regular, non-atomic memory accesses are to be ordered around an atomic operation.
 
+## Designing lock-based concurrent data structures
 
-## Thread Pool
+## Designing lock-free concurrent data structures
+
+`cmpxchg`
+: compare/exchange
+
+Algorithms that use compare/exchange operations on the data structure often have loops inside. Cause another thread might have modified the data in the meantime, in which case the code will need to redo part of its operation before trying the compare/exchange again.
+
+A wait-free data structure is a lock-free data structure with the additional property that every thread accessing the data structure can complete its operation within a bounded number of steps, regardless of the behavior of other threads. Algorithms that can involve an unbounded number of retries because of clashes with other threads are thus not wait-free.
+
+* why lock-free
+	* primary reason: to enable maximum concurrency
+	* second reason: robustness
+		* If a thread dies while holding a lock, that data structure is broken forever. But if a thread dies partway through an operation on a lock-free data structure, nothing is lost except that thread’s data; other threads can proceed normally.
+
+As already mentioned, lock-free data structures rely on the use of atomic opera- tions and the associated memory-ordering guarantees in order to ensure that data becomes visible to other threads in the correct order.
+
+## Designing concurrent code
+
+### Deviding work between threads
+
+* dividing before processing begins
+* dividing data recursively (qsort)
+* dividing by task type
+
+### Factors affecting performance
+
+* processor numbers
+* data contention
+	* high/low contention
+* cache ping-pong
+	* var/mutex passed back and forth between the caches many times
+	* effects of contention with mutexes are usually different from the effects of contention with atomic operations
+	* use of a mutex natually serializes threads at the operating system level rather than at the processor level
+* false sharing
+* data proximity
+* oversubscription and excessive task switching
+* scalability and Amdahl's law
+
+## Advanced thread management
+
+### Thread Pool
 
 ```cpp
 namespace mp {

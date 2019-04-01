@@ -1,5 +1,6 @@
 ---
 title: CentOS Install
+published: false
 ---
 
 # 电脑安装Linux系统步骤
