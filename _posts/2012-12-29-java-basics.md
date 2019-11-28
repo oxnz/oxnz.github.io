@@ -12,7 +12,7 @@ tags:
 
 ## 介绍
 
-记录一些零散的 java 入门知识，不定期更新。
+Java Basics.
 
 <!--more-->
 
@@ -21,12 +21,119 @@ tags:
 * TOC
 {:toc}
 
+## Functional
+
+```java
+@FunctionalInterface
+public interface Provider<T> {
+    T get() throws Exception;
+}
+
+@FunctionalInterface
+public interface Fn<T, R> {
+    R apply(T input) throws Exception;
+    default <V> Fn<V, R> compose(Fn<? super V, ? extends T> before) {
+        Objects.requireNonNull(before);
+        return (V v) -> apply(before.apply(v));
+    }
+    default <V> Fn<T, V> andThen(Fn<? super R, ? extends V> after) {
+        Objects.requireNonNull(after);
+        return (T t) -> after.apply(apply(t));
+    }
+}
+```
+
+### Throwable Return Value Wrap
+
+```java
+@Accessors(fluent = true)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class Try<T> {
+    @Getter
+    private final T value;
+    @Getter
+    private final Exception exception;
+
+    public static <T> Try<T> success(final T v) {
+        return new Try<>(v, null);
+    }
+
+    public static <T> Try<T> failure(final Exception e) {
+        return new Try<>(null, e);
+    }
+
+    public static <T> Try<T> of(Provider<T> provider) {
+        try {
+            return success(provider.get());
+        } catch (Exception e) {
+            return failure(e);
+        }
+    }
+
+    public void succeeded(Consumer<? super T> consumer) {
+        if (value != null) consumer.accept(value);
+    }
+
+    public <R> Try<R> map(Fn<? super T, ? extends R> mapper) {
+        Objects.requireNonNull(mapper);
+        try {
+            if (value != null) return success(mapper.apply(value));
+            else throw exception;
+        } catch (Exception e) {
+            return failure(e);
+        }
+    }
+
+    public <U> Try<U> flatMap(Function<? super T, Try<U>> mapper) {
+        Objects.requireNonNull(mapper);
+        if (succeeded())
+            return mapper.apply(value);
+        else {
+            return failure(exception);
+        }
+    }
+
+    public <R> R unify(BiFunction<T, Exception, R> fn) {
+        return fn.apply(value, exception);
+    }
+
+    public <R> R exceptionally(Function<Exception, R> fn) {
+        if (exception != null) return fn.apply(exception);
+        return null;
+    }
+
+    public boolean succeeded() {
+        return exception == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return succeeded() ? value.hashCode() : exception.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other instanceof Try) {
+            Try o = (Try) other;
+            return Objects.equals(value, o.value) && Objects.equals(exception, o.exception);
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return succeeded() ? String.format("Try.success[%s]", value) : String.format("Try.failure[%s]", exception);
+    }
+}
+```
+
 ## Data Types
 
 * bool, byte, char, short, int, float, long, double
 * Boolean, Byte, Char, Short, Integer, Float, Long, Double
 
-## 集合类
+## Collections
 
 1. 集合，无序和互异，如果add两个一样的值，只有一个。
 
@@ -56,7 +163,7 @@ tags:
 
    ```java
    import java.util.*;
-   
+
    public class Test {
        public static void main(String[] args) {
            List<String> s = new ArrayList<String>();
@@ -83,7 +190,7 @@ tags:
 
    ```java
    import java.util.*;
-   
+
    public class Test {
        public static void main(String[] args) {
            Map<String, String> m = new HashMap<String, String>();
