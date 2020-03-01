@@ -10,13 +10,13 @@ tags:
 - Java
 ---
 
-## 介绍
+## Introduction
 
 Java Basics.
 
 <!--more-->
 
-## 目录
+## Table of Contents
 
 * TOC
 {:toc}
@@ -124,6 +124,62 @@ public class Try<T> {
     @Override
     public String toString() {
         return succeeded() ? String.format("Try.success[%s]", value) : String.format("Try.failure[%s]", exception);
+    }
+}
+```
+
+## Http Client
+
+### TrustPinnedSelfSignedStrategy
+
+```java
+public class TrustPinnedSelfSignedStrategy extends TrustSelfSignedStrategy {
+
+    private final String host;
+    private final X509Certificate certificate;
+
+    public TrustPinnedSelfSignedStrategy(String host, X509Certificate certificate) {
+        this.host = host;
+        this.certificate = certificate;
+    }
+
+    @Override
+    public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        System.out.println("validating");
+        System.out.println(chain);
+        System.out.println(authType);
+        boolean ret =  super.isTrusted(chain, authType) && chain[0].equals(certificate);
+        System.out.println(chain[0]);
+        System.out.println(certificate);
+        return ret;
+    }
+}
+```
+
+## Dropwizard
+
+```java
+public class DireApplication extends Application<DireConfiguration> {
+
+    private static final Injector injector = Guice.createInjector(new DireModule());
+
+    public static void main(String[] args) throws Exception {
+        injector.getInstance(DireApplication.class).run(args);
+    }
+
+    @Override
+    public void initialize(Bootstrap<DireConfiguration> bootstrap) {
+        bootstrap.setConfigurationSourceProvider(
+                new SubstitutingSourceProvider(
+                        bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false)
+                )
+        );
+    }
+
+    @Override
+    public void run(DireConfiguration configuration, Environment environment) {
+        environment.jersey().register(injector.getInstance(DireResource.class));
     }
 }
 ```
