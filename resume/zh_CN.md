@@ -2,7 +2,7 @@
 title: Resume
 layout: page
 status: publish
-published: true
+published: false
 lang: zh_CN
 categories: []
 tags: []
