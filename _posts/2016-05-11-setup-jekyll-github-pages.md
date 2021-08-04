@@ -41,6 +41,11 @@ Bash command history(some non-relative command are ommited):
 526  bundle exec jekyll serve --watch --incremental --detach --host 0.0.0.0 # bind to all IPs
 {% endhighlight %}
 
+```shell
+gem install --user-install bundler jekyll github-pages
+1534  export PATH="~/.gem/ruby/2.6.0/bin:$PATH"
+```
+
 Gemfile content:
 
 {% highlight ruby %}
@@ -181,7 +186,7 @@ Register an Disqus account and paste the embeded code.
 
 First, export an xml file from wordpress use the Export submenu in Tools.
 
-Keep the default to export all and save the xml file locally.   You can then use jekyll import to retrieve all your posts. First you first need to install jekyll-import as it is not part of jekyll main gem:   
+Keep the default to export all and save the xml file locally. You can then use jekyll import to retrieve all your posts. First you first need to install jekyll-import as it is not part of jekyll main gem:
 
 ```shell
 gem install jekyll-import
